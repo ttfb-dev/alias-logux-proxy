@@ -2,6 +2,7 @@ import { Server } from '@logux/server'
 
 const server = new Server(
   Server.loadOptions(process, {
+    host: '0.0.0.0',
     controlSecret: 'secret',
     subprotocol: '1.0.0',
     supports: '^0.11.1',
@@ -10,4 +11,4 @@ const server = new Server(
   })
 )
 
-server.listen()
+server.listen('0.0.0.0')
