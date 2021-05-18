@@ -6,8 +6,6 @@ export GROUP_ID=$(id -g)
 
 export $(cat ./build/.env.base)
 
-env
-
 export COMPOSE_FILE=docker-compose.yml
 export COMPOSE_PROJECT_NAME=logux-proxy
 
