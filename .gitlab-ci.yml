@@ -10,7 +10,6 @@ build_images:
   only:
     - master
   script:
-    - export NODE_ENV=production
     - ./build/run-build
     - ./build/run
   tags:
