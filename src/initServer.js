@@ -2,6 +2,8 @@
 import { Server } from '@logux/server';
 
 const isProd = process.env.NODE_ENV === 'production';
+console.log(process.env);
+console.log(isProd);
 
 const server = new Server(
   Server.loadOptions(process, {
