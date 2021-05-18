@@ -6,6 +6,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@logux/server": "^0.10.0"
+    "@logux/server": "^0.10.0",
+    "@ttfb/aliasgame": "^0.0.4"
   }
 }
