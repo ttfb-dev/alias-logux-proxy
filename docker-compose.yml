@@ -5,6 +5,9 @@ networks:
     external:
       name: network
 
+volumes:
+  ssl:
+
 services:
   logux-proxy:
     container_name: logux-proxy
@@ -13,3 +16,5 @@ services:
       dockerfile: ./build/nodejs/Dockerfile
     restart: 'always'
     image: registry.gitlab.com/aliasgame/logux-proxy:nodejs_14
+  volumes:
+    - ssl:/etc/ssl
