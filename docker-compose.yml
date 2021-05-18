@@ -16,5 +16,5 @@ services:
       dockerfile: ./build/nodejs/Dockerfile
     restart: 'always'
     image: registry.gitlab.com/aliasgame/logux-proxy:nodejs_14
-  volumes:
-    - ssl:/etc/ssl
+    volumes:
+      - ssl:/etc/ssl
