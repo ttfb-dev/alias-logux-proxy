@@ -11,4 +11,6 @@ RUN yarn install
 # Если вы создаете сборку для продакшн
 # RUN npm ci --only=production
 
+EXPOSE 31337
+
 CMD [ "yarn", "start" ]
