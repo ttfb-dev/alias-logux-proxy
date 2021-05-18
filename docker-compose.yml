@@ -1,0 +1,15 @@
+version: '3.6'
+
+networks:
+  default:
+    external:
+      name: network
+
+services:
+  logux-proxy:
+    container_name: logux-proxy
+    build:
+      context: .
+      dockerfile: ./build/nodejs/Dockerfile
+    restart: 'always'
+    image: registry.gitlab.com/aliasgame/logux-proxy:nodejs_14

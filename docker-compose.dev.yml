@@ -1,0 +1,19 @@
+version: '3.6'
+
+networks:
+  default:
+    external:
+      name: ttfb
+
+services:
+  logux-proxy:
+    restart: "no"
+    networks:
+      default:
+        aliases:
+          - logux-proxy.lc
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.logux-proxy.loadbalancer.server.port=80
+      - traefik.http.routers.logux-proxy.rule=Host(`logux-proxy.lc`)
+      - traefik.http.routers.logux-proxy.entrypoints=web
