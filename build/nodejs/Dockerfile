@@ -3,7 +3,7 @@ FROM node:14
 # создание директории приложения
 WORKDIR /usr/src/app
 
-COPY index.js           index.js
+COPY src                ./src
 COPY package.json       package.json
 COPY yarn.lock          yarn.lock
 
