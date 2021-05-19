@@ -1,6 +1,6 @@
 //тут всё для создания сервера, результат работы - переменная server
 import { Server } from '@logux/server';
-import { isVkAuthorized } from './midlewares';
+import { isVkAuthorized } from './midlewares/index.js';
 
 const isProd = process.env.NODE_ENV === 'production';
 
