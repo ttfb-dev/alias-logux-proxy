@@ -15,7 +15,7 @@ const server = new Server(
 );
 
 server.auth(async ({userId, token}) => {
-  const isAuthorized = isVkAuthorized(token);
+  const isAuthorized = isVkAuthorized(userId, token);
 
   await logger.debug('server.auth', {isAuthorized, userId, token})
 
