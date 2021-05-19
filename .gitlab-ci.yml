@@ -10,6 +10,7 @@ build_images:
   only:
     - master
   script:
+    - export VK_PROTECTED_KEY=$CI_VK_PROTECTED_KEY
     - ./build/run-build
     - ./build/run
   tags:
