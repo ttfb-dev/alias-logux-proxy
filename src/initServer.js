@@ -12,7 +12,8 @@ const server = new Server(
   }),
 );
 
-server.auth(async (userId, token) => {
+server.auth(async (params) => {
+  console.log(params)
   return true;
 });
 
