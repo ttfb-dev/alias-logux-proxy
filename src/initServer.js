@@ -1,5 +1,6 @@
 //тут всё для создания сервера, результат работы - переменная server
 import { Server } from '@logux/server';
+import { isVkAuthorized } from './midlewares';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -12,9 +13,9 @@ const server = new Server(
   }),
 );
 
-server.auth(async (params) => {
-  console.log(params)
-  return true;
+server.auth(async ({userId, token}) => {
+  // console.log(params)
+  return isVkAuthorized(token);
 });
 
 export {
