@@ -8,7 +8,7 @@ const open = (server) => {
     async process(ctx, action, meta) {
       const { level, data, user_id } = action;
 
-      await logger.exec(level, "vk-miniapp-cli", { ...data, user_id });
+      await logger.exec(level, 'vk-miniapp-cli', { ...data, user_id });
 
       ctx.sendBack({
         type: "log/send_success",
