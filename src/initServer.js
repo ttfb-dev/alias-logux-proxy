@@ -2,6 +2,7 @@
 import { Server } from '@logux/server';
 import { isVkAuthorized } from './midlewares/index.js';
 import { logger } from './services/index.js';
+import { prs } from './services/index.js';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -18,6 +19,10 @@ server.auth(async ({userId, token}) => {
   const isAuthorized = isVkAuthorized(userId, token);
 
   await logger.debug('server.auth', {isAuthorized, userId, token})
+
+  if (isAuthorized) {
+    await prs.setUserParam(userId, 'last_connect', {value: Date.now()});
+  }
 
   return isAuthorized;
 });

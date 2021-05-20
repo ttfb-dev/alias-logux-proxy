@@ -7,7 +7,7 @@
   "type": "module",
   "dependencies": {
     "@logux/server": "^0.10.0",
-    "@ttfb/aliasgame": "^0.0.5"
+    "@ttfb/aliasgame": "^0.0.12"
   },
   "devDependencies": {
     "eslint": "^7.26.0",
