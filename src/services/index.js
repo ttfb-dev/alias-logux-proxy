@@ -1,7 +1,6 @@
-import { logger } from './logger.js';
-import { prs } from './prs.js';
+import { RoomService, CommandService } from './roomService.js';
 
 export {
-  logger,
-  prs,
+  RoomService,
+  CommandService,
 };
