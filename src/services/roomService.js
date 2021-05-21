@@ -41,6 +41,7 @@ class RoomService {
         }
 
         const roomMembers = prs.getRoomParam(roomId, 'members', []);
+        console.log(roomMembers);
         if (roomMembers.includes(userId)) {
             roomMembers.splice(roomMembers.indexOf(userId), 1);
         }
