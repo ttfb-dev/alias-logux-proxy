@@ -25,7 +25,7 @@ class RoomService {
             return new ErrorResponse('room_does_not_exist_or_closed', 'Комната, к которой вы пытаетесь присоединиться не существует или закрыта');
         }
 
-        const roomMembers = prs.getRoomParam(roomId, 'members', []);
+        const roomMembers = await prs.getRoomParam(roomId, 'members', []);
         roomMembers.push(userId);
         await prs.setRoomParam(roomId, 'members', roomMembers);
         await prs.setUserParam(userId, 'room_in', roomId);
@@ -40,8 +40,7 @@ class RoomService {
             return new ErrorResponse('user_in_another_room', 'Вы присоеденены к другой комнате {room_id}', {room_id: currentRoomId});
         }
 
-        const roomMembers = prs.getRoomParam(roomId, 'members', []);
-        console.log(roomMembers);
+        const roomMembers = await prs.getRoomParam(roomId, 'members', []);
         if (roomMembers.includes(userId)) {
             roomMembers.splice(roomMembers.indexOf(userId), 1);
         }
