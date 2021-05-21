@@ -34,7 +34,7 @@ class RoomService {
     }
 
     async leaveRoom(userId, roomId) {
-        const currentRoomId = this.whereIAm(userId);
+        const currentRoomId = await this.whereIAm(userId);
 
         if (parseInt(roomId) !== currentRoomId) {
             return new ErrorResponse('user_in_another_room', 'Вы присоеденены к другой комнате {room_id}', {room_id: currentRoomId});
