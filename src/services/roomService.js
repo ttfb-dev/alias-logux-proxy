@@ -53,7 +53,7 @@ class RoomService {
     async createRoom(userId) {
         const currentRoomId = await this.whereIAm(userId)
         if (currentRoomId) {
-            return new ErrorResponse('user_already_in_room', 'Вы уже присоеденены к комнате {room_id}', {room_id: current_room});
+            return new ErrorResponse('user_already_in_room', 'Вы уже присоеденены к комнате {room_id}', {room_id: currentRoomId});
         }
 
         const roomId = await prs.getNextInt('room_id');
