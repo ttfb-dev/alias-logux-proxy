@@ -46,6 +46,7 @@ const room = (server) => {
 
       ctx.sendBack({
         type: "room/create_success",
+        roomId: result,
       });
     },
   });
