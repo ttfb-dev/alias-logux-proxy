@@ -20,7 +20,9 @@ class RoomService {
         }
 
         // проверяем статус комнаты
-        const isRoomActive = (await prs.getRoomParam(roomId, 'status')) === 'active';
+        const roomStatus = await prs.getRoomParam(roomId, 'status');
+        console.log(`room status is ${roomStatus}`);
+        const isRoomActive = roomStatus === 'active';
         if (!isRoomActive) {
             return new ErrorResponse('room_does_not_exist_or_closed', 'Комната, к которой вы пытаетесь присоединиться не существует или закрыта');
         }
