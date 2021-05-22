@@ -3,6 +3,4 @@ import { logger } from './logger.js';
 
 const prs = new PrStorage(logger);
 
-export {
-  prs,
-}
+export { prs };

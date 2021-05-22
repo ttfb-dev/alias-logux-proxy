@@ -1,11 +1,11 @@
-import ErrorResponse from "../contracts/errorResponse.js";
-import { logger } from "../libs/index.js";
-import { RoomService } from '../services/index.js'
+import ErrorResponse from '../contracts/errorResponse.js';
+import { logger } from '../libs/index.js';
+import { RoomService } from '../services/index.js';
 
 const roomService = new RoomService();
 
 const room = (server) => {
-  server.type("room/join", {
+  server.type('room/join', {
     async access(ctx, action, meta) {
       return true;
     },
@@ -17,18 +17,20 @@ const room = (server) => {
 
       if (result instanceof ErrorResponse) {
         ctx.sendBack({
-          type: "room/join_error",
-          ...result
-        })
+          type: 'room/join_error',
+          ...result,
+        });
+
+        return;
       }
 
       ctx.sendBack({
-        type: "room/join_success",
+        type: 'room/join_success',
       });
     },
   });
 
-  server.type("room/create", {
+  server.type('room/create', {
     async access(ctx, action, meta) {
       return true;
     },
@@ -39,19 +41,21 @@ const room = (server) => {
 
       if (result instanceof ErrorResponse) {
         ctx.sendBack({
-          type: "room/create_error",
-          ...result
-        })
+          type: 'room/create_error',
+          ...result,
+        });
+
+        return;
       }
 
       ctx.sendBack({
-        type: "room/create_success",
+        type: 'room/create_success',
         roomId: result,
       });
     },
   });
 
-  server.type("room/leave", {
+  server.type('room/leave', {
     async access(ctx, action, meta) {
       return true;
     },
@@ -63,18 +67,20 @@ const room = (server) => {
 
       if (result instanceof ErrorResponse) {
         ctx.sendBack({
-          type: "room/leave_error",
-          ...result
-        })
+          type: 'room/leave_error',
+          ...result,
+        });
+
+        return;
       }
 
       ctx.sendBack({
-        type: "room/leave_success",
+        type: 'room/leave_success',
       });
     },
   });
 
-  server.type("room/where_i_am", {
+  server.type('room/where_i_am', {
     async access(ctx, action, meta) {
       return true;
     },
@@ -85,14 +91,16 @@ const room = (server) => {
 
       if (result instanceof ErrorResponse) {
         ctx.sendBack({
-          type: "room/where_i_am_error",
-          ...result
-        })
+          type: 'room/where_i_am_error',
+          ...result,
+        });
+
+        return;
       }
 
       ctx.sendBack({
-        type: "room/where_i_am_success",
-        roomId: result
+        type: 'room/where_i_am_success',
+        roomId: result,
       });
     },
   });

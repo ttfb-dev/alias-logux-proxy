@@ -1,7 +1,7 @@
-import { logger } from "../libs/index.js";
+import { logger } from '../libs/index.js';
 
 const open = (server) => {
-  server.type("log/send_init", {
+  server.type('log/send_init', {
     async access(ctx, action, meta) {
       return true;
     },
@@ -12,7 +12,7 @@ const open = (server) => {
       await logger.exec(level, 'vk-miniapp-cli', { ...data, userId });
 
       ctx.sendBack({
-        type: "log/send_success",
+        type: 'log/send_success',
       });
     },
   });
