@@ -23,9 +23,12 @@ const room = (server) => {
       const { roomId } = ctx.params;
       const { userId } = ctx;
 
+      const room = roomService.getRoomDetail(roomId);
+
       return {
         roomId: roomId,
         online: server.connected.values(),
+        room,
       }
     },
     async unsubscribe(ctx, action, meta) {
