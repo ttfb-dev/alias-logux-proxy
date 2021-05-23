@@ -26,6 +26,7 @@ const room = (server) => {
       const room = roomService.getRoomDetail(roomId);
 
       return {
+        type: 'room/loaded',
         roomId: roomId,
         online: server.connected.values(),
         room,
