@@ -23,7 +23,7 @@ const room = (server) => {
       const { roomId } = ctx.params;
       const { userId } = ctx;
 
-      const room = roomService.getRoomDetail(roomId);
+      const room = await roomService.getRoomDetail(roomId);
 
       return {
         type: 'room/loaded',
