@@ -19,6 +19,15 @@ const room = (server) => {
       await logger.debug(`uid ${userId}: room/${roomId} subscribed`, {userId, roomId})
       return true;
     },
+    async load(ctx, action, meta) {
+      const { roomId } = ctx.params;
+      const { userId } = ctx;
+
+      return {
+        roomId: roomId,
+        online: server.connected.values(),
+      }
+    },
     async unsubscribe(ctx, action, meta) {
       const { roomId } = ctx.params;
       const { userId } = ctx;
