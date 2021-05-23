@@ -21,10 +21,12 @@ const room = (server) => {
     async unsubscribe(ctx, action, meta) {
       const { roomId } = ctx.params;
       const { userId } = ctx;
-      const result = await roomService.leaveRoom(userId, roomId);
-      await logger.debug('room: leave', {userId, roomId, result, action, meta})
-      if (result instanceof ErrorResponse) {
-        await logger.debug('room: unsubscribe failed', {userId, roomId, result})
+      if (action.hasOwnProperty('leave') && action.leave) {
+        const result = await roomService.leaveRoom(userId, roomId);
+        await logger.debug('room: leave', {userId, roomId, result, action, meta})
+        if (result instanceof ErrorResponse) {
+          await logger.error('room: leave failed', {userId, roomId, result})
+        }
       }
       return true;
     },
