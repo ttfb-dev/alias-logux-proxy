@@ -9,19 +9,22 @@ const room = (server) => {
     async access(ctx, action, meta) {
       const { roomId } = ctx.params;
       const { userId } = ctx;
-      await logger.debug('room: access', {userId, roomId })
+
+      const result = await roomService.joinRoom(userId, roomId);
+      if (result instanceof ErrorResponse) {
+        await logger.debug('room: access failed', {userId, roomId, result})
+        return false;
+      }
+      await logger.debug('room: access success', {userId, roomId, result})
       return true;
     },
     async unsubscribe(ctx, action, meta) {
       const { roomId } = ctx.params;
       const { userId } = ctx;
-      await logger.debug('room: unsubscribe', {userId, roomId })
-      return true;
-    },
-    async finally(ctx, action, meta) {
-      const { roomId } = ctx.params;
-      const { userId } = ctx;
-      await logger.debug('room: finally', {userId, roomId })
+      const result = await roomService.leaveRoom(userId, roomId);
+      if (result instanceof ErrorResponse) {
+        await logger.debug('room: unsubscribe failed', {userId, roomId, result})
+      }
       return true;
     },
   })
