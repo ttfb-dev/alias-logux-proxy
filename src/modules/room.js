@@ -22,6 +22,7 @@ const room = (server) => {
       const { roomId } = ctx.params;
       const { userId } = ctx;
       const result = await roomService.leaveRoom(userId, roomId);
+      await logger.debug('room: leave', {userId, roomId, result})
       if (result instanceof ErrorResponse) {
         await logger.debug('room: unsubscribe failed', {userId, roomId, result})
       }
