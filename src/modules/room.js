@@ -91,8 +91,17 @@ const room = (server) => {
       return true;
     },
     async process(ctx, action, meta) {
-      const { roomId } = action;
       const { userId } = ctx;
+
+      const roomId = await roomService.whereIAm(userId);
+
+      if (!roomId) {
+        ctx.sendBack({
+          type: 'room/leave_success',
+        });
+
+        return;
+      }
 
       const result = await roomService.leaveRoom(userId, roomId);
 
