@@ -12,6 +12,8 @@ const room = (server) => {
 
       const currentRoomId = await roomService.whereIAm(userId);
 
+      console.log(typeof roomId, typeof currentRoomId);
+
       if (currentRoomId !== roomId) {
         await logger.debug('room: access failed', {userId, roomId, currentRoomId})
         return false;
