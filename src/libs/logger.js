@@ -4,6 +4,4 @@ const loguxService = 'logux-proxy';
 
 const logger = new Logger(host, loguxService);
 
-export {
-  logger,
-}
+export { logger };

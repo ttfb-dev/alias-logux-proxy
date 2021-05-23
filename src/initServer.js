@@ -14,18 +14,16 @@ const server = new Server(
   }),
 );
 
-server.auth(async ({userId, token}) => {
+server.auth(async ({ userId, token }) => {
   const isAuthorized = isVkAuthorized(userId, token);
 
-  await logger.debug('server.auth', {isAuthorized, userId, token})
+  await logger.debug('server.auth', { isAuthorized, userId, token });
 
   if (isAuthorized) {
-    await prs.setUserParam(userId, 'last_connect', {value: Date.now()});
+    await prs.setUserParam(userId, 'last_connect', { value: Date.now() });
   }
 
   return isAuthorized;
 });
 
-export {
-  server,
-};
+export { server };
