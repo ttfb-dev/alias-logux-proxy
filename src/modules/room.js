@@ -28,7 +28,6 @@ const room = (server) => {
       return {
         type: 'room/loaded',
         roomId: roomId,
-        online: server.connected.values(),
         room,
       }
     },
