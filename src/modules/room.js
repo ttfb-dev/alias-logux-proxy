@@ -10,16 +10,19 @@ const room = (server) => {
       const { roomId } = ctx.params;
       const { userId } = ctx;
       await logger.debug('room: access', {userId, roomId })
+      return true;
     },
     async unsubscribe(ctx, action, meta) {
       const { roomId } = ctx.params;
       const { userId } = ctx;
       await logger.debug('room: unsubscribe', {userId, roomId })
+      return true;
     },
     async finally(ctx, action, meta) {
       const { roomId } = ctx.params;
       const { userId } = ctx;
       await logger.debug('room: finally', {userId, roomId })
+      return true;
     },
   })
 
