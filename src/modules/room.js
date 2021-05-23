@@ -7,12 +7,10 @@ const roomService = new RoomService();
 const room = (server) => {
   server.channel('room/:roomId', {
     async access(ctx, action, meta) {
-      const { roomId } = ctx.params;
+      const roomId = parseInt(ctx.params.roomId);
       const { userId } = ctx;
 
       const currentRoomId = await roomService.whereIAm(userId);
-
-      console.log(typeof roomId, typeof currentRoomId);
 
       if (currentRoomId !== roomId) {
         await logger.debug('room: access failed', {userId, roomId, currentRoomId})
@@ -34,7 +32,7 @@ const room = (server) => {
       }
     },
     async unsubscribe(ctx, action, meta) {
-      const { roomId } = ctx.params;
+      const roomId = parseInt(ctx.params.roomId);
       const { userId } = ctx;
       await logger.debug(`uid ${userId}: room/${roomId} unsubscribed`, {userId, roomId})
       return true;
