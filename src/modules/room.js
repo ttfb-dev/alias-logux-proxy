@@ -13,7 +13,7 @@ const room = (server) => {
       const currentRoomId = await roomService.whereIAm(userId);
 
       if (currentRoomId !== roomId) {
-        await logger.debug('room: access failed', {userId, roomId, result})
+        await logger.debug('room: access failed', {userId, roomId, currentRoomId})
         return false;
       }
       await logger.debug(`uid ${userId}: room/${roomId} subscribed`, {userId, roomId})
