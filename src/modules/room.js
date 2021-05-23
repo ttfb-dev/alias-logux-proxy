@@ -10,24 +10,19 @@ const room = (server) => {
       const { roomId } = ctx.params;
       const { userId } = ctx;
 
-      const result = await roomService.joinRoom(userId, roomId);
-      if (result instanceof ErrorResponse) {
+      const currentRoomId = await roomService.whereIAm(userId);
+
+      if (currentRoomId !== roomId) {
         await logger.debug('room: access failed', {userId, roomId, result})
         return false;
       }
-      await logger.debug('room: access success', {userId, roomId, result})
+      await logger.debug(`uid ${userId}: room/${roomId} subscribed`, {userId, roomId})
       return true;
     },
     async unsubscribe(ctx, action, meta) {
       const { roomId } = ctx.params;
       const { userId } = ctx;
-      if (action.hasOwnProperty('leave') && action.leave) {
-        const result = await roomService.leaveRoom(userId, roomId);
-        await logger.debug('room: leave', {userId, roomId, result, action, meta})
-        if (result instanceof ErrorResponse) {
-          await logger.error('room: leave failed', {userId, roomId, result})
-        }
-      }
+      await logger.debug(`uid ${userId}: room/${roomId} unsubscribed`, {userId, roomId})
       return true;
     },
   })
