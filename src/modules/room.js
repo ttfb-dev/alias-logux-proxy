@@ -5,6 +5,25 @@ import { RoomService } from '../services/index.js'
 const roomService = new RoomService();
 
 const room = (server) => {
+
+  server.channel('room/:roomId', {
+    async access(ctx, action, meta) {
+      const { roomId } = ctx.params;
+      const { userId } = ctx;
+      await logger.debug('room: access', {userId, roomId })
+    },
+    async unsubscribe(ctx, action, meta) {
+      const { roomId } = ctx.params;
+      const { userId } = ctx;
+      await logger.debug('room: unsubscribe', {userId, roomId })
+    },
+    async finally(ctx, action, meta) {
+      const { roomId } = ctx.params;
+      const { userId } = ctx;
+      await logger.debug('room: finally', {userId, roomId })
+    },
+  })
+
   server.type("room/join", {
     async access(ctx, action, meta) {
       return true;
