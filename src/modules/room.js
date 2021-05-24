@@ -57,8 +57,6 @@ const room = (server) => {
       const { roomId } = action;
       const { userId } = ctx;
 
-      console.log(`leave user with id ${userId}`);
-
       const result = await roomService.joinRoom(userId, roomId);
 
       if (result instanceof ErrorResponse) {
@@ -74,7 +72,7 @@ const room = (server) => {
         type: 'room/join_success',
       });
     },
-    resend (ctx, action, meta) {
+    async resend (ctx, action, meta) {
       action.userId = ctx.userId;
       return `room/${ action.roomId }`
     },
@@ -112,8 +110,6 @@ const room = (server) => {
     async process(ctx, action, meta) {
       const { userId } = ctx;
 
-      console.log(`leave user with id ${userId}`);
-
       const roomId = await roomService.whereIAm(userId);
 
       if (!roomId) {
@@ -140,7 +136,7 @@ const room = (server) => {
         roomId: null,
       });
     },
-    resend (ctx, action, meta) {
+    async resend (ctx, action, meta) {
       action.userId = ctx.userId;
       return `room/${ action.roomId }`
     },
