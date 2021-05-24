@@ -13,10 +13,17 @@ const room = (server) => {
       const currentRoomId = await roomService.whereIAm(userId);
 
       if (currentRoomId !== roomId) {
-        await logger.debug('room: access failed', {userId, roomId, currentRoomId})
+        await logger.debug('room: access failed', {
+          userId,
+          roomId,
+          currentRoomId,
+        });
         return false;
       }
-      await logger.debug(`uid ${userId}: room/${roomId} subscribed`, {userId, roomId})
+      await logger.debug(`uid ${userId}: room/${roomId} subscribed`, {
+        userId,
+        roomId,
+      });
       return true;
     },
     async load(ctx, action, meta) {
@@ -29,15 +36,18 @@ const room = (server) => {
         type: 'room/loaded',
         roomId,
         room,
-      }
+      };
     },
     async unsubscribe(ctx, action, meta) {
       const roomId = parseInt(ctx.params.roomId);
       const { userId } = ctx;
-      await logger.debug(`uid ${userId}: room/${roomId} unsubscribed`, {userId, roomId})
+      await logger.debug(`uid ${userId}: room/${roomId} unsubscribed`, {
+        userId,
+        roomId,
+      });
       return true;
     },
-  })
+  });
 
   server.type('room/join', {
     async access(ctx, action, meta) {
@@ -119,6 +129,7 @@ const room = (server) => {
 
       ctx.sendBack({
         type: 'room/leave_success',
+        roomId: null,
       });
     },
   });
