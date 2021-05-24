@@ -73,7 +73,7 @@ const room = (server) => {
       });
     },
     resend (ctx, action, meta) {
-      action.userId = userId;
+      action.userId = ctx.userId;
       return `room/${ action.roomId }`
     },
   });
@@ -137,7 +137,7 @@ const room = (server) => {
       });
     },
     resend (ctx, action, meta) {
-      action.userId = userId;
+      action.userId = ctx.userId;
       return `room/${ action.roomId }`
     },
   });
