@@ -81,9 +81,9 @@ class RoomService {
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'owner', userId);
     await prs.setRoomParam(roomId, 'members', [userId]);
-    await prs.setRoomParam(roomId, 'commands', []);
-    await prs.setRoomParam(roomId, 'settings', {});
-    await prs.setRoomParam(roomId, 'wordsets', []);
+    // await prs.setRoomParam(roomId, 'commands', []);
+    await prs.setRoomParam(roomId, 'settings', {name: 'Не случайное название'});
+    // await prs.setRoomParam(roomId, 'wordsets', []);
     await prs.setUserParam(userId, 'room_in', roomId);
 
     await this.commandService.initCommands(roomId);
@@ -93,12 +93,10 @@ class RoomService {
 
   async getRoomDetail(roomId) {
     return {
-      status:   await prs.getRoomParam(roomId, 'status'),
-      owner:    await prs.getRoomParam(roomId, 'owner'),
-      members:  await prs.getRoomParam(roomId, 'members'),
-      commands: await prs.getRoomParam(roomId, 'commands'),
-      settings: await prs.getRoomParam(roomId, 'settings'),
-      wordsets: await prs.getRoomParam(roomId, 'wordsets'),
+      status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
+      owner:    await prs.getRoomParam(roomId, 'owner', null),
+      members:  await prs.getRoomParam(roomId, 'members', []),
+      settings: await prs.getRoomParam(roomId, 'settings', {}),
     }
   }
 }

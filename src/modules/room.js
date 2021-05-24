@@ -27,7 +27,7 @@ const room = (server) => {
 
       return {
         type: 'room/loaded',
-        roomId: roomId,
+        roomId,
         room,
       }
     },
