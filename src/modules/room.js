@@ -173,15 +173,22 @@ const room = (server) => {
 
   /** client actions */
   server.type('room/user_joined', {
+    access() {
+      return true;
+    },
     async resend (ctx, action, meta) {
       return `room/${ action.roomId }`
     },
-  })
+  });
+
   server.type('room/user_left', {
+    access() {
+      return true;
+    },
     async resend (ctx, action, meta) {
       return `room/${ action.roomId }`
     },
-  })
+  });
 };
 
 export { room };
