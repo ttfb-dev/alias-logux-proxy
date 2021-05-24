@@ -56,7 +56,8 @@ const room = (server) => {
     async process(ctx, action, meta) {
       const { roomId } = action;
       const { userId } = ctx;
-      console.log('room/join', ctx, action);
+
+      console.log(`leave user with id ${userId}`);
 
       const result = await roomService.joinRoom(userId, roomId);
 
@@ -74,7 +75,6 @@ const room = (server) => {
       });
     },
     resend (ctx, action, meta) {
-      console.log('resend', ctx, action);
       action.userId = ctx.userId;
       return `room/${ action.roomId }`
     },
@@ -111,6 +111,8 @@ const room = (server) => {
     },
     async process(ctx, action, meta) {
       const { userId } = ctx;
+
+      console.log(`leave user with id ${userId}`);
 
       const roomId = await roomService.whereIAm(userId);
 
