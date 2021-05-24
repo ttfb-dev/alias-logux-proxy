@@ -95,6 +95,8 @@ const room = (server) => {
         return;
       }
 
+      action.userId = userId;
+
       ctx.sendBack({
         type: 'room/create_success',
         roomId: result,
@@ -129,6 +131,8 @@ const room = (server) => {
 
         return;
       }
+
+      action.userId = userId;
 
       ctx.sendBack({
         type: 'room/leave_success',
