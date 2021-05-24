@@ -68,13 +68,15 @@ const room = (server) => {
         return;
       }
 
+      await server.log.add({
+        type: 'room/user_joined',
+        roomId,
+        userId,
+      });
+
       ctx.sendBack({
         type: 'room/join_success',
       });
-    },
-    async resend (ctx, action, meta) {
-      action.userId = ctx.userId;
-      return `room/${ action.roomId }`
     },
   });
 
@@ -131,15 +133,16 @@ const room = (server) => {
         return;
       }
 
+      await server.log.add({
+        type: 'room/user_left',
+        roomId,
+        userId,
+      });
+
       ctx.sendBack({
         type: 'room/leave_success',
         roomId: null,
       });
-    },
-    async resend (ctx, action, meta) {
-      action.userId = ctx.userId;
-      const roomId = await roomService.whereIAm(ctx.userId);
-      return `room/${ roomId }`
     },
   });
 
@@ -167,6 +170,18 @@ const room = (server) => {
       });
     },
   });
+
+  /** client actions */
+  server.type('room/user_joined', {
+    async resend (ctx, action, meta) {
+      return `room/${ action.roomId }`
+    },
+  })
+  server.type('room/user_left', {
+    async resend (ctx, action, meta) {
+      return `room/${ action.roomId }`
+    },
+  })
 };
 
 export { room };
