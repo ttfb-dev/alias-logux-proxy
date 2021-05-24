@@ -72,6 +72,9 @@ const room = (server) => {
         type: 'room/join_success',
       });
     },
+    resend (ctx, action, meta) {
+      return `room/${ action.roomId }`
+    },
   });
 
   server.type('room/create', {
@@ -131,6 +134,9 @@ const room = (server) => {
         type: 'room/leave_success',
         roomId: null,
       });
+    },
+    resend (ctx, action, meta) {
+      return `room/${ action.roomId }`
     },
   });
 

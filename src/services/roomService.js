@@ -25,7 +25,6 @@ class RoomService {
 
     // проверяем статус комнаты
     const roomStatus = await prs.getRoomParam(roomId, 'status');
-    console.log(`room status is ${roomStatus}`);
     const isRoomActive = roomStatus === 'active';
     if (!isRoomActive) {
       return new ErrorResponse(
