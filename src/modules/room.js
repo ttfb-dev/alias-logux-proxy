@@ -73,6 +73,7 @@ const room = (server) => {
       });
     },
     resend (ctx, action, meta) {
+      action.userId = userId;
       return `room/${ action.roomId }`
     },
   });
@@ -94,8 +95,6 @@ const room = (server) => {
 
         return;
       }
-
-      action.userId = userId;
 
       ctx.sendBack({
         type: 'room/create_success',
@@ -132,14 +131,13 @@ const room = (server) => {
         return;
       }
 
-      action.userId = userId;
-
       ctx.sendBack({
         type: 'room/leave_success',
         roomId: null,
       });
     },
     resend (ctx, action, meta) {
+      action.userId = userId;
       return `room/${ action.roomId }`
     },
   });
