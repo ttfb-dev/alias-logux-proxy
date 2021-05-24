@@ -172,22 +172,22 @@ const room = (server) => {
   });
 
   /** client actions */
+  //событие присоединения к комнате
   server.type('room/user_joined', {
     access() {
       return true;
     },
     async resend (ctx, action, meta) {
-      console.log(`resended to ${action.roomId}`)
       return `room/${ action.roomId }`
     },
   });
 
+  //событие отключения от комнаты
   server.type('room/user_left', {
     access() {
       return true;
     },
     async resend (ctx, action, meta) {
-      console.log(`resended to ${action.roomId}`)
       return `room/${ action.roomId }`
     },
   });
