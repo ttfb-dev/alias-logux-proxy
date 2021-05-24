@@ -112,6 +112,9 @@ const room = (server) => {
 
       const roomId = await roomService.whereIAm(userId);
 
+      action.roomId = roomId;
+      console.log('action', action);
+
       if (!roomId) {
         ctx.sendBack({
           type: 'room/leave_success',
@@ -137,6 +140,7 @@ const room = (server) => {
       });
     },
     async resend (ctx, action, meta) {
+      console.log('resend', action);
       action.userId = ctx.userId;
       return `room/${ action.roomId }`
     },
