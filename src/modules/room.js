@@ -137,8 +137,8 @@ const room = (server) => {
       });
     },
     async resend (ctx, action, meta) {
-      const roomId = await roomService.whereIAm(userId);
       action.userId = ctx.userId;
+      const roomId = await roomService.whereIAm(ctx.userId);
       return `room/${ roomId }`
     },
   });
