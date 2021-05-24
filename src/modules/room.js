@@ -177,6 +177,7 @@ const room = (server) => {
       return true;
     },
     async resend (ctx, action, meta) {
+      console.log(`resended to ${action.roomId}`)
       return `room/${ action.roomId }`
     },
   });
@@ -186,6 +187,7 @@ const room = (server) => {
       return true;
     },
     async resend (ctx, action, meta) {
+      console.log(`resended to ${action.roomId}`)
       return `room/${ action.roomId }`
     },
   });
