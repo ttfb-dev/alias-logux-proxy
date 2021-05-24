@@ -34,6 +34,7 @@ class RoomService {
     }
 
     const roomMembers = await prs.getRoomParam(roomId, 'members', []);
+    console.log('roomMembers', roomMembers);
     roomMembers.push(userId);
     await prs.setRoomParam(roomId, 'members', roomMembers);
     await prs.setUserParam(userId, 'room_in', roomId);
