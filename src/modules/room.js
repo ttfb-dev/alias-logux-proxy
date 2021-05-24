@@ -73,6 +73,7 @@ const room = (server) => {
       });
     },
     resend (ctx, action, meta) {
+      console.log('resend', ctx, action);
       action.userId = ctx.userId;
       return `room/${ action.roomId }`
     },
