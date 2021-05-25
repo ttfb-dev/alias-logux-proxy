@@ -1,6 +1,7 @@
 import { prs, logger } from '../libs/index.js';
 import { ErrorResponse } from '../contracts/index.js';
 import { TeamService } from './teamService.js';
+import { room } from '../modules/room.js';
  
 class RoomService {
   teamService;
@@ -97,6 +98,7 @@ class RoomService {
 
   async getRoomDetail(roomId) {
     const room = {
+      roomId:   roomId,
       status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
       owner:    await prs.getRoomParam(roomId, 'owner', null),
       members:  await prs.getRoomParam(roomId, 'members', []),
