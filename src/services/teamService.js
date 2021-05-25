@@ -66,10 +66,9 @@ class TeamService {
   }
 
   findMyTeam (teams, userId) {
-    const myTeam = null;
-  
+    let myTeam = null;
+
     teams.forEach(team => {
-      console.log(team.members, userId, team.members.includes(userId))
       if (team.members.includes(userId)) {
         myTeam = team.teamId;
       }
