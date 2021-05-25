@@ -1,6 +1,7 @@
 import { prs, logger } from '../libs/index.js';
 import { ErrorResponse } from '../contracts/index.js';
-
+import { TeamService } from './teamService.js';
+ 
 class RoomService {
   teamService;
 
@@ -81,10 +82,12 @@ class RoomService {
 
     const roomName = await getRandomRoomName();
 
+    const teams = this.teamService.getTwoTeams(roomId);
+
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'owner', userId);
     await prs.setRoomParam(roomId, 'members', [userId]);
-    // await prs.setRoomParam(roomId, 'teams', []);
+    await prs.setRoomParam(roomId, 'teams', teams);
     await prs.setRoomParam(roomId, 'settings', {name: roomName});
     // await prs.setRoomParam(roomId, 'wordsets', []);
     await prs.setUserParam(userId, 'room_in', roomId);
@@ -99,6 +102,7 @@ class RoomService {
       status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
       owner:    await prs.getRoomParam(roomId, 'owner', null),
       members:  await prs.getRoomParam(roomId, 'members', []),
+      teams:    await prs.setRoomParam(roomId, 'teams', []),
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     }
   }
@@ -112,8 +116,4 @@ const getRandomRoomName = async () => {
   return names[Math.floor(Math.random() * names.length)];
 }
 
-class TeamService {
-  async initTeams(roomId) {}
-}
-
-export { RoomService, TeamService };
+export { RoomService };
