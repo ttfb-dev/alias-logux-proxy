@@ -67,10 +67,13 @@ const room = (server) => {
         return;
       }
 
+      const room = await roomService.getRoomDetail(roomId, userId);
+
       await server.log.add({
         type: 'room/user_joined',
         roomId,
         userId,
+        members: room.members,
       });
 
       ctx.sendBack({
@@ -132,10 +135,13 @@ const room = (server) => {
         return;
       }
 
+      const room = await roomService.getRoomDetail(roomId, userId);
+
       await server.log.add({
         type: 'room/user_left',
         roomId,
         userId,
+        members: room.members,
       });
 
       ctx.sendBack({
@@ -150,7 +156,7 @@ const room = (server) => {
       return true;
     },
     async process(ctx, action, meta) {
-        const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId);
 
       const result = await roomService.whereIAm(userId);
 
