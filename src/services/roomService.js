@@ -106,27 +106,10 @@ class RoomService {
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     };
 
-    room.myTeam = findMyTeam(room.teams);
+    room.myTeam = this.teamService.findMyTeam(room.teams);
 
     return room;
   }
-
-  async getMyTeam(roomId, userId) {
-    const teams = await this.teamService.getTwoTeams(roomId);
-    return findMyTeam(teams, userId);
-  }
-}
-
-const findMyTeam = (teams, userId) => {
-  const myTeam = null;
-
-  teams.forEach(team => {
-    if (team.members.includes(userId)) {
-      myTeam = team.teamId;
-    }
-  });
-
-  return myTeam;
 }
 
 const getRandomRoomName = async () => {

@@ -59,6 +59,24 @@ class TeamService {
     })
     await prs.setRoomParam(roomId, 'teams', teams);
   }
+
+  async getMyTeam(roomId, userId) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+    return this.findMyTeam(teams, userId);
+  }
+
+  findMyTeam (teams, userId) {
+    const myTeam = null;
+  
+    teams.forEach(team => {
+      console.log(team.members, id, team.members.includes(userId))
+      if (team.members.includes(userId)) {
+        myTeam = team.teamId;
+      }
+    });
+  
+    return myTeam;
+  }
 }
 
 export { TeamService };
