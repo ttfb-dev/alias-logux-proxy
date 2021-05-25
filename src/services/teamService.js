@@ -5,6 +5,7 @@ class TeamService {
     async getRandomTeamName(roomId) {
         let tryLeft = 50;
         const teams = prs.getRoomParam(roomId, 'teams', []);
+        console.log(teams);
         const teamNames = teams.map((team) => {
             if (team.hasOwnProperty('name')) {
                 return team.name;
