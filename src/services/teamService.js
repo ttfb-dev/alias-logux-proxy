@@ -24,18 +24,20 @@ class TeamService {
     }
 
     async getTwoTeams(roomId) {
-        const teamAName = await this.getRandomTeamName(roomId);
-        const teamBName = await this.getRandomTeamName(roomId);
         return [
-            {
-                name: teamAName,
-                members: [],
-            },
-            {
-                name: teamBName,
-                members: [],
-            },
+            await this.getNewTeam(roomId),
+            await this.getNewTeam(roomId),
         ];
+    }
+
+    async getNewTeam(roomId) {
+        const teamName = await this.getRandomTeamName(roomId);
+        const teamId = await prs.getNextInt(`room_${roomId}_teams`, 0);
+        return {
+            teamId: teamId,
+            name: teamName,
+            members: [],
+        }
     }
 }
 
