@@ -102,7 +102,7 @@ class RoomService {
       status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
       owner:    await prs.getRoomParam(roomId, 'owner', null),
       members:  await prs.getRoomParam(roomId, 'members', []),
-      teams:    await prs.setRoomParam(roomId, 'teams', []),
+      teams:    await prs.getRoomParam(roomId, 'teams', []),
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     }
   }
