@@ -9,15 +9,16 @@ const team = (server) => {
   
   server.type('room/team_join', {
     async access(ctx, action, meta) {
-      const { roomId } = action;
-      const { userId } = ctx;
+      const roomId = parseInt(action.roomId);
+      const userId = parseInt(ctx.userId);
       const currentTeam = await roomService.getMyTeam(roomId, userId);
       //допускаем только тех кто не в комнате
       return currentTeam === null;
     },
     async process(ctx, action, meta) {
-      const { roomId, teamId } = action;
-      const { userId } = ctx;
+      const roomId = parseInt(action.roomId);
+      const teamId = parseInt(action.teamId);
+      const userId = parseInt(ctx.userId);
 
       const result = await teamService.joinTeam(roomId, teamId, userId);
 
