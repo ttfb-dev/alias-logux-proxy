@@ -2,10 +2,10 @@ import { prs, logger } from '../libs/index.js';
 import { ErrorResponse } from '../contracts/index.js';
 
 class RoomService {
-  commandService;
+  teamService;
 
   constructor() {
-    this.commandService = new CommandService();
+    this.teamService = new TeamService();
   }
 
   async whereIAm(userId) {
@@ -79,15 +79,17 @@ class RoomService {
 
     const roomId = await prs.getNextInt('room_id');
 
+    const roomName = await getRandomRoomName();
+
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'owner', userId);
     await prs.setRoomParam(roomId, 'members', [userId]);
-    // await prs.setRoomParam(roomId, 'commands', []);
-    await prs.setRoomParam(roomId, 'settings', {name: 'Не случайное название'});
+    // await prs.setRoomParam(roomId, 'teams', []);
+    await prs.setRoomParam(roomId, 'settings', {name: roomName});
     // await prs.setRoomParam(roomId, 'wordsets', []);
     await prs.setUserParam(userId, 'room_in', roomId);
 
-    await this.commandService.initCommands(roomId);
+    await this.teamService.initTeams(roomId);
 
     return roomId;
   }
@@ -102,8 +104,16 @@ class RoomService {
   }
 }
 
-class CommandService {
-  async initCommands(roomId) {}
+const getRandomRoomName = async () => {
+  const lng = 'ru';
+  const type = 'rooms';
+  const namesString = await prs.getAppParam(`word_dataset_${lng}_${type}`);
+  const names = namesString.split(',');
+  return names[Math.floor(Math.random() * names.length)];
 }
 
-export { RoomService, CommandService };
+class TeamService {
+  async initTeams(roomId) {}
+}
+
+export { RoomService, TeamService };
