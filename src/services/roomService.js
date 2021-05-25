@@ -96,7 +96,7 @@ class RoomService {
     return roomId;
   }
 
-  async getRoomDetail(roomId) {
+  async getRoomDetail(roomId, userId) {
     const room = {
       roomId:   roomId,
       status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
@@ -106,7 +106,7 @@ class RoomService {
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     };
 
-    room.myTeam = this.teamService.findMyTeam(room.teams);
+    room.myTeam = this.teamService.findMyTeam(room.teams, userId);
 
     return room;
   }

@@ -28,8 +28,9 @@ const room = (server) => {
     },
     async load(ctx, action, meta) {
       const roomId = parseInt(ctx.params.roomId);
+      const userId = parseInt(ctx.userId);
 
-      const room = await roomService.getRoomDetail(roomId);
+      const room = await roomService.getRoomDetail(roomId, userId);
 
       return {
         type: 'room/state',
