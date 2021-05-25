@@ -4,8 +4,7 @@ class TeamService {
     // генерирует пустую команду со случайным неповторяющимся названием
     async getRandomTeamName(roomId) {
         let tryLeft = 50;
-        const teams = prs.getRoomParam(roomId, 'teams', []);
-        console.log(teams);
+        const teams = await prs.getRoomParam(roomId, 'teams', []);
         const teamNames = teams.map((team) => {
             if (team.hasOwnProperty('name')) {
                 return team.name;
