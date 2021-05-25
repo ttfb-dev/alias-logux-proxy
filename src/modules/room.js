@@ -27,7 +27,7 @@ const room = (server) => {
       return true;
     },
     async load(ctx, action, meta) {
-      const { roomId } = ctx.params;
+      const roomId = parseInt(ctx.params.roomId);
 
       const room = await roomService.getRoomDetail(roomId);
 
