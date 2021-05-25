@@ -32,7 +32,7 @@ const room = (server) => {
       const room = await roomService.getRoomDetail(roomId);
 
       return {
-        type: 'room/loaded',
+        type: 'room/state',
         room,
       };
     },
