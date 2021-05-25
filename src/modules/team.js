@@ -1,8 +1,9 @@
 import ErrorResponse from '../contracts/errorResponse.js';
 import { logger } from '../libs/index.js';
-import { TeamService } from '../services/index.js';
+import { TeamService, RoomService } from '../services/index.js';
 
 const teamService = new TeamService();
+const roomService = new RoomService();
 
 const team = (server) => {
   
@@ -30,11 +31,14 @@ const team = (server) => {
         return;
       }
 
+      const room = await roomService.getRoomDetail(roomId, userId);
+
       await server.log.add({
         type: 'room/user_joined_team',
         roomId,
         teamId,
         userId,
+        teams: room.teams,
       });
 
       ctx.sendBack({
@@ -66,11 +70,13 @@ const team = (server) => {
         return;
       }
 
+      const room = await roomService.getRoomDetail(roomId, userId);
+
       await server.log.add({
         type: 'room/user_left_team',
         roomId,
-        teamId,
         userId,
+        teams: room.teams,
       });
 
       ctx.sendBack({
