@@ -1,3 +1,3 @@
-import { RoomService, CommandService } from './roomService.js';
+import { RoomService, TeamService } from './roomService.js';
 
-export { RoomService, CommandService };
+export { RoomService, TeamService };
