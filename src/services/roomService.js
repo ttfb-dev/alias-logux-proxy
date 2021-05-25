@@ -106,13 +106,18 @@ class RoomService {
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     };
 
-    room.myTeam = getMyTeam(room.teams);
+    room.myTeam = findMyTeam(room.teams);
 
     return room;
   }
+
+  async getMyTeam(roomId, userId) {
+    const teams = await this.teamService.getTwoTeams(roomId);
+    return findMyTeam(teams, userId);
+  }
 }
 
-const getMyTeam = (teams, userId) => {
+const findMyTeam = (teams, userId) => {
   const myTeam = null;
 
   teams.forEach(team => {

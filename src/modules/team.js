@@ -1,61 +1,25 @@
 import ErrorResponse from '../contracts/errorResponse.js';
 import { logger } from '../libs/index.js';
-import { RoomService } from '../services/index.js';
+import { RoomService, TeamService } from '../services/index.js';
 
 const roomService = new RoomService();
+const teamService = new TeamService();
 
 const room = (server) => {
-  server.channel('room/:roomId', {
+  
+  server.type('room/team/join', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(ctx.params.roomId);
-      const { userId } = ctx;
-
-      const currentRoomId = await roomService.whereIAm(userId);
-
-      if (currentRoomId !== roomId) {
-        await logger.debug('room: access failed', {
-          userId,
-          roomId,
-          currentRoomId,
-        });
-        return false;
-      }
-      await logger.debug(`uid ${userId}: room/${roomId} subscribed`, {
-        userId,
-        roomId,
-      });
-      return true;
-    },
-    async load(ctx, action, meta) {
-      const { roomId } = ctx.params;
-
-      const room = await roomService.getRoomDetail(roomId);
-
-      return {
-        type: 'room/loaded',
-        room,
-      };
-    },
-    async unsubscribe(ctx, action, meta) {
-      const roomId = parseInt(ctx.params.roomId);
-      const { userId } = ctx;
-      await logger.debug(`uid ${userId}: room/${roomId} unsubscribed`, {
-        userId,
-        roomId,
-      });
-      return true;
-    },
-  });
-
-  server.type('room/join', {
-    async access(ctx, action, meta) {
-      return true;
-    },
-    async process(ctx, action, meta) {
       const { roomId } = action;
       const { userId } = ctx;
+      const currentTeam = await roomService.getMyTeam(roomId, userId);
+      //допускаем только тех кто не в комнате
+      return currentTeam === null;
+    },
+    async process(ctx, action, meta) {
+      const { roomId, teamId } = action;
+      const { userId } = ctx;
 
-      const result = await roomService.joinRoom(userId, roomId);
+      const result = await teamService.joinTeam(roomId, teamId, userId);
 
       if (result instanceof ErrorResponse) {
         ctx.sendBack({
