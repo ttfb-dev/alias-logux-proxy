@@ -8,7 +8,7 @@ const room = (server) => {
   server.channel('room/:roomId', {
     async access(ctx, action, meta) {
       const roomId = parseInt(ctx.params.roomId);
-      const userId = parseInt(ctx);
+        const userId = parseInt(ctx.userId);
 
       const currentRoomId = await roomService.whereIAm(userId);
 
@@ -38,7 +38,7 @@ const room = (server) => {
     },
     async unsubscribe(ctx, action, meta) {
       const roomId = parseInt(ctx.params.roomId);
-      const userId = parseInt(ctx);
+        const userId = parseInt(ctx.userId);
       await logger.debug(`uid ${userId}: room/${roomId} unsubscribed`, {
         userId,
         roomId,
@@ -53,7 +53,7 @@ const room = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId } = action;
-      const userId = parseInt(ctx);
+        const userId = parseInt(ctx.userId);
 
       const result = await roomService.joinRoom(userId, roomId);
 
@@ -83,7 +83,7 @@ const room = (server) => {
       return true;
     },
     async process(ctx, action, meta) {
-      const userId = parseInt(ctx);
+      const userId = parseInt(ctx.userId);
 
       const result = await roomService.createRoom(userId);
 
@@ -108,7 +108,7 @@ const room = (server) => {
       return true;
     },
     async process(ctx, action, meta) {
-      const userId = parseInt(ctx);
+        const userId = parseInt(ctx.userId);
 
       const roomId = await roomService.whereIAm(userId);
 
@@ -149,7 +149,7 @@ const room = (server) => {
       return true;
     },
     async process(ctx, action, meta) {
-      const userId = parseInt(ctx);
+        const userId = parseInt(ctx.userId);
 
       const result = await roomService.whereIAm(userId);
 
