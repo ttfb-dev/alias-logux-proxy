@@ -30,8 +30,8 @@ class TeamService {
     ];
   }
 
-  async getNewTeam(roomId) {
-    const teamName = await this.getRandomTeamName(roomId);
+  async getNewTeam(roomId, customTeamName = null) {
+    const teamName = customTeamName || await this.getRandomTeamName(roomId);
     const teamId = await prs.getNextInt(`room_${roomId}_teams`, 0);
     return {
       teamId: teamId,

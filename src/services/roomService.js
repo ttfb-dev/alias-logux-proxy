@@ -110,6 +110,27 @@ class RoomService {
 
     return room;
   }
+
+  async createTeam(roomId, teamName) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+    const newTeam = await this.teamService.getNewTeam(roomId, teamName);
+
+    teams.push(newTeam);
+
+    await prs.setRoomParam(roomId, 'teams', teams);
+  }
+
+  async deleteTeam(roomId, teamId) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+    
+    for (let i = 0; i < teams.length; i++) {
+      if (teams.teamId === teamId) {
+        teams.split(i, 1);
+      }
+    }
+
+    await prs.setRoomParam(roomId, 'teams', teams);
+  }
 }
 
 const getRandomRoomName = async () => {
