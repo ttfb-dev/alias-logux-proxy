@@ -1,8 +1,7 @@
 import ErrorResponse from '../contracts/errorResponse.js';
 import { logger } from '../libs/index.js';
-import { RoomService, TeamService } from '../services/index.js';
+import { TeamService } from '../services/index.js';
 
-const roomService = new RoomService();
 const teamService = new TeamService();
 
 const team = (server) => {
@@ -11,7 +10,7 @@ const team = (server) => {
     async access(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
       const userId = parseInt(ctx.userId);
-      const currentTeam = await roomService.getMyTeam(roomId, userId);
+      const currentTeam = await teamService.getMyTeam(roomId, userId);
       //допускаем только тех кто не в комнате
       return currentTeam === null;
     },
@@ -48,7 +47,7 @@ const team = (server) => {
     async access(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
       const userId = parseInt(ctx.userId);
-      const currentTeam = await roomService.getMyTeam(roomId, userId);
+      const currentTeam = await teamService.getMyTeam(roomId, userId);
       //допускаем только тех кто находится в комнате
       return currentTeam !== null;
     },
