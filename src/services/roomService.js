@@ -92,8 +92,6 @@ class RoomService {
     // await prs.setRoomParam(roomId, 'wordsets', []);
     await prs.setUserParam(userId, 'room_in', roomId);
 
-    await this.teamService.initTeams(roomId);
-
     return roomId;
   }
 
