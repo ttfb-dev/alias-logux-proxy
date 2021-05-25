@@ -82,7 +82,7 @@ class RoomService {
 
     const roomName = await getRandomRoomName();
 
-    const teams = this.teamService.getTwoTeams(roomId);
+    const teams = await this.teamService.getTwoTeams(roomId);
 
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'owner', userId);
