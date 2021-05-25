@@ -96,14 +96,30 @@ class RoomService {
   }
 
   async getRoomDetail(roomId) {
-    return {
+    const room = {
       status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
       owner:    await prs.getRoomParam(roomId, 'owner', null),
       members:  await prs.getRoomParam(roomId, 'members', []),
       teams:    await prs.getRoomParam(roomId, 'teams', []),
       settings: await prs.getRoomParam(roomId, 'settings', {}),
-    }
+    };
+
+    room.myTeam = getMyTeam(room.teams);
+
+    return room;
   }
+}
+
+const getMyTeam = (teams, userId) => {
+  const myTeam = null;
+
+  teams.forEach(team => {
+    if (team.members.includes(userId)) {
+      myTeam = team.teamId;
+    }
+  });
+
+  return myTeam;
 }
 
 const getRandomRoomName = async () => {
