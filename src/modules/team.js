@@ -12,7 +12,7 @@ const team = (server) => {
       const roomId = parseInt(action.roomId);
       const userId = parseInt(ctx.userId);
       const currentTeam = await teamService.getMyTeam(roomId, userId);
-      //допускаем только тех кто не в комнате
+      //допускаем только тех кто не в команде
       return currentTeam === null;
     },
     async process(ctx, action, meta) {
@@ -53,7 +53,7 @@ const team = (server) => {
       const roomId = parseInt(action.roomId);
       const userId = parseInt(ctx.userId);
       const currentTeam = await teamService.getMyTeam(roomId, userId);
-      //допускаем только тех кто находится в комнате
+      //допускаем только тех кто находится в команде
       return currentTeam !== null;
     },
     async process(ctx, action, meta) {
@@ -125,7 +125,45 @@ const team = (server) => {
         teams: room.teams,
       });
     },
-  })
+  });
+
+  server.type('room/team_delete', {
+    async access(ctx, action, meta) {
+      const roomId = parseInt(action.roomId);
+      const teamId = parseInt(action.teamId);
+      const userId = parseInt(ctx.userId);
+      const currentRoom = await roomService.whereIAm(userId);
+      //проверяем, что комната пустая и удаляющий в текущей комнате
+      return await roomService.isTeamEmpty(roomId, teamId) && currentRoom === roomId;
+    },
+    async process(ctx, action, meta) {
+      const roomId = parseInt(action.roomId);
+      const userId = parseInt(ctx.userId);
+
+      const result = await roomService.deleteTeam(roomId, teamId);
+
+      if (result instanceof ErrorResponse) {
+        ctx.sendBack({
+          type: 'room/team_delete_error',
+          ...result,
+        });
+
+        return;
+      }
+
+      await server.log.add({
+        type: 'room/team_deleted',
+        roomId,
+        userId,
+        teams: result,
+      });
+
+      ctx.sendBack({
+        type: 'room/team_delete_success',
+        teams: result,
+      });
+    },
+  });
 
   /** client actions */
   //событие присоединения к команды
@@ -134,7 +172,10 @@ const team = (server) => {
       return true;
     },
     async resend (ctx, action, meta) {
-      return `room/${ action.roomId }`
+      console.log(typeof ctx.userId, typeof action.userId)
+      if (parseInt(ctx.userId) !== action.userId) {
+        return `room/${ action.roomId }`
+      }
     },
   });
 

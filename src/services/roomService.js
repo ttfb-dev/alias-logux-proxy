@@ -122,6 +122,20 @@ class RoomService {
     return teams;
   }
 
+  async isTeamEmpty(roomId, teamId) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+
+    let isEmpty = false;
+
+    teams.forEach(team => {
+      if (team.teamId === teamId) {
+        isEmpty = team.members.length === 0;
+      }
+    });
+
+    return isEmpty;
+  }
+
   async deleteTeam(roomId, teamId) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     
@@ -132,6 +146,8 @@ class RoomService {
     }
 
     await prs.setRoomParam(roomId, 'teams', teams);
+
+    return teams;
   }
 }
 
