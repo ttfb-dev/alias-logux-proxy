@@ -127,11 +127,11 @@ const team = (server) => {
       const currentRoom = await roomService.whereIAm(userId);
       const isEmpty = await roomService.isTeamEmpty(roomId, teamId);
       //проверяем, что комната пустая и удаляющий в текущей комнате
-      await logger.debug('team delete', { isEmpty, currentRoom, roomId })
       return isEmpty && currentRoom === roomId;
     },
     async process(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
+      const teamId = parseInt(action.teamId);
 
       const result = await roomService.deleteTeam(roomId, teamId);
 
