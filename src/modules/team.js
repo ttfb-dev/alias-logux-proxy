@@ -87,45 +87,45 @@ const team = (server) => {
     },
   });
 
-  // server.type('room/team_create', {
-  //   async access(ctx, action, meta) {
-  //     const roomId = parseInt(action.roomId);
-  //     const userId = parseInt(ctx.userId);
-  //     const currentRoom = await roomService.whereIAm(userId);
-  //     //допускаем только тех кто находится в комнате
-  //     return currentRoom === roomId;
-  //   },
-  //   async process(ctx, action, meta) {
-  //     const roomId = parseInt(action.roomId);
-  //     const userId = parseInt(ctx.userId);
-  //     const teamName = action.teamName;
+  server.type('room/team_create', {
+    async access(ctx, action, meta) {
+      const roomId = parseInt(action.roomId);
+      const userId = parseInt(ctx.userId);
+      const currentRoom = await roomService.whereIAm(userId);
+      //допускаем только тех кто находится в комнате
+      return currentRoom === roomId;
+    },
+    async process(ctx, action, meta) {
+      const roomId = parseInt(action.roomId);
+      const userId = parseInt(ctx.userId);
+      const teamName = action.teamName;
 
-  //     const result = await roomService.createTeam(roomId, teamName);
+      const result = await roomService.createTeam(roomId, teamName);
 
-  //     if (result instanceof ErrorResponse) {
-  //       ctx.sendBack({
-  //         type: 'room/team_create_error',
-  //         ...result,
-  //       });
+      if (result instanceof ErrorResponse) {
+        ctx.sendBack({
+          type: 'room/team_create_error',
+          ...result,
+        });
 
-  //       return;
-  //     }
+        return;
+      }
 
-  //     const room = await roomService.getRoomDetail(roomId, userId);
+      const room = await roomService.getRoomDetail(roomId, userId);
 
-  //     await server.log.add({
-  //       type: 'room/team_created',
-  //       roomId,
-  //       userId,
-  //       teams: room.teams,
-  //     });
+      await server.log.add({
+        type: 'room/team_created',
+        roomId,
+        userId,
+        teams: room.teams,
+      });
 
-  //     ctx.sendBack({
-  //       type: 'room/team_create_success',
-  //       myTeam: null,
-  //     });
-  //   },
-  // })
+      ctx.sendBack({
+        type: 'room/team_create_success',
+        teams: room.teams,
+      });
+    },
+  })
 
   /** client actions */
   //событие присоединения к команды
@@ -148,15 +148,15 @@ const team = (server) => {
     },
   });
 
-  //событие создания команды
-  // server.type('room/team_created', {
-  //   access() {
-  //     return true;
-  //   },
-  //   async resend (ctx, action, meta) {
-  //     return `room/${ action.roomId }`
-  //   },
-  // });
+  // событие создания команды
+  server.type('room/team_created', {
+    access() {
+      return true;
+    },
+    async resend (ctx, action, meta) {
+      return `room/${ action.roomId }`
+    },
+  });
 };
 
 export { team };

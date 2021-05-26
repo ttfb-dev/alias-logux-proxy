@@ -118,6 +118,8 @@ class RoomService {
     teams.push(newTeam);
 
     await prs.setRoomParam(roomId, 'teams', teams);
+
+    return teams;
   }
 
   async deleteTeam(roomId, teamId) {
