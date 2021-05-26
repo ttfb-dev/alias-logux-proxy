@@ -129,8 +129,9 @@ const team = (server) => {
       const userId = parseInt(ctx.userId);
       const currentRoom = await roomService.whereIAm(userId);
       const isEmpty = await roomService.isTeamEmpty(roomId, teamId);
+      const teamsCount = await roomService.getTeamsCount(roomId);
       //проверяем, что комната пустая и удаляющий в текущей комнате
-      return isEmpty && currentRoom === roomId;
+      return isEmpty && currentRoom === roomId && teamsCount > 2;
     },
     async process(ctx, action, meta) {
       const roomId = parseInt(action.roomId);

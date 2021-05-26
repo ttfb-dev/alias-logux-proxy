@@ -136,6 +136,11 @@ class RoomService {
     return isEmpty;
   }
 
+  async getTeamsCount(roomId) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+    return teams.length;
+  }
+
   async deleteTeam(roomId, teamId) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
 
