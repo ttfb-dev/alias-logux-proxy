@@ -172,7 +172,7 @@ const team = (server) => {
       return true;
     },
     async resend (ctx, action, meta) {
-      console.log(typeof ctx.userId, typeof action.userId)
+      await logger.debug('user_joined', { ctx: typeof ctx.userId, action: typeof action.userId })
       if (parseInt(ctx.userId) !== action.userId) {
         return `room/${ action.roomId }`
       }
