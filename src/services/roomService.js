@@ -138,16 +138,12 @@ class RoomService {
 
   async deleteTeam(roomId, teamId) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
-    
-    for (let i = 0; i < teams.length; i++) {
-      if (teams.teamId === teamId) {
-        teams.split(i, 1);
-      }
-    }
 
-    await prs.setRoomParam(roomId, 'teams', teams);
+    const filteredTeams = teams.filter(team => team.teamId !== teamId)
 
-    return teams;
+    await prs.setRoomParam(roomId, 'teams', filteredTeams);
+
+    return filteredTeams;
   }
 }
 
