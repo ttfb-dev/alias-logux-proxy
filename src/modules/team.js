@@ -135,6 +135,8 @@ const team = (server) => {
 
       const result = await roomService.deleteTeam(roomId, teamId);
 
+      await logger.debug('delete team', {result})
+
       if (result instanceof ErrorResponse) {
         ctx.sendBack({
           type: 'room/team_delete_error',
