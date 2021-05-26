@@ -38,7 +38,7 @@ const room = (server) => {
       };
     },
     async filter(ctx, action, meta) {
-      await logger.debug('called channel filter', {ctx: ctx.userId, action: action.userId})
+      await logger.debug('called channel filter', {a: `${ctx.userId}`, b: `${action.userId}`})
       return true;
     },
     async unsubscribe(ctx, action, meta) {
