@@ -35,7 +35,6 @@ const team = (server) => {
 
       await server.log.add({
         type: 'room/user_joined_team',
-        roomId,
         teamId,
         userId,
         teams: room.teams,
@@ -43,7 +42,7 @@ const team = (server) => {
 
       ctx.sendBack({
         type: 'room/join_team_success',
-        myTeam: room.myTeam,
+        myTeam: teamId,
       });
     },
   });
@@ -75,7 +74,6 @@ const team = (server) => {
 
       await server.log.add({
         type: 'room/user_left_team',
-        roomId,
         userId,
         teams: room.teams,
       });
@@ -97,7 +95,6 @@ const team = (server) => {
     },
     async process(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
-      const userId = parseInt(ctx.userId);
       const teamName = action.teamName;
 
       const result = await roomService.createTeam(roomId, teamName);
@@ -111,18 +108,13 @@ const team = (server) => {
         return;
       }
 
-      const room = await roomService.getRoomDetail(roomId, userId);
-
       await server.log.add({
         type: 'room/team_created',
-        roomId,
-        userId,
-        teams: room.teams,
+        teams: result,
       });
 
       ctx.sendBack({
         type: 'room/team_create_success',
-        teams: room.teams,
       });
     },
   });
@@ -138,7 +130,6 @@ const team = (server) => {
     },
     async process(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
-      const userId = parseInt(ctx.userId);
 
       const result = await roomService.deleteTeam(roomId, teamId);
 
@@ -153,14 +144,11 @@ const team = (server) => {
 
       await server.log.add({
         type: 'room/team_deleted',
-        roomId,
-        userId,
         teams: result,
       });
 
       ctx.sendBack({
         type: 'room/team_delete_success',
-        teams: result,
       });
     },
   });
@@ -172,10 +160,7 @@ const team = (server) => {
       return true;
     },
     async resend (ctx, action, meta) {
-      await logger.debug('user_joined', { ctx: typeof ctx.userId, action: typeof action.userId })
-      if (parseInt(ctx.userId) !== action.userId) {
-        return `room/${ action.roomId }`
-      }
+      return `room/${ action.roomId }`
     },
   });
 
@@ -191,6 +176,16 @@ const team = (server) => {
 
   // событие создания команды
   server.type('room/team_created', {
+    access() {
+      return true;
+    },
+    async resend (ctx, action, meta) {
+      return `room/${ action.roomId }`
+    },
+  });
+
+  // событие удаления команды
+  server.type('room/team_deleted', {
     access() {
       return true;
     },
