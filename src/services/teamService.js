@@ -54,7 +54,7 @@ class TeamService {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     teams.forEach((team) => {
       if (team.members.includes(userId)) {
-        team.members.splice(team.members.indexOf(userId), 1);
+        team.members = team.members.filter(uid => uid !== userId);
       }
     })
     await prs.setRoomParam(roomId, 'teams', teams);

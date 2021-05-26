@@ -35,6 +35,7 @@ const team = (server) => {
 
       await server.log.add({
         type: 'room/user_joined_team',
+        roomId,
         teamId,
         userId,
         teams: room.teams,
@@ -74,6 +75,7 @@ const team = (server) => {
 
       await server.log.add({
         type: 'room/user_left_team',
+        roomId,
         userId,
         teams: room.teams,
       });
@@ -110,6 +112,7 @@ const team = (server) => {
 
       await server.log.add({
         type: 'room/team_created',
+        roomId,
         teams: result,
       });
 
@@ -148,6 +151,7 @@ const team = (server) => {
 
       await server.log.add({
         type: 'room/team_deleted',
+        roomId,
         teams: result,
       });
 
