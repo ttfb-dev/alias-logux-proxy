@@ -131,6 +131,8 @@ const room = (server) => {
 
       const currentRoom = roomService.whereIAm(userId);
 
+      console.log(currentRoom, roomId);
+
       return roomId === currentRoom;
     },
     async process(ctx, action, meta) {
