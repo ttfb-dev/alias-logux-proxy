@@ -122,6 +122,9 @@ class RoomService {
     };
 
     room.myTeam = teamService.findMyTeam(room.teams, userId);
+    room.gameWordDatasets = {
+      fullList: wordService.getGameDatasets(room.settings.lang)
+    }
 
     return room;
   }

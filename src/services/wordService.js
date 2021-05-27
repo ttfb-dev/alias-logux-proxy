@@ -44,6 +44,11 @@ class WordService {
 
     return shuffled.slice(0, n);
   }
+
+  async getGameDatasets(lang) {
+    const datasets = await prs.getAppParam('word_datasets', {});
+    return datasets.filter(dataset => dataset.type === 'game' && dataset.lang === lang);
+  }
 }
 
 export { WordService };
