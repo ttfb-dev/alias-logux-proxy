@@ -97,6 +97,20 @@ class RoomService {
     return roomId;
   }
 
+  async renameRoom(roomId, customRoomName) {
+    if (!customRoomName) {
+      const settings = await prs.getRoomParam(roomId, 'settings', {});
+      const randomRoomName = await wordService.getRandomRoomName(settings.lang);
+    }
+    const roomName = customRoomName || randomRoomName;
+
+    const settings = await prs.getRoomParam(roomId, 'settings', {});
+    settings.name = roomName;
+    await prs.getRoomParam(roomId, 'settings', {});
+
+    return settings;
+  }
+
   async getRoomDetail(roomId, userId) {
     const room = {
       roomId:   roomId,
@@ -113,8 +127,10 @@ class RoomService {
   }
 
   async createTeam(roomId, teamName) {
+    const settings = await prs.getRoomParam(roomId, 'settings', {});
+
     const teams = await prs.getRoomParam(roomId, 'teams', []);
-    const newTeam = await teamService.getNewTeam(roomId, teamName);
+    const newTeam = await teamService.getNewTeam(roomId, teamName, settings.lang);
 
     teams.push(newTeam);
 

@@ -114,6 +114,40 @@ const room = (server) => {
     },
   });
 
+  server.type('room/rename', {
+    async access(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      const roomId = parseInt(action.roomId);
+      const currentRoom = roomService.whereIAm(userId);
+      return roomId === currentRoom;
+    },
+    async process(ctx, action, meta) {
+      const roomId = parseInt(action.roomId);
+      const roomName = action.roomName;
+
+      const result = await roomService.renameRoom(roomId, roomName);
+
+      if (result instanceof ErrorResponse) {
+        ctx.sendBack({
+          type: 'room/rename_error',
+          ...result,
+        });
+
+        return;
+      }
+
+      await server.log.add({
+        type: 'room/renamed',
+        roomId,
+        settings: result,
+      });
+
+      ctx.sendBack({
+        type: 'room/rename_success',
+      });
+    },
+  });
+
   server.type('room/leave', {
     async access(ctx, action, meta) {
       return true;
@@ -196,6 +230,16 @@ const room = (server) => {
 
   //событие отключения от комнаты
   server.type('room/user_left', {
+    access() {
+      return true;
+    },
+    async resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
+    },
+  });
+
+  //событие изменения настроек комнаты
+  server.type('room/rename', {
     access() {
       return true;
     },
