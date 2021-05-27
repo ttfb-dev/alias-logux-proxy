@@ -1,8 +1,9 @@
 import ErrorResponse from '../contracts/errorResponse.js';
 import { logger } from '../libs/index.js';
-import { RoomService } from '../services/index.js';
+import { RoomService, WordService } from '../services/index.js';
 
 const roomService = new RoomService();
+const wordService = new WordService();
 
 const room = (server) => {
   server.channel('room/:roomId', {
@@ -32,9 +33,14 @@ const room = (server) => {
 
       const room = await roomService.getRoomDetail(roomId, userId);
 
+      const randomRoomNames = await wordService.getRandomRoomNames(room.settings.lang);
+      const randomTeamNames = await wordService.getRandomTeamNames(room.settings.lang);
+
       return {
         type: 'room/state',
         room,
+        randomRoomNames,
+        randomTeamNames,
       };
     },
     async unsubscribe(ctx, action, meta) {

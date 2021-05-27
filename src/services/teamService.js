@@ -1,8 +1,10 @@
 import { prs, logger } from '../libs/index.js';
+import { WordService } from './wordService.js';
+const wordService = new WordService();
 
 class TeamService {
   // генерирует пустую команду со случайным неповторяющимся названием
-  async getRandomTeamName(roomId) {
+  async getRandomTeamName(roomId, lang = 'ru') {
     let tryLeft = 50;
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     const teamNames = teams.map((team) => {
@@ -10,17 +12,18 @@ class TeamService {
         return team.name;
       }
     })
-    const availableTeamNamesString = await prs.getAppParam('word_dataset_ru_teams');
-    const availableTeamNames = availableTeamNamesString.split(',');
+    
+    const allTeamNames = wordService.getTeamNames(lang)
+    
     while (tryLeft > 0) {
-      const randomName = availableTeamNames[Math.floor(Math.random() * availableTeamNames.length)];
+      const randomName = allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
 
       if (!teamNames.includes(randomName)) {
         return randomName;
       }
       tryLeft =- 1;
     }
-    return availableTeamNames[Math.floor(Math.random() * availableTeamNames.length)];
+    return allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
   }
 
   async getTwoTeams(roomId) {

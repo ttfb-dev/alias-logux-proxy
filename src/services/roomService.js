@@ -1,14 +1,12 @@
 import { prs, logger } from '../libs/index.js';
 import { ErrorResponse } from '../contracts/index.js';
 import { TeamService } from './teamService.js';
-import { room } from '../modules/room.js';
+import { WordService } from './wordService.js';
+
+const teamService = new TeamService();
+const wordService = new WordService();
  
 class RoomService {
-  teamService;
-
-  constructor() {
-    this.teamService = new TeamService();
-  }
 
   async whereIAm(userId) {
     return await prs.getUserParam(userId, 'room_in', null);
@@ -81,15 +79,18 @@ class RoomService {
 
     const roomId = await prs.getNextInt('room_id');
 
-    const roomName = await getRandomRoomName();
+    const roomName = await wordService.getRandomRoomName('ru');
 
-    const teams = await this.teamService.getTwoTeams(roomId);
+    const teams = await teamService.getTwoTeams(roomId);
 
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'owner', userId);
     await prs.setRoomParam(roomId, 'members', [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
-    await prs.setRoomParam(roomId, 'settings', {name: roomName});
+    await prs.setRoomParam(roomId, 'settings', {
+      name: roomName,
+      lang: 'ru',
+    });
     // await prs.setRoomParam(roomId, 'wordsets', []);
     await prs.setUserParam(userId, 'room_in', roomId);
 
@@ -106,14 +107,14 @@ class RoomService {
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     };
 
-    room.myTeam = this.teamService.findMyTeam(room.teams, userId);
+    room.myTeam = teamService.findMyTeam(room.teams, userId);
 
     return room;
   }
 
   async createTeam(roomId, teamName) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
-    const newTeam = await this.teamService.getNewTeam(roomId, teamName);
+    const newTeam = await teamService.getNewTeam(roomId, teamName);
 
     teams.push(newTeam);
 
@@ -150,14 +151,6 @@ class RoomService {
 
     return filteredTeams;
   }
-}
-
-const getRandomRoomName = async () => {
-  const lng = 'ru';
-  const type = 'rooms';
-  const namesString = await prs.getAppParam(`word_dataset_${lng}_${type}`);
-  const names = namesString.split(',');
-  return names[Math.floor(Math.random() * names.length)];
 }
 
 export { RoomService };
