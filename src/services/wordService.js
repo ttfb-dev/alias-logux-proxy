@@ -5,7 +5,7 @@ class WordService {
   async getRandomRoomName (lang = 'ru') {
     const availableRoomNamesString = await prs.getAppParam(`word_dataset_${lang}_rooms`);
     const availableRoomNames = availableRoomNamesString.split(',');
-    return availableRoomNames[Math.floor(Math.random() * names.length)];
+    return availableRoomNames[Math.floor(Math.random() * availableRoomNames.length)];
   }
 
   // генерирует пустую команду со случайным неповторяющимся названием
