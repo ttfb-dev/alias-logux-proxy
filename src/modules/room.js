@@ -129,7 +129,7 @@ const room = (server) => {
 
       ctx.data = { roomId, userId };
 
-      const currentRoom = roomService.whereIAm(userId);
+      const currentRoom = await roomService.whereIAm(userId);
 
       console.log(currentRoom, roomId);
 
