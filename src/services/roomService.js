@@ -169,9 +169,10 @@ class RoomService {
   }
 
   async renameTeam(roomId, teamId, customTeamName) {
+    const settings = await prs.getRoomParam(roomId, 'settings', {});
     const teams = await prs.getRoomParam(roomId, 'teams', []);
 
-    const teamName = customTeamName || await teamService.getUniqueRandomTeamName(roomId, lang);
+    const teamName = customTeamName || await teamService.getUniqueRandomTeamName(roomId, settings.lang);
 
     teams.forEach(team => {
       if (team.teamId === teamId) {
