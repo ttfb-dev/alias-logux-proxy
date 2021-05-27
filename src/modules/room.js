@@ -11,6 +11,8 @@ const room = (server) => {
       const roomId = parseInt(ctx.params.roomId);
       const userId = parseInt(ctx.userId);
 
+      ctx.data = { roomId, userId };
+
       const currentRoomId = await roomService.whereIAm(userId);
 
       if (currentRoomId !== roomId) {
@@ -19,22 +21,27 @@ const room = (server) => {
           roomId,
           currentRoomId,
         });
+
         return false;
       }
+
       await logger.debug(`uid ${userId}: room/${roomId} subscribed`, {
         userId,
         roomId,
       });
+
       return true;
     },
     async load(ctx, action, meta) {
-      const roomId = parseInt(ctx.params.roomId);
-      const userId = parseInt(ctx.userId);
-
+      const { roomId, userId } = ctx.data;
       const room = await roomService.getRoomDetail(roomId, userId);
 
-      const randomRoomNames = await wordService.getRandomRoomNames(room.settings.lang);
-      const randomTeamNames = await wordService.getRandomTeamNames(room.settings.lang);
+      const randomRoomNames = await wordService.getRandomRoomNames(
+        room.settings.lang,
+      );
+      const randomTeamNames = await wordService.getRandomTeamNames(
+        room.settings.lang,
+      );
 
       return {
         type: 'room/state',
@@ -44,12 +51,13 @@ const room = (server) => {
       };
     },
     async unsubscribe(ctx, action, meta) {
-      const roomId = parseInt(ctx.params.roomId);
-      const userId = parseInt(ctx.userId);
+      const { roomId, userId } = ctx.data;
+
       await logger.debug(`uid ${userId}: room/${roomId} unsubscribed`, {
         userId,
         roomId,
       });
+
       return true;
     },
   });
@@ -118,11 +126,15 @@ const room = (server) => {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const roomId = parseInt(action.roomId);
+
+      ctx.data = { roomId, userId };
+
       const currentRoom = roomService.whereIAm(userId);
+
       return roomId === currentRoom;
     },
     async process(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const { roomId } = ctx.data;
       const roomName = action.roomName;
 
       const result = await roomService.renameRoom(roomId, roomName);
@@ -223,7 +235,7 @@ const room = (server) => {
     access() {
       return true;
     },
-    async resend(ctx, action, meta) {
+    resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
   });
@@ -233,7 +245,7 @@ const room = (server) => {
     access() {
       return true;
     },
-    async resend(ctx, action, meta) {
+    resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
   });
@@ -243,7 +255,7 @@ const room = (server) => {
     access() {
       return true;
     },
-    async resend(ctx, action, meta) {
+    resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
   });
