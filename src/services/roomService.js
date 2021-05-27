@@ -130,7 +130,7 @@ class RoomService {
     const settings = await prs.getRoomParam(roomId, 'settings', {});
 
     const teams = await prs.getRoomParam(roomId, 'teams', []);
-    const newTeam = await teamService.getNewTeam(roomId, teamName, settings.lang);
+    const newTeam = await teamService.getNewTeam(roomId, settings.lang, teamName);
 
     teams.push(newTeam);
 
