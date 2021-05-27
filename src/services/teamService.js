@@ -14,16 +14,23 @@ class TeamService {
     })
     
     const allTeamNames = wordService.getTeamNames(lang);
+
+    console.log(`all team names`, allTeamNames);
     
     while (tryLeft > 0) {
       const randomName = allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
 
       if (!teamNames.includes(randomName)) {
+        console.log(`uh! got ${randomName}`)
         return randomName;
       }
       tryLeft =- 1;
     }
-    return allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
+
+    const lastChance = allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
+
+    console.log(`50 times left, got ${lastChance}`)
+    return lastChance;
   }
 
   async getTwoTeams(roomId, lang = 'ru') {
