@@ -13,24 +13,18 @@ class TeamService {
       }
     })
     
-    const allTeamNames = wordService.getTeamNames(lang);
-
-    console.log(`all team names`, allTeamNames);
+    const allTeamNames = await wordService.getTeamNames(lang);
     
     while (tryLeft > 0) {
       const randomName = allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
 
       if (!teamNames.includes(randomName)) {
-        console.log(`uh! got ${randomName}`)
         return randomName;
       }
       tryLeft =- 1;
     }
 
-    const lastChance = allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
-
-    console.log(`50 times left, got ${lastChance}`)
-    return lastChance;
+    return allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
   }
 
   async getTwoTeams(roomId, lang = 'ru') {
@@ -43,7 +37,6 @@ class TeamService {
   async getNewTeam(roomId, lang = 'ru', customTeamName = null) {
     console.log(`getNewTeam ${roomId}, ${lang}, ${customTeamName}`)
     const teamName = customTeamName || await this.getUniqueRandomTeamName(roomId, lang);
-    console.log(`teamName ${teamName}`)
     const teamId = await prs.getNextInt(`room_${roomId}_teams`, 0);
     return {
       teamId: teamId,
