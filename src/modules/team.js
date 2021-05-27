@@ -173,8 +173,9 @@ const team = (server) => {
     async process(ctx, action, meta) {
       const { roomId } = ctx.data;
       const teamId = parseInt(action.teamId);
+      const teamName = action.teamName;
 
-      const result = await roomService.deleteTeam(roomId, teamId);
+      const result = await roomService.renameTeam(roomId, teamId, teamName);
 
       if (result instanceof ErrorResponse) {
         ctx.sendBack({
