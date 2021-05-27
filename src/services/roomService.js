@@ -106,7 +106,7 @@ class RoomService {
 
     const settings = await prs.getRoomParam(roomId, 'settings', {});
     settings.name = roomName;
-    await prs.getRoomParam(roomId, 'settings', {});
+    await prs.setRoomParam(roomId, 'settings', settings);
 
     return settings;
   }
