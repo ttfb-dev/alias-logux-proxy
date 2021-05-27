@@ -239,7 +239,7 @@ const room = (server) => {
   });
 
   //событие изменения настроек комнаты
-  server.type('room/rename', {
+  server.type('room/renamed', {
     access() {
       return true;
     },
