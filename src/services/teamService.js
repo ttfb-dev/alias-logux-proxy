@@ -35,7 +35,6 @@ class TeamService {
   }
 
   async getNewTeam(roomId, lang = 'ru', customTeamName = null) {
-    console.log(`getNewTeam ${roomId}, ${lang}, ${customTeamName}`)
     const teamName = customTeamName || await this.getUniqueRandomTeamName(roomId, lang);
     const teamId = await prs.getNextInt(`room_${roomId}_teams`, 0);
     return {

@@ -139,8 +139,6 @@ const team = (server) => {
 
       const result = await roomService.deleteTeam(roomId, teamId);
 
-      await logger.debug('delete team', {result})
-
       if (result instanceof ErrorResponse) {
         ctx.sendBack({
           type: 'room/team_delete_error',
@@ -158,6 +156,43 @@ const team = (server) => {
 
       ctx.sendBack({
         type: 'room/team_delete_success',
+      });
+    },
+  });
+
+  server.type('room/team_rename', {
+    async access(ctx, action, meta) {
+      const roomId = parseInt(action.roomId);
+      const userId = parseInt(ctx.userId);
+      const currentRoom = await roomService.whereIAm(userId);
+
+      ctx.data = { roomId, userId };
+
+      return currentRoom === roomId;
+    },
+    async process(ctx, action, meta) {
+      const { roomId } = ctx.data;
+      const teamId = parseInt(action.teamId);
+
+      const result = await roomService.deleteTeam(roomId, teamId);
+
+      if (result instanceof ErrorResponse) {
+        ctx.sendBack({
+          type: 'room/team_rename_error',
+          ...result,
+        });
+
+        return;
+      }
+
+      await server.log.add({
+        type: 'room/team_renamed',
+        roomId,
+        teams: result,
+      });
+
+      ctx.sendBack({
+        type: 'room/team_rename_success',
       });
     },
   });
@@ -195,6 +230,16 @@ const team = (server) => {
 
   // событие удаления команды
   server.type('room/team_deleted', {
+    access() {
+      return true;
+    },
+    async resend (ctx, action, meta) {
+      return `room/${ action.roomId }`
+    },
+  });
+
+  // событие переименования команды
+  server.type('room/team_renamed', {
     access() {
       return true;
     },

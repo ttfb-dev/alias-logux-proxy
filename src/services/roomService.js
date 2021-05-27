@@ -167,6 +167,22 @@ class RoomService {
 
     return filteredTeams;
   }
+
+  async renameTeam(roomId, teamId, customTeamName) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+
+    const teamName = customTeamName || await teamService.getUniqueRandomTeamName(roomId, lang);
+
+    teams.forEach(team => {
+      if (team.teamId === teamId) {
+        team.name = teamName;
+      }
+    })
+
+    await prs.setRoomParam(roomId, 'teams', teams);
+
+    return teams;
+  }
 }
 
 export { RoomService };
