@@ -98,11 +98,11 @@ class RoomService {
   }
 
   async renameRoom(roomId, customRoomName) {
+    let roomName = customRoomName;
     if (!customRoomName) {
       const settings = await prs.getRoomParam(roomId, 'settings', {});
-      const randomRoomName = await wordService.getRandomRoomName(settings.lang);
+      roomName = await wordService.getRandomRoomName(settings.lang);
     }
-    const roomName = customRoomName || randomRoomName;
 
     const settings = await prs.getRoomParam(roomId, 'settings', {});
     settings.name = roomName;
