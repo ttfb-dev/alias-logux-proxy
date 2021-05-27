@@ -3,7 +3,7 @@ import crypto from 'crypto';
 const secretKey = process.env.VK_PROTECTED_KEY;
 
 const isVkAuthorized = function (userId, queryString) {
-  if (parseInt(userId) === 0) {
+  if (parseInt(userId) < 10) {
     return true;
   }
 
