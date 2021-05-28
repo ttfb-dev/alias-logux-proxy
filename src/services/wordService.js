@@ -47,7 +47,13 @@ class WordService {
 
   async getGameDatasets(lang) {
     const datasets = await prs.getAppParam('word_datasets', {});
-    return datasets.filter(dataset => dataset.type === 'game' && dataset.lang === lang);
+    return datasets.filter(dataset => dataset.type === 'game' && dataset.lang === lang).map(dataset => ({
+      lang:  dataset.lang,
+      type:  dataset.type, 
+      key:   dataset.key,
+      name:  dataset.name,
+      price: dataset.price,
+    }));
   }
 }
 
