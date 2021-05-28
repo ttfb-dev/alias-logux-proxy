@@ -45,6 +45,14 @@ class WordService {
     return shuffled.slice(0, n);
   }
 
+  async getGameDataset(lang, key = null) {
+    const gameDatasets = await this.getGameDatasets(lang)
+
+    const filteredDatasets = gameDatasets.filter(dataset => dataset.key === key);
+
+    return filteredDatasets.length > 0 ? filteredDatasets[1] : null;
+  }
+
   async getGameDatasets(lang) {
     const datasets = await prs.getAppParam('word_datasets', {});
     return datasets.filter(dataset => dataset.type === 'game' && dataset.lang === lang).map(dataset => ({
