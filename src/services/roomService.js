@@ -123,7 +123,7 @@ class RoomService {
 
     room.myTeam = teamService.findMyTeam(room.teams, userId);
     room.gameWordDatasets = {
-      fullList: await wordService.getGameDatasets(room.settings.lang)
+      fullList: await wordService.getLangGameDatasets(room.settings.lang)
     }
 
     return room;

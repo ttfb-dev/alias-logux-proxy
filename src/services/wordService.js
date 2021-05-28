@@ -46,22 +46,31 @@ class WordService {
   }
 
   async getGameDataset(lang, key = null) {
-    const gameDatasets = await this.getGameDatasets(lang)
+    const gameDatasets = await this.getLangGameDatasets(lang)
 
     const filteredDatasets = gameDatasets.filter(dataset => dataset.key === key);
 
     return filteredDatasets.length > 0 ? filteredDatasets[1] : null;
   }
 
-  async getGameDatasets(lang) {
+  async getLangGameDatasets(lang) {
     const datasets = await prs.getAppParam('word_datasets', {});
-    return datasets.filter(dataset => dataset.type === 'game' && dataset.lang === lang).map(dataset => ({
+    return datasets.filter(dataset => dataset.type === 'game' && dataset.lang === lang).map(mapGameDataset);
+  }
+
+  async getGameDatasets() {
+    const datasets = await prs.getAppParam('word_datasets', {});
+    return datasets.filter(dataset => dataset.type === 'game').map(mapGameDataset);
+  }
+
+  mapGameDataset(dataset) {
+    return {
       lang:  dataset.lang,
       type:  dataset.type, 
       key:   dataset.key,
       name:  dataset.name,
       price: dataset.price,
-    }));
+    }
   }
 }
 
