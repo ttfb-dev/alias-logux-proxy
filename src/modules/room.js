@@ -50,9 +50,9 @@ const room = (server) => {
         randomTeamNames,
       };
     },
-    filter(ctx, action, meta) {
-      return (roomCtx, roomAction, roomMeta) => ctx.userId === roomCtx.userId;
-    },
+    /*     filter(ctx, action, meta) {
+      return (roomCtx, roomAction, roomMeta) => ctx.userId !== roomCtx.userId;
+    }, */
     async unsubscribe(ctx, action, meta) {
       const { roomId, userId } = ctx.data;
 
