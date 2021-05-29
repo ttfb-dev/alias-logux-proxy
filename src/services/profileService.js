@@ -70,8 +70,8 @@ class ProfileService {
 
   mapDatasetsWithStatus(activeIds, purchasedIds, datasets) {
     datasets.forEach(dataset => {
-      const isActive = activeIds.includes(dataset.id)
-      const isPurchased = purchasedIds.includes(dataset.id)
+      const isActive = activeIds.includes(dataset.datasetId)
+      const isPurchased = purchasedIds.includes(dataset.datasetId)
       const isFree = dataset.price === 0
       const isAvailable = isFree || isPurchased;
 
