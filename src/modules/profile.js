@@ -63,7 +63,7 @@ const profile = (server) => {
       const datasets = await profileService.getDatasetsWithStatus(userId);
 
       ctx.sendBack({
-        type: 'profile/activate_dataset_success',
+        type: 'profile/deactivate_dataset_success',
         datasets,
       });
     },

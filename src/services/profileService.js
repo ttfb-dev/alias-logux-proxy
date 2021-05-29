@@ -10,7 +10,7 @@ class ProfileService {
   }
 
   async addPurchasedDatasetId(userId, datasetId) {
-    const purchasedDatasetIds = await this.getPurchasedDatasetsList(userId);
+    const purchasedDatasetIds = await this.getPurchasedDatasetIds(userId);
     purchasedDatasetIds.push(datasetId);
     await prs.setUserParam(userId, 'purchased_dataset_ids', purchasedDatasetIds)
   }
