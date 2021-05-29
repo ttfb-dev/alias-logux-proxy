@@ -33,10 +33,10 @@ class RoomService {
       );
     }
 
-    const roomMembers = await prs.getRoomParam(roomId, 'members', []);
-    if (!roomMembers.includes(userId)) {
-      roomMembers.push(userId);
-      await prs.setRoomParam(roomId, 'members', roomMembers);
+    const roomMemberIds = await prs.getRoomParam(roomId, 'memberIds', []);
+    if (!roomMemberIds.includes(userId)) {
+      roomMemberIds.push(userId);
+      await prs.setRoomParam(roomId, 'memberIds', roomMemberIds);
     }
     await prs.setUserParam(userId, 'room_in', roomId);
 
@@ -57,11 +57,11 @@ class RoomService {
       );
     }
 
-    const roomMembers = await prs.getRoomParam(roomId, 'members', []);
-    if (roomMembers.includes(userId)) {
-      roomMembers.splice(roomMembers.indexOf(userId), 1);
+    const roomMemberIds = await prs.getRoomParam(roomId, 'memberIds', []);
+    if (roomMemberIds.includes(userId)) {
+      roomMemberIds.splice(roomMemberIds.indexOf(userId), 1);
     }
-    await prs.setRoomParam(roomId, 'members', roomMembers);
+    await prs.setRoomParam(roomId, 'memberIds', roomMemberIds);
     await prs.delUserParam(userId, 'room_in');
 
     return true;
@@ -85,7 +85,7 @@ class RoomService {
 
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'ownerId', userId);
-    await prs.setRoomParam(roomId, 'members', [userId]);
+    await prs.setRoomParam(roomId, 'memberIds', [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
     await prs.setRoomParam(roomId, 'settings', {
       name: roomName,
@@ -149,7 +149,7 @@ class RoomService {
 
     teams.forEach(team => {
       if (team.teamId === teamId) {
-        isEmpty = team.members.length === 0;
+        isEmpty = team.memberIds.length === 0;
       }
     });
 

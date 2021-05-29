@@ -40,7 +40,7 @@ class TeamService {
     return {
       teamId: teamId,
       name: teamName,
-      members: [],
+      memberIds: [],
     }
   }
 
@@ -48,7 +48,7 @@ class TeamService {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     teams.forEach((team) => {
       if (team.teamId === teamId) {
-        team.members.push(userId);
+        team.memberIds.push(userId);
       }
     })
     await prs.setRoomParam(roomId, 'teams', teams);
@@ -57,8 +57,8 @@ class TeamService {
   async leaveTeam(roomId, userId) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     teams.forEach((team) => {
-      if (team.members.includes(userId)) {
-        team.members = team.members.filter(uid => uid !== userId);
+      if (team.memberIds.includes(userId)) {
+        team.memberIds = team.memberIds.filter(uid => uid !== userId);
       }
     })
     await prs.setRoomParam(roomId, 'teams', teams);
@@ -73,7 +73,7 @@ class TeamService {
     let myTeam = null;
 
     teams.forEach(team => {
-      if (team.members.includes(userId)) {
+      if (team.memberIds.includes(userId)) {
         myTeam = team.teamId;
       }
     });
