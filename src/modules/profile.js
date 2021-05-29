@@ -12,7 +12,7 @@ const profile = (server) => {
     async process(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
 
-      const datasets = await wordService.getLangGameDatasets();
+      const datasets = await wordService.getLangGameDatasets('ru');
 
       const purchasedIds = await profileService.getPurchasedDatasetIds(userId);
 
