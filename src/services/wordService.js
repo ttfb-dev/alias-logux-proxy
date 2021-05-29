@@ -48,9 +48,15 @@ class WordService {
   async getGameDataset(datasetId) {
     const gameDatasets = await this.getGameDatasets()
 
-    const filteredDatasets = gameDatasets.filter(dataset => dataset.datasetId === datasetId);
+    let dataset = null;
 
-    return filteredDatasets.length > 0 ? filteredDatasets[1] : null;
+    gameDatasets.forEach(gameDataset => {
+      if (gameDataset.datasetId === datasetId) {
+        dataset = gameDataset;
+      }
+    });
+
+    return dataset;
   }
 
   async getLangGameDatasets(lang) {
