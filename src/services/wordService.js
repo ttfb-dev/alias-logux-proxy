@@ -46,7 +46,7 @@ class WordService {
   }
 
   async getGameDataset(datasetId) {
-    const gameDatasets = await this.getGameDatasets(lang)
+    const gameDatasets = await this.getGameDatasets()
 
     const filteredDatasets = gameDatasets.filter(dataset => dataset.datasetId === datasetId);
 
