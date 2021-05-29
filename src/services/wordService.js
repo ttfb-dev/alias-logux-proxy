@@ -45,10 +45,10 @@ class WordService {
     return shuffled.slice(0, n);
   }
 
-  async getGameDataset(lang, key = null) {
-    const gameDatasets = await this.getLangGameDatasets(lang)
+  async getGameDataset(datasetId) {
+    const gameDatasets = await this.getGameDatasets(lang)
 
-    const filteredDatasets = gameDatasets.filter(dataset => dataset.key === key);
+    const filteredDatasets = gameDatasets.filter(dataset => dataset.datasetId === datasetId);
 
     return filteredDatasets.length > 0 ? filteredDatasets[1] : null;
   }
@@ -65,12 +65,29 @@ class WordService {
 
   mapGameDataset(dataset) {
     return {
+      datasetId: dataset.datasetId,
       lang:  dataset.lang,
-      type:  dataset.type, 
-      key:   dataset.key,
+      type:  dataset.type,
       name:  dataset.name,
       price: dataset.price,
     }
+  }
+
+  mapDatasetsWithStatus(activeIds, purchasedIds, datasets) {
+    datasets.forEach(dataset => {
+      const isActive = activeIds.includes(dataset.id)
+      const isPurchased = purchasedIds.includes(dataset.id)
+      const isFree = dataset.price === 0
+      const isAvailable = isFree || isPurchased;
+
+      dataset.status = isActive 
+        ? 'active' 
+        : isAvailable 
+          ? 'available'
+          : 'available_to_buy';
+    })
+
+    return datasets;
   }
 }
 

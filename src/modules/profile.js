@@ -12,11 +12,18 @@ const profile = (server) => {
     async process(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
 
-      const datasets = await wordService.getGameDatasets();
+      const datasets = await wordService.getLangGameDatasets();
+
+      const purchasedIds = await profileService.getPurchasedDatasetIds(userId);
+
+      const activeIds = await profileService.getActiveDatasetIds(userId);
+
+      const datasetsWithStatus = wordService.mapDatasetsWithStatus(activeIds, purchasedIds, datasets);
+
 
       ctx.sendBack({
-        type: 'room/get_game_datasets_success',
-        datasets,
+        type: 'profile/get_game_datasets_success',
+        datasetsWithStatus,
       });
     },
   });
@@ -31,26 +38,24 @@ const profile = (server) => {
       const purchases = await profileService.getPurchasedDatasetsList(userId);
 
       ctx.sendBack({
-        type: 'room/get_purchases_success',
+        type: 'profile/get_purchases_success',
         purchases,
       });
     },
   });
 
-  server.type('profile/buy_dataset', {
+  server.type('profile/buy_game_dataset', {
     async access(ctx, action, meta) {
       return true;
     },
     async process(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
-      const { lang, key } = action;
+      const { datasetId } = action;
 
-      const dataset = await wordService.getGameDataset(lang, key)
-
-      const purchases = await profileService.addPurchasedDataset(userId, dataset);
+      const purchases = await profileService.addPurchasedDataset(userId, datasetId);
 
       ctx.sendBack({
-        type: 'room/get_purchases_success',
+        type: 'profile/buy_game_dataset_success',
         purchases,
       });
     },
