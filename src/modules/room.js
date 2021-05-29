@@ -238,7 +238,11 @@ const room = (server) => {
     access() {
       return true;
     },
+    process() {
+      console.log('process')
+    },
     resend(ctx, action, meta) {
+      console.log('resend')
       return `room/${action.roomId}`;
     },
   });
