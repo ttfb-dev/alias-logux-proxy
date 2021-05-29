@@ -84,7 +84,7 @@ class RoomService {
     const teams = await teamService.getTwoTeams(roomId);
 
     await prs.setRoomParam(roomId, 'status', 'active');
-    await prs.setRoomParam(roomId, 'owner', userId);
+    await prs.setRoomParam(roomId, 'ownerId', userId);
     await prs.setRoomParam(roomId, 'members', [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
     await prs.setRoomParam(roomId, 'settings', {
@@ -115,13 +115,13 @@ class RoomService {
     const room = {
       roomId:   roomId,
       status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
-      owner:    await prs.getRoomParam(roomId, 'owner', null),
-      members:  await prs.getRoomParam(roomId, 'members', []),
+      ownerId:  await prs.getRoomParam(roomId, 'ownerId', null),
+      memberIds:  await prs.getRoomParam(roomId, 'memberIds', []),
       teams:    await prs.getRoomParam(roomId, 'teams', []),
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     };
 
-    room.myTeam = teamService.findMyTeam(room.teams, userId);
+    room.myTeamId = teamService.findMyTeam(room.teams, userId);
     room.gameWordDatasets = {
       fullList: await wordService.getLangGameDatasets(room.settings.lang)
     }

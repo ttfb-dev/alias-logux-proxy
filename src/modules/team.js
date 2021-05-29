@@ -31,19 +31,17 @@ const team = (server) => {
         return;
       }
 
-      const room = await roomService.getRoomDetail(roomId, userId);
-
       await server.log.add({
         type: 'room/user_joined_team',
         roomId,
         teamId,
         userId,
-        teams: room.teams,
+        teams: result,
       });
 
       ctx.sendBack({
         type: 'room/join_team_success',
-        myTeam: teamId,
+        myTeamId: teamId,
       });
     },
   });
@@ -71,18 +69,16 @@ const team = (server) => {
         return;
       }
 
-      const room = await roomService.getRoomDetail(roomId, userId);
-
       await server.log.add({
         type: 'room/user_left_team',
         roomId,
         userId,
-        teams: room.teams,
+        teams: result,
       });
 
       ctx.sendBack({
         type: 'room/leave_team_success',
-        myTeam: null,
+        myTeamId: null,
       });
     },
   });
