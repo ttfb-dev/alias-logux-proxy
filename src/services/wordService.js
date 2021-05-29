@@ -72,23 +72,6 @@ class WordService {
       price: dataset.price,
     }
   }
-
-  mapDatasetsWithStatus(activeIds, purchasedIds, datasets) {
-    datasets.forEach(dataset => {
-      const isActive = activeIds.includes(dataset.id)
-      const isPurchased = purchasedIds.includes(dataset.id)
-      const isFree = dataset.price === 0
-      const isAvailable = isFree || isPurchased;
-
-      dataset.status = isActive 
-        ? 'active' 
-        : isAvailable 
-          ? 'available'
-          : 'available_to_buy';
-    })
-
-    return datasets;
-  }
 }
 
 export { WordService };
