@@ -10,7 +10,7 @@ class ProfileService {
   }
 
   async addPurchasedDatasetId(userId, datasetId) {
-    const purchasedDatasetIds = this.getPurchasedDatasetsList(userId);
+    const purchasedDatasetIds = await this.getPurchasedDatasetsList(userId);
     purchasedDatasetIds.push(datasetId);
     await prs.setUserParam(userId, 'purchased_dataset_ids', purchasedDatasetIds)
   }
@@ -20,14 +20,14 @@ class ProfileService {
   }
 
   async activateDatasetId(userId, datasetId) {
-    const activeDatasetIds = this.getActiveDatasetIds(userId);
+    const activeDatasetIds = await this.getActiveDatasetIds(userId);
     activeDatasetIds.push(datasetId);
     await prs.setUserParam(userId, 'activated_dataset_ids', activeDatasetIds);
     return activeDatasetIds;
   }
 
   async deactivateDatasetId(userId, datasetId) {
-    const activeDatasetIds = this.getActiveDatasetIds(userId);
+    const activeDatasetIds = await this.getActiveDatasetIds(userId);
     activeDatasetIds.push(datasetId);
     const newActiveDatasets = activeDatasetIds.filter(activeDatasetId => activeDatasetId !== datasetId);
     await prs.setUserParam(userId, 'activated_dataset_ids', newActiveDatasets);
