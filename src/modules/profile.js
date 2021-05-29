@@ -77,11 +77,13 @@ const profile = (server) => {
       const userId = parseInt(ctx.userId);
       const { datasetId } = action;
 
-      const purchases = await profileService.addPurchasedDatasetId(userId, datasetId);
+      await profileService.addPurchasedDatasetId(userId, datasetId);
+
+      const datasets = await profileService.getDatasetsWithStatus(userId);
 
       ctx.sendBack({
         type: 'profile/buy_game_dataset_success',
-        purchases,
+        datasets,
       });
     },
   });
