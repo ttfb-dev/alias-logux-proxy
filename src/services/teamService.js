@@ -52,6 +52,8 @@ class TeamService {
       }
     })
     await prs.setRoomParam(roomId, 'teams', teams);
+
+    return teams;
   }
 
   async leaveTeam(roomId, userId) {
@@ -62,6 +64,8 @@ class TeamService {
       }
     })
     await prs.setRoomParam(roomId, 'teams', teams);
+
+    return teams;
   }
 
   async getMyTeam(roomId, userId) {
@@ -70,15 +74,15 @@ class TeamService {
   }
 
   findMyTeam (teams, userId) {
-    let myTeam = null;
+    let myTeamId = null;
 
     teams.forEach(team => {
       if (team.memberIds.includes(userId)) {
-        myTeam = team.teamId;
+        myTeamId = team.teamId;
       }
     });
   
-    return myTeam;
+    return myTeamId;
   }
 }
 
