@@ -90,7 +90,7 @@ const room = (server) => {
         type: 'room/user_joined',
         roomId,
         userId,
-        members: room.members,
+        memberIds: room.memberIds,
       });
 
       ctx.sendBack({
@@ -197,7 +197,7 @@ const room = (server) => {
         type: 'room/user_left',
         roomId,
         userId,
-        members: room.members,
+        memberIds: room.memberIds,
       });
 
       ctx.sendBack({
