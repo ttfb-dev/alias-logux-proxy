@@ -1,6 +1,5 @@
-import ErrorResponse from '../contracts/index.js';
+import { ErrorResponse } from '../contracts/index.js';
 import { prs, logger } from '../libs/index.js';
-import { room } from '../modules/room.js';
 
 import { RoomService } from './roomService.js';
 const roomService = new RoomService();
