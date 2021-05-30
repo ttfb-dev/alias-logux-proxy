@@ -228,6 +228,8 @@ const room = (server) => {
         const isDatasetAvailableToActivate =
           await roomService.isDatasetAvailableToActivate(roomId, datasetId);
 
+        console.log(isItMyRoomId, amIRoomOwner, isDatasetAvailableToActivate);
+
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToActivate;
       } catch (e) {
         logger.critical(e.message, {
@@ -260,12 +262,12 @@ const room = (server) => {
 
         const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
 
-        const isDatasetAvailableTodeactivate =
+        const isDatasetAvailableToDeactivate =
           await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
 
-        console.log(isItMyRoomId, amIRoomOwner, isDatasetAvailableTodeactivate);
+        console.log(isItMyRoomId, amIRoomOwner, isDatasetAvailableToDeactivate);
 
-        return isItMyRoomId && amIRoomOwner && isDatasetAvailableTodeactivate;
+        return isItMyRoomId && amIRoomOwner && isDatasetAvailableToDeactivate;
       } catch (e) {
         logger.critical(e.message, {type: 'room/activate_game_dataset', action, userId: ctx.userId});
       }
