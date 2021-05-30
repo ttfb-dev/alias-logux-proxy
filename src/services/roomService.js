@@ -222,6 +222,7 @@ class RoomService {
     
     if (onRoomCreate) {
       const activeDatasetIds = await profileService.getActiveDatasetIds(room.ownerId);
+      console.log('onRoomCreate', room.ownerId, activeDatasetIds)
       await prs.setRoomParam(roomId, 'active_game_dataset_ids', activeDatasetIds);
     }
 
