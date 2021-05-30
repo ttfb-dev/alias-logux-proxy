@@ -9,23 +9,18 @@ const game = (server) => {
 
   server.channel('room/:roomId/game/:gameId', {
     async access(ctx, action, meta) {
-        const roomId = parseInt(ctx.params.roomId);
-        const gameId = parseInt(ctx.params.gameId);
-        const userId = parseInt(ctx.userId);
+      const roomId = parseInt(ctx.params.roomId);
+      const gameId = parseInt(ctx.params.gameId);
+      const userId = parseInt(ctx.userId);
 
-        ctx.data = { roomId, gameId, userId };
-      try {
+      ctx.data = { roomId, gameId, userId };
+      const currentRoomId = await roomService.whereIAm(userId);
 
-        const currentRoomId = await roomService.whereIAm(userId);
+      const roomGameId = await gameService.getRoomGameId(roomId);
 
-        const roomGameId = await gameService.getRoomGameId(roomId);
+      const roomInGame = await gameService.isRoomInGame(roomId);
 
-        const roomInGame = await gameService.isRoomInGame(roomId);
-
-        return roomInGame && currentRoomId === roomId && roomGameId === gameId;
-      } catch (error) {
-        server.undo(action, meta, 'error', {error})
-      }
+      return roomInGame && currentRoomId === roomId && roomGameId === gameId;
     },
     async load(ctx, action, meta) {
       const { roomId, userId } = ctx.data;
@@ -55,11 +50,16 @@ const game = (server) => {
       const userId = parseInt(ctx.userId);
       const roomId = parseInt(action.roomId);
 
-      const isRoomOwner = await roomService.amIRoomOwner(userId, roomId);
+      try {
+        const isRoomOwner = await roomService.amIRoomOwner(userId, roomId);
 
-      const canStartGame = await gameService.canStartGame(roomId);
+        const canStartGame = await gameService.canStartGame(roomId);
 
-      return true;
+        return isRoomOwner && canStartGame;
+      } catch (error) {
+        server.undo(action, meta, 'error', {error});
+        return false;
+      }
     },
     async process(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
