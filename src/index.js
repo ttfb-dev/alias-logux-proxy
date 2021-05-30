@@ -13,7 +13,7 @@ room(server);
 
 team(server);
 
-// game(server);
+game(server);
 
 profile(server);
 
