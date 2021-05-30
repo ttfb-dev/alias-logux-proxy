@@ -84,6 +84,8 @@ const room = (server) => {
         return;
       }
 
+      await roomService.refreshRoomDatasets(roomId);
+
       const room = await roomService.getRoomDetail(roomId, userId);
 
       await server.log.add({
@@ -190,6 +192,8 @@ const room = (server) => {
 
         return;
       }
+
+      await roomService.refreshRoomDatasets(roomId);
 
       const room = await roomService.getRoomDetail(roomId, userId);
 
