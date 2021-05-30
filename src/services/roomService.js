@@ -110,6 +110,14 @@ class RoomService {
     return roomId;
   }
 
+  async setRoomStatus(roomId, status) {
+    if (!['active', 'game'].includes(status)) {
+      return ;
+    }
+
+    await prs.setRoomParam(roomId, 'status', status);
+  }
+
   async renameRoom(roomId, customRoomName) {
     let roomName = customRoomName;
     if (!customRoomName) {
@@ -126,12 +134,12 @@ class RoomService {
 
   async getRoom(roomId) {
     return {
-      roomId:   roomId,
-      status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
-      ownerId:  await prs.getRoomParam(roomId, 'ownerId', null),
+      roomId:     roomId,
+      status:     await prs.getRoomParam(roomId, 'status', 'not_found'),
+      ownerId:    await prs.getRoomParam(roomId, 'ownerId', null),
       memberIds:  await prs.getRoomParam(roomId, 'member_ids', []),
-      teams:    await prs.getRoomParam(roomId, 'teams', []),
-      settings: await prs.getRoomParam(roomId, 'settings', {}),
+      teams:      await prs.getRoomParam(roomId, 'teams', []),
+      settings:   await prs.getRoomParam(roomId, 'settings', {}),
     };
   }
 
@@ -216,8 +224,10 @@ class RoomService {
 
   async deactivateGameDataset(roomId, datasetId) {
     const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
+    console.log(activeGameDatasetIds)
     const filteredActiveGameDatasetIds = activeGameDatasetIds.filter(dataset => dataset.datasetId !== datasetId);
     await prs.setRoomParam(roomId, 'active_game_dataset_ids', filteredActiveGameDatasetIds);
+    console.log(filteredActiveGameDatasetIds)
     return filteredActiveGameDatasetIds;
   }
 

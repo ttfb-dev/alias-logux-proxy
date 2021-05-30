@@ -38,16 +38,6 @@ const room = (server) => {
     /*     filter(ctx, action, meta) {
       return (roomCtx, roomAction, roomMeta) => ctx.userId !== roomCtx.userId;
     }, */
-    async unsubscribe(ctx, action, meta) {
-      const { roomId, userId } = ctx.data;
-
-      await logger.debug(`uid ${userId}: room/${roomId} unsubscribed`, {
-        userId,
-        roomId,
-      });
-
-      return true;
-    },
   });
 
   server.type('room/join', {
