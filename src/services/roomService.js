@@ -85,8 +85,6 @@ class RoomService {
 
     const teams = await teamService.getTwoTeams(roomId);
 
-    await this.refreshRoomDatasets(roomId, true);
-
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'ownerId', userId);
     await prs.setRoomParam(roomId, 'member_ids', [userId]);
@@ -96,6 +94,8 @@ class RoomService {
       lang: 'ru',
     });
     await prs.setUserParam(userId, 'room_in', roomId);
+
+    await this.refreshRoomDatasets(roomId, true);
 
     return roomId;
   }
