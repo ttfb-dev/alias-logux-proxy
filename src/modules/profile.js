@@ -78,13 +78,13 @@ const profile = (server) => {
       const userId = parseInt(ctx.userId);
       const { datasetId } = action;
 
-      const currentRoom = await roomService.whereIAm(userId);
+      const roomId = await roomService.whereIAm(userId);
 
       await profileService.addPurchasedDatasetId(userId, datasetId);
 
       const datasets = await profileService.getDatasetsWithStatus(userId);
 
-      if (currentRoom) {
+      if (roomId) {
         await roomService.refreshRoomDatasets(roomId);
         const room = await roomService.getRoomDetail(roomId);
         await server.log.add({
