@@ -14,6 +14,16 @@ class RoomService {
     return await prs.getUserParam(userId, 'room_in', null);
   }
 
+  async isItMyRoomId(userId, roomId) {
+    const myRoomId = await this.whereIAm(userId);
+    return myRoomId === roomId;
+  }
+
+  async amIRoomOwner(userId, roomId) {
+    const ownerId = await prs.getRoomParam(roomId, 'ownerId', null);
+    return userId === ownerId
+  }
+
   async joinRoom(userId, roomId) {
     // если уже присоеденены к какой-либо комнате
     const currentRoomId = await this.whereIAm(userId);
@@ -235,6 +245,39 @@ class RoomService {
     const purchasedDatasetIds = await this.getRoomPurchasedDatasetIds(roomId);
 
     return profileService.mapDatasetsWithStatus(activeGameDatasetIds, purchasedDatasetIds, datasets);
+  }
+
+  async isDatasetAvailable(roomId, datasetId) {
+    const datasets = await this.getRoomGameDatasets(roomId);
+    for (let i = 0; i < datasets.length; i++) {
+      const dataset = datasets[i]
+      if (dataset.datasetId === datasetId) {
+        return ['active', 'available'].includes(dataset.status)
+      }
+    }
+    return false;
+  }
+
+  async isDatasetAvailableToActivate(roomId, datasetId) {
+    const datasets = await this.getRoomGameDatasets(roomId);
+    for (let i = 0; i < datasets.length; i++) {
+      const dataset = datasets[i]
+      if (dataset.datasetId === datasetId) {
+        return dataset.status === 'available';
+      }
+    }
+    return false;
+  }
+
+  async isDatasetAvailableToDeactivate(roomId, datasetId) {
+    const datasets = await this.getRoomGameDatasets(roomId);
+    for (let i = 0; i < datasets.length; i++) {
+      const dataset = datasets[i]
+      if (dataset.datasetId === datasetId) {
+        return dataset.status === 'active';
+      }
+    }
+    return false;
   }
 }
 

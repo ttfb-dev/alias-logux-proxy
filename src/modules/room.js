@@ -15,22 +15,7 @@ const room = (server) => {
 
       const currentRoomId = await roomService.whereIAm(userId);
 
-      if (currentRoomId !== roomId) {
-        await logger.debug('room: access failed', {
-          userId,
-          roomId,
-          currentRoomId,
-        });
-
-        return false;
-      }
-
-      await logger.debug(`uid ${userId}: room/${roomId} subscribed`, {
-        userId,
-        roomId,
-      });
-
-      return true;
+      return currentRoomId === roomId;
     },
     async load(ctx, action, meta) {
       const { roomId, userId } = ctx.data;
@@ -237,6 +222,55 @@ const room = (server) => {
       });
     },
   });
+
+  server.type('room/activate_word_dataset', {
+    async access(ctx, action, meta) {
+      try {
+        const roomId = parseInt(action.roomId);
+        const userId = parseInt(ctx.userId);
+        const datasetId = parseInt(action.datasetId);
+
+        ctx.data = { roomId, userId, datasetId };
+
+        const isItMyRoomId = await roomService.isItMyRoomId(userId, roomId);
+
+        const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
+
+        const isDatasetAvailableToActivate = await roomService.isDatasetAvailableToActivate(roomId, datasetId);
+
+        return isItMyRoomId && amIRoomOwner && isDatasetAvailableToActivate;
+      } catch (e) {
+        logger.critical(e.message, {type: 'room/activate_word_dataset', action, userId: ctx.userId});
+      }
+      return false;
+    },
+    resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
+    },
+    async process() {},
+  })
+
+  server.type('room/deactivate_word_dataset', {
+    async access(ctx, action, meta) {
+      const roomId = parseInt(action.roomId);
+      const userId = parseInt(ctx.userId);
+      const datasetId = parseInt(action.datasetId);
+
+      ctx.data = { roomId, userId, datasetId };
+
+      const isItMyRoomId = await roomService.isItMyRoomId(userId, roomId);
+
+      const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
+
+      const isDatasetAvailableTodeactivate = await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
+
+      return isItMyRoomId && amIRoomOwner && isDatasetAvailableTodeactivate;
+    },
+    resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
+    },
+    async process() {},
+  })
 
   /** client actions */
   //событие присоединения к комнате
