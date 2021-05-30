@@ -1,5 +1,6 @@
-import { ProfileService, WordService } from '../services/index.js';
+import { ProfileService, RoomService, WordService } from '../services/index.js';
 
+const roomService = new RoomService();
 const profileService = new ProfileService();
 
 const profile = (server) => {
@@ -77,9 +78,21 @@ const profile = (server) => {
       const userId = parseInt(ctx.userId);
       const { datasetId } = action;
 
+      const currentRoom = await roomService.whereIAm(userId);
+
       await profileService.addPurchasedDatasetId(userId, datasetId);
 
       const datasets = await profileService.getDatasetsWithStatus(userId);
+
+      if (currentRoom) {
+        await roomService.refreshRoomDatasets(roomId);
+        const room = await roomService.getRoomDetail(roomId);
+        await server.log.add({
+          type: 'room/dataset_purchased',
+          roomId,
+          gameWordDatasets: room.gameWordDatasets,
+        });
+      }
 
       ctx.sendBack({
         type: 'profile/buy_game_dataset_success',

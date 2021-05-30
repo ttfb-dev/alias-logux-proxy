@@ -268,6 +268,16 @@ const room = (server) => {
       return `room/${action.roomId}`;
     },
   });
+
+  //событие покупки набора слов в комнате
+  server.type('room/dataset_purchased', {
+    access() {
+      return true;
+    },
+    resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
+    },
+  });
 };
 
 export { room };
