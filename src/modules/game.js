@@ -7,43 +7,43 @@ const gameService = new GameService();
 
 const game = (server) => {
 
-  server.channel('room/:roomId/game/:gameId', {
-    async access(ctx, action, meta) {
-      const roomId = parseInt(ctx.params.roomId);
-      const gameId = parseInt(ctx.params.gameId);
-      const userId = parseInt(ctx.userId);
+  // server.channel('room/:roomId/game/:gameId', {
+  //   async access(ctx, action, meta) {
+  //     const roomId = parseInt(ctx.params.roomId);
+  //     const gameId = parseInt(ctx.params.gameId);
+  //     const userId = parseInt(ctx.userId);
 
-      ctx.data = { roomId, gameId, userId };
-      const currentRoomId = await roomService.whereIAm(userId);
+  //     ctx.data = { roomId, gameId, userId };
+  //     const currentRoomId = await roomService.whereIAm(userId);
 
-      const roomGameId = await gameService.getRoomGameId(roomId);
+  //     const roomGameId = await gameService.getRoomGameId(roomId);
 
-      const roomInGame = await gameService.isRoomInGame(roomId);
+  //     const roomInGame = await gameService.isRoomInGame(roomId);
 
-      return roomInGame && currentRoomId === roomId && roomGameId === gameId;
-    },
-    async load(ctx, action, meta) {
-      const { roomId, userId } = ctx.data;
-      const room = await roomService.getRoomDetail(roomId, userId);
+  //     return roomInGame && currentRoomId === roomId && roomGameId === gameId;
+  //   },
+  //   async load(ctx, action, meta) {
+  //     const { roomId, userId } = ctx.data;
+  //     const room = await roomService.getRoomDetail(roomId, userId);
 
-      const randomRoomNames = await wordService.getRandomRoomNames(
-        room.settings.lang,
-      );
-      const randomTeamNames = await wordService.getRandomTeamNames(
-        room.settings.lang,
-      );
+  //     const randomRoomNames = await wordService.getRandomRoomNames(
+  //       room.settings.lang,
+  //     );
+  //     const randomTeamNames = await wordService.getRandomTeamNames(
+  //       room.settings.lang,
+  //     );
 
-      return {
-        type: 'room/state',
-        room,
-        randomRoomNames,
-        randomTeamNames,
-      };
-    },
-    /*     filter(ctx, action, meta) {
-      return (roomCtx, roomAction, roomMeta) => ctx.userId !== roomCtx.userId;
-    }, */
-  });
+  //     return {
+  //       type: 'room/state',
+  //       room,
+  //       randomRoomNames,
+  //       randomTeamNames,
+  //     };
+  //   },
+  //   /*     filter(ctx, action, meta) {
+  //     return (roomCtx, roomAction, roomMeta) => ctx.userId !== roomCtx.userId;
+  //   }, */
+  // });
 
   server.type('room/start_game', {
     async access(ctx, action, meta) {
