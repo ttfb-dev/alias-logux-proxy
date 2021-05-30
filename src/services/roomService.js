@@ -210,6 +210,7 @@ class RoomService {
     const purchasedDatasets = [];
     await memberIds.forEach(async memberId => {
       const userPurchasedDatasets = await profileService.getPurchasedDatasetIds(memberId)
+      console.log('getRoomPurchasedDatasetIds userPurchasedDatasets', userPurchasedDatasets)
       purchasedDatasets.push(...userPurchasedDatasets);
     });
     console.log('getRoomPurchasedDatasetIds purchasedDatasets', purchasedDatasets)
