@@ -228,8 +228,6 @@ const room = (server) => {
         const isDatasetAvailableToActivate =
           await roomService.isDatasetAvailableToActivate(roomId, datasetId);
 
-        console.log(isItMyRoomId, amIRoomOwner, isDatasetAvailableToActivate);
-
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToActivate;
       } catch (e) {
         logger.critical(e.message, {
@@ -264,8 +262,6 @@ const room = (server) => {
 
         const isDatasetAvailableToDeactivate =
           await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
-
-        console.log(isItMyRoomId, amIRoomOwner, isDatasetAvailableToDeactivate);
 
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToDeactivate;
       } catch (e) {

@@ -224,10 +224,8 @@ class RoomService {
 
   async deactivateGameDataset(roomId, datasetId) {
     const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
-    console.log(activeGameDatasetIds)
-    const filteredActiveGameDatasetIds = activeGameDatasetIds.filter(dataset => dataset.datasetId !== datasetId);
+    const filteredActiveGameDatasetIds = activeGameDatasetIds.filter(id => id !== datasetId);
     await prs.setRoomParam(roomId, 'active_game_dataset_ids', filteredActiveGameDatasetIds);
-    console.log(filteredActiveGameDatasetIds)
     return filteredActiveGameDatasetIds;
   }
 
