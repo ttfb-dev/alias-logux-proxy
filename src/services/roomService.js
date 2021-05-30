@@ -214,6 +214,13 @@ class RoomService {
     return activeGameDatasetIds;
   }
 
+  async deactivateGameDataset(roomId, datasetId) {
+    const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
+    const filteredActiveGameDatasetIds = activeGameDatasetIds.filter(dataset => dataset.datasetId !== datasetId);
+    await prs.setRoomParam(roomId, 'active_game_dataset_ids', filteredActiveGameDatasetIds);
+    return filteredActiveGameDatasetIds;
+  }
+
   async getRoomPurchasedDatasetIds(roomId) {
     const memberIds = await prs.getRoomParam(roomId, 'member_ids', []);
     const purchasedDatasets = [];

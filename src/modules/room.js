@@ -247,8 +247,11 @@ const room = (server) => {
     resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
-    async process() {},
-  })
+    async process(ctx, action, meta) {
+      const { roomId, datasetId } = ctx.data;
+      await roomService.activateGameDataset(roomId, datasetId)
+    },
+  });
 
   server.type('room/deactivate_word_dataset', {
     async access(ctx, action, meta) {
@@ -269,8 +272,11 @@ const room = (server) => {
     resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
-    async process() {},
-  })
+    async process(ctx, action, meta) {
+      const { roomId, datasetId } = ctx.data;
+      await roomService.deactivateGameDataset(roomId, datasetId)
+    },
+  });
 
   /** client actions */
   //событие присоединения к комнате
