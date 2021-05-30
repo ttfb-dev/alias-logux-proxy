@@ -2,9 +2,11 @@ import { prs, logger } from '../libs/index.js';
 import { ErrorResponse } from '../contracts/index.js';
 import { TeamService } from './teamService.js';
 import { WordService } from './wordService.js';
+import { ProfileService } from './profileService.js';
 
 const teamService = new TeamService();
 const wordService = new WordService();
+const profileService = new ProfileService();
  
 class RoomService {
 
@@ -83,6 +85,8 @@ class RoomService {
 
     const teams = await teamService.getTwoTeams(roomId);
 
+    await this.refreshRoomDatasets(roomId, true);
+
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'ownerId', userId);
     await prs.setRoomParam(roomId, 'memberIds', [userId]);
@@ -91,7 +95,6 @@ class RoomService {
       name: roomName,
       lang: 'ru',
     });
-    // await prs.setRoomParam(roomId, 'wordsets', []);
     await prs.setUserParam(userId, 'room_in', roomId);
 
     return roomId;
@@ -111,8 +114,8 @@ class RoomService {
     return settings;
   }
 
-  async getRoomDetail(roomId, userId) {
-    const room = {
+  async getRoom(roomId) {
+    return {
       roomId:   roomId,
       status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
       ownerId:  await prs.getRoomParam(roomId, 'ownerId', null),
@@ -120,11 +123,13 @@ class RoomService {
       teams:    await prs.getRoomParam(roomId, 'teams', []),
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     };
+  }
+
+  async getRoomDetail(roomId, userId) {
+    const room = await this.getRoom(roomId);
 
     room.myTeamId = teamService.findMyTeam(room.teams, userId);
-    room.gameWordDatasets = {
-      fullList: await wordService.getLangGameDatasets(room.settings.lang)
-    }
+    room.gameWordDatasets = await this.getRoomGameDatasets(roomId);
 
     return room;
   }
@@ -186,6 +191,47 @@ class RoomService {
     await prs.setRoomParam(roomId, 'teams', teams);
 
     return teams;
+  }
+
+  async getRoomActiveGameDatasetIds(roomId) {
+    return await prs.getRoomParam(roomId, 'active_game_dataset_ids', []);
+  }
+
+  async activateGameDataset(roomId, datasetId) {
+    const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
+    activeGameDatasetIds.push(datasetId);
+    await prs.setRoomParam(roomId, 'active_game_dataset_ids', activeGameDatasetIds);
+    return activeGameDatasetIds;
+  }
+
+  async getRoomPurchasedDatasetIds(roomId) {
+    const memberIds = await prs.getRoomParam(roomId, 'member_ids');
+    const purchasedDatasets = [];
+    memberIds.forEach(memberId => {
+      purchasedDatasets.push(...await profileService.getPurchasedDatasetIds(memberId));
+    })
+  }
+
+  async refreshRoomDatasets(roomId, onRoomCreate = false) {
+    const room = await this.getRoom(roomId);
+    
+    if (onRoomCreate) {
+      const activeDatasetIds = await profileService.getActiveDatasetIds(room.ownerId);
+      await prs.setRoomParam(roomId, 'active_game_dataset_ids', activeDatasetIds);
+    }
+
+    const purchasedDatasetIds = await this.getRoomPurchasedDatasetIds(roomId);
+
+    await prs.setRoomParam(roomId, 'purchased_game_dataset_ids', purchasedDatasetIds);
+  }
+
+  async getRoomGameDatasets(roomId) {
+    const room = await this.getRoom(roomId);
+    const datasets = await wordService.getLangGameDatasets(room.settings.lang);
+    const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
+    const purchasedDatasetIds = await this.getRoomPurchasedDatasetIds(roomId);
+
+    return profileService.mapDatasetsWithStatus(activeGameDatasetIds, purchasedDatasetIds, datasets);
   }
 }
 
