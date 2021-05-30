@@ -193,7 +193,6 @@ const room = (server) => {
 
       ctx.sendBack({
         type: 'room/leave_success',
-        roomId: null,
       });
     },
   });
@@ -236,11 +235,16 @@ const room = (server) => {
 
         const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
 
-        const isDatasetAvailableToActivate = await roomService.isDatasetAvailableToActivate(roomId, datasetId);
+        const isDatasetAvailableToActivate =
+          await roomService.isDatasetAvailableToActivate(roomId, datasetId);
 
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToActivate;
       } catch (e) {
-        logger.critical(e.message, {type: 'room/activate_word_dataset', action, userId: ctx.userId});
+        logger.critical(e.message, {
+          type: 'room/activate_word_dataset',
+          action,
+          userId: ctx.userId,
+        });
       }
       return false;
     },
@@ -249,7 +253,7 @@ const room = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, datasetId } = ctx.data;
-      await roomService.activateGameDataset(roomId, datasetId)
+      await roomService.activateGameDataset(roomId, datasetId);
     },
   });
 
@@ -265,7 +269,8 @@ const room = (server) => {
 
       const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
 
-      const isDatasetAvailableTodeactivate = await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
+      const isDatasetAvailableTodeactivate =
+        await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
 
       return isItMyRoomId && amIRoomOwner && isDatasetAvailableTodeactivate;
     },
@@ -274,7 +279,7 @@ const room = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, datasetId } = ctx.data;
-      await roomService.deactivateGameDataset(roomId, datasetId)
+      await roomService.deactivateGameDataset(roomId, datasetId);
     },
   });
 
