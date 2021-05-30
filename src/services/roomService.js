@@ -208,7 +208,8 @@ class RoomService {
     const memberIds = await prs.getRoomParam(roomId, 'member_ids');
     const purchasedDatasets = [];
     memberIds.forEach(memberId => {
-      purchasedDatasets.push(...await profileService.getPurchasedDatasetIds(memberId));
+      const userPurchasedDatasets = await profileService.getPurchasedDatasetIds(memberId)
+      purchasedDatasets.push(...userPurchasedDatasets);
     })
   }
 
