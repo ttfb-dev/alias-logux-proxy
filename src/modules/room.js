@@ -21,6 +21,8 @@ const room = (server) => {
       const { roomId, userId } = ctx.data;
       const room = await roomService.getRoomDetail(roomId, userId);
 
+      console.log(room);
+
       const randomRoomNames = await wordService.getRandomRoomNames(
         room.settings.lang,
       );
