@@ -1,3 +1,4 @@
+import { ResponseError } from '@logux/server';
 import { logger } from '../libs/index.js';
 import { RoomService, GameService } from '../services/index.js';
 
@@ -18,7 +19,8 @@ const game = (server) => {
 
         return isRoomOwner && canStartGame;
       } catch (error) {
-        server.undo(action, meta, 'error', {extra: {...error}});
+        // server.undo(action, meta, 'error', {extra: {...error}});
+        throw new ResponseError(200, '', {}, 'no access');
       }
     },
     async process(ctx, action, meta) {
