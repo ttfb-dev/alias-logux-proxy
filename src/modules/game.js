@@ -19,7 +19,6 @@ const game = (server) => {
         return isRoomOwner && canStartGame;
       } catch (error) {
         server.undo(action, meta, 'error', {extra: {...error}});
-        return false;
       }
     },
     async process(ctx, action, meta) {
