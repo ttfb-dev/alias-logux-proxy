@@ -78,8 +78,8 @@ class ProfileService {
       dataset.status = isActive 
         ? 'active' 
         : isAvailable 
-          ? 'available'
-          : 'available_to_buy';
+          ? 'inactive'
+          : 'available';
     })
 
     return datasets;

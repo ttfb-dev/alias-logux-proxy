@@ -259,7 +259,7 @@ class RoomService {
     for (let i = 0; i < datasets.length; i++) {
       const dataset = datasets[i]
       if (dataset.datasetId === datasetId) {
-        return ['active', 'available'].includes(dataset.status)
+        return ['active', 'inactive'].includes(dataset.status)
       }
     }
     return false;
@@ -270,7 +270,7 @@ class RoomService {
     for (let i = 0; i < datasets.length; i++) {
       const dataset = datasets[i]
       if (dataset.datasetId === datasetId) {
-        return dataset.status === 'available';
+        return dataset.status === 'inactive';
       }
     }
     return false;
