@@ -35,10 +35,10 @@ class RoomService {
       );
     }
 
-    const roomMemberIds = await prs.getRoomParam(roomId, 'memberIds', []);
+    const roomMemberIds = await prs.getRoomParam(roomId, 'member_ids', []);
     if (!roomMemberIds.includes(userId)) {
       roomMemberIds.push(userId);
-      await prs.setRoomParam(roomId, 'memberIds', roomMemberIds);
+      await prs.setRoomParam(roomId, 'member_ids', roomMemberIds);
     }
     await prs.setUserParam(userId, 'room_in', roomId);
 
@@ -59,11 +59,11 @@ class RoomService {
       );
     }
 
-    const roomMemberIds = await prs.getRoomParam(roomId, 'memberIds', []);
+    const roomMemberIds = await prs.getRoomParam(roomId, 'member_ids', []);
     if (roomMemberIds.includes(userId)) {
       roomMemberIds.splice(roomMemberIds.indexOf(userId), 1);
     }
-    await prs.setRoomParam(roomId, 'memberIds', roomMemberIds);
+    await prs.setRoomParam(roomId, 'member_ids', roomMemberIds);
     await prs.delUserParam(userId, 'room_in');
 
     return true;
@@ -89,7 +89,7 @@ class RoomService {
 
     await prs.setRoomParam(roomId, 'status', 'active');
     await prs.setRoomParam(roomId, 'ownerId', userId);
-    await prs.setRoomParam(roomId, 'memberIds', [userId]);
+    await prs.setRoomParam(roomId, 'member_ids', [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
     await prs.setRoomParam(roomId, 'settings', {
       name: roomName,
@@ -119,7 +119,7 @@ class RoomService {
       roomId:   roomId,
       status:   await prs.getRoomParam(roomId, 'status', 'not_found'),
       ownerId:  await prs.getRoomParam(roomId, 'ownerId', null),
-      memberIds:  await prs.getRoomParam(roomId, 'memberIds', []),
+      memberIds:  await prs.getRoomParam(roomId, 'member_ids', []),
       teams:    await prs.getRoomParam(roomId, 'teams', []),
       settings: await prs.getRoomParam(roomId, 'settings', {}),
     };
@@ -205,7 +205,7 @@ class RoomService {
   }
 
   async getRoomPurchasedDatasetIds(roomId) {
-    const memberIds = await prs.getRoomParam(roomId, 'member_ids');
+    const memberIds = await prs.getRoomParam(roomId, 'member_ids', []);
     const purchasedDatasets = [];
     await memberIds.forEach(async memberId => {
       const userPurchasedDatasets = await profileService.getPurchasedDatasetIds(memberId)
