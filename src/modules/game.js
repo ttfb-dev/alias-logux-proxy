@@ -1,4 +1,3 @@
-import ErrorResponse from '../contracts/errorResponse.js';
 import { logger } from '../libs/index.js';
 import { RoomService, GameService } from '../services/index.js';
 

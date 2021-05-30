@@ -258,8 +258,8 @@ class RoomService {
   }
 
   async getRoomGameDatasets(roomId) {
-    const room = await this.getRoom(roomId);
-    const datasets = await wordService.getLangGameDatasets(room.settings.lang);
+    const lang = await this.getRoomLang(roomId);
+    const datasets = await wordService.getLangGameDatasets(lang);
     const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
     const purchasedDatasetIds = await this.getRoomPurchasedDatasetIds(roomId);
 
@@ -286,8 +286,6 @@ class RoomService {
         return dataset.status === 'inactive';
       }
     }
-
-    console.log('dataset not found:', datasetId, datasets)
     return false;
   }
 
@@ -300,6 +298,11 @@ class RoomService {
       }
     }
     return false;
+  }
+
+  async getRoomLang(roomId) {
+    const roomSettings = await prs.getRoomParam(roomId, 'settings', {lang: 'ru'});
+    return roomSettings.lang;
   }
 }
 
