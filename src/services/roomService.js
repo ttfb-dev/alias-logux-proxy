@@ -211,6 +211,7 @@ class RoomService {
       const userPurchasedDatasets = await profileService.getPurchasedDatasetIds(memberId)
       purchasedDatasets.push(...userPurchasedDatasets);
     })
+    return purchasedDatasets;
   }
 
   async refreshRoomDatasets(roomId, onRoomCreate = false) {
