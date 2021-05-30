@@ -134,12 +134,13 @@ class RoomService {
 
   async getRoom(roomId) {
     return {
-      roomId:     roomId,
-      status:     await prs.getRoomParam(roomId, 'status', 'not_found'),
-      ownerId:    await prs.getRoomParam(roomId, 'ownerId', null),
-      memberIds:  await prs.getRoomParam(roomId, 'member_ids', []),
-      teams:      await prs.getRoomParam(roomId, 'teams', []),
-      settings:   await prs.getRoomParam(roomId, 'settings', {}),
+      roomId:           roomId,
+      status:           await prs.getRoomParam(roomId, 'status', 'not_found'),
+      ownerId:          await prs.getRoomParam(roomId, 'ownerId', null),
+      memberIds:        await prs.getRoomParam(roomId, 'member_ids', []),
+      teams:            await prs.getRoomParam(roomId, 'teams', []),
+      settings:         await prs.getRoomParam(roomId, 'settings', {}),
+      gameWordDatasets: await this.getRoomGameDatasets(roomId),
     };
   }
 
@@ -147,9 +148,12 @@ class RoomService {
     const room = await this.getRoom(roomId);
 
     room.myTeamId = teamService.findMyTeam(room.teams, userId);
-    room.gameWordDatasets = await this.getRoomGameDatasets(roomId);
 
     return room;
+  }
+
+  async getRoomStatus(roomId) {
+    return await prs.getRoomParam(roomId, 'status', 'not_found');
   }
 
   async createTeam(roomId, teamName) {
