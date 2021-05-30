@@ -93,6 +93,7 @@ const room = (server) => {
         roomId,
         userId,
         memberIds: room.memberIds,
+        gameWordDatasets: room.gameWordDatasets,
       });
 
       ctx.sendBack({
@@ -202,6 +203,7 @@ const room = (server) => {
         roomId,
         userId,
         memberIds: room.memberIds,
+        gameWordDatasets: room.gameWordDatasets,
       });
 
       ctx.sendBack({
