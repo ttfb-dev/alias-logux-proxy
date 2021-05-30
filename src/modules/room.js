@@ -223,7 +223,7 @@ const room = (server) => {
     },
   });
 
-  server.type('room/activate_word_dataset', {
+  server.type('room/activate_game_dataset', {
     async access(ctx, action, meta) {
       try {
         const roomId = parseInt(action.roomId);
@@ -240,7 +240,7 @@ const room = (server) => {
 
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToActivate;
       } catch (e) {
-        logger.critical(e.message, {type: 'room/activate_word_dataset', action, userId: ctx.userId});
+        logger.critical(e.message, {type: 'room/activate_game_dataset', action, userId: ctx.userId});
       }
       return false;
     },
@@ -249,25 +249,30 @@ const room = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, datasetId } = ctx.data;
-      await roomService.activateGameDataset(roomId, datasetId)
+      await roomService.activateGameDataset(roomId, datasetId);
     },
   });
 
-  server.type('room/deactivate_word_dataset', {
+  server.type('room/deactivate_game_dataset', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
-      const userId = parseInt(ctx.userId);
-      const datasetId = parseInt(action.datasetId);
+      try {
+        const roomId = parseInt(action.roomId);
+        const userId = parseInt(ctx.userId);
+        const datasetId = parseInt(action.datasetId);
 
-      ctx.data = { roomId, userId, datasetId };
+        ctx.data = { roomId, userId, datasetId };
 
-      const isItMyRoomId = await roomService.isItMyRoomId(userId, roomId);
+        const isItMyRoomId = await roomService.isItMyRoomId(userId, roomId);
 
-      const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
+        const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
 
-      const isDatasetAvailableTodeactivate = await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
+        const isDatasetAvailableTodeactivate = await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
 
-      return isItMyRoomId && amIRoomOwner && isDatasetAvailableTodeactivate;
+        return isItMyRoomId && amIRoomOwner && isDatasetAvailableTodeactivate;
+      } catch (e) {
+        logger.critical(e.message, {type: 'room/activate_game_dataset', action, userId: ctx.userId});
+      }
+      return false;
     },
     resend(ctx, action, meta) {
       return `room/${action.roomId}`;
