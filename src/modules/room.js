@@ -263,6 +263,8 @@ const room = (server) => {
         const isDatasetAvailableTodeactivate =
           await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
 
+        console.log(isItMyRoomId, amIRoomOwner, isDatasetAvailableTodeactivate);
+
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableTodeactivate;
       } catch (e) {
         logger.critical(e.message, {type: 'room/activate_game_dataset', action, userId: ctx.userId});
