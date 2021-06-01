@@ -1,7 +1,4 @@
-import { ProfileService, RoomService, WordService } from '../services/index.js';
-
-const roomService = new RoomService();
-const profileService = new ProfileService();
+import { profileService, roomService } from '../services/index.js';
 
 const profile = (server) => {
   

@@ -1,8 +1,5 @@
 import { logger } from '../libs/index.js';
-import { RoomService, GameService } from '../services/index.js';
-
-const roomService = new RoomService();
-const gameService = new GameService();
+import { roomService, gameService } from '../services/index.js';
 
 const game = (server) => {
 

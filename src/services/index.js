@@ -1,7 +1,7 @@
-import { RoomService } from './roomService.js';
-import { TeamService } from './teamService.js';
-import { WordService } from './wordService.js';
-import { GameService } from './gameService.js';
-import { ProfileService } from './profileService.js';
+import roomService from './roomService.js';
+import teamService from './teamService.js';
+import wordService from './wordService.js';
+import gameService from './gameService.js';
+import profileService from './profileService.js';
 
-export { RoomService, TeamService, WordService, ProfileService, GameService };
+export { roomService, teamService, wordService, profileService, gameService };

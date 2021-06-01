@@ -1,11 +1,7 @@
 import { prs, logger } from '../libs/index.js';
 import { ErrorResponse } from '../contracts/index.js';
-import { TeamService, WordService, GameService, ProfileService } from './index.js';
 
-const teamService = new TeamService();
-const wordService = new WordService();
-const gameService = new GameService();
-const profileService = new ProfileService();
+import { gameService, profileService, teamService, wordService } from './index.js';
  
 class RoomService {
 
@@ -316,4 +312,4 @@ class RoomService {
   }
 }
 
-export { RoomService };
+export default new RoomService;

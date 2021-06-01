@@ -1,8 +1,6 @@
-import { ErrorResponse } from '../contracts/index.js';
 import { prs, logger } from '../libs/index.js';
 
-import { RoomService } from './roomService.js';
-const roomService = new RoomService();
+import { roomService } from './index.js';
 
 class GameService {
   async canStartGame(roomId) {
@@ -121,4 +119,4 @@ class GameService {
   }
 }
 
-export { GameService };
+export default new GameService();

@@ -1,6 +1,5 @@
 import { prs, logger } from '../libs/index.js';
-import { WordService } from './wordService.js';
-const wordService = new WordService();
+import { wordService } from './index.js';
 
 class TeamService {
   // генерирует пустую команду со случайным неповторяющимся названием
@@ -86,4 +85,4 @@ class TeamService {
   }
 }
 
-export { TeamService };
+export default new TeamService;

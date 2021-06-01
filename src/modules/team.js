@@ -1,9 +1,5 @@
 import ErrorResponse from '../contracts/errorResponse.js';
-import { logger } from '../libs/index.js';
-import { TeamService, RoomService } from '../services/index.js';
-
-const teamService = new TeamService();
-const roomService = new RoomService();
+import { teamService, roomService } from '../services/index.js';
 
 const team = (server) => {
   

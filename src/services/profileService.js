@@ -1,7 +1,5 @@
 import { prs, logger } from '../libs/index.js';
-import { WordService } from './wordService.js';
-
-const wordService = new WordService();
+import { wordService } from './index.js';
 
 class ProfileService {
 
@@ -86,4 +84,4 @@ class ProfileService {
   }
 }
 
-export { ProfileService };
+export default new ProfileService;

@@ -80,4 +80,4 @@ class WordService {
   }
 }
 
-export { WordService };
+export default new WordService;

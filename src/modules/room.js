@@ -1,9 +1,6 @@
 import ErrorResponse from '../contracts/errorResponse.js';
 import { logger } from '../libs/index.js';
-import { RoomService, WordService } from '../services/index.js';
-
-const roomService = new RoomService();
-const wordService = new WordService();
+import { roomService, wordService } from '../services/index.js';
 
 const room = (server) => {
   server.channel('room/:roomId', {
