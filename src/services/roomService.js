@@ -2,11 +2,17 @@ import { prs, logger } from '../libs/index.js';
 import { ErrorResponse } from '../contracts/index.js';
 
 import { gameService, profileService, teamService, wordService } from './index.js';
+
+const storageKeys = {
+  roomId: 'room_in',
+  ownerId: 'owner_id',
+  memberIds: 'member_ids',
+};
  
 class RoomService {
 
   async whereIAm(userId) {
-    return await prs.getUserParam(userId, 'room_in', null);
+    return await prs.getUserParam(userId, storageKeys.roomId, null);
   }
 
   async isItMyRoomId(userId, roomId) {
@@ -15,7 +21,7 @@ class RoomService {
   }
 
   async amIRoomOwner(userId, roomId) {
-    const ownerId = await prs.getRoomParam(roomId, 'ownerId', null);
+    const ownerId = await prs.getRoomParam(roomId, storageKeys.ownerId, null);
     return userId === ownerId
   }
 
@@ -40,12 +46,12 @@ class RoomService {
       );
     }
 
-    const roomMemberIds = await prs.getRoomParam(roomId, 'member_ids', []);
+    const roomMemberIds = await prs.getRoomParam(roomId, storageKeys.memberIds, []);
     if (!roomMemberIds.includes(userId)) {
       roomMemberIds.push(userId);
-      await prs.setRoomParam(roomId, 'member_ids', roomMemberIds);
+      await prs.setRoomParam(roomId, storageKeys.memberIds, roomMemberIds);
     }
-    await prs.setUserParam(userId, 'room_in', roomId);
+    await prs.setUserParam(userId, storageKeys.roomId, roomId);
 
     return true;
   }
@@ -64,12 +70,12 @@ class RoomService {
       );
     }
 
-    const roomMemberIds = await prs.getRoomParam(roomId, 'member_ids', []);
+    const roomMemberIds = await prs.getRoomParam(roomId, storageKeys.memberIds, []);
     if (roomMemberIds.includes(userId)) {
       roomMemberIds.splice(roomMemberIds.indexOf(userId), 1);
     }
-    await prs.setRoomParam(roomId, 'member_ids', roomMemberIds);
-    await prs.delUserParam(userId, 'room_in');
+    await prs.setRoomParam(roomId, storageKeys.memberIds, roomMemberIds);
+    await prs.delUserParam(userId, storageKeys.roomId);
 
     return true;
   }
@@ -91,14 +97,14 @@ class RoomService {
     const teams = await teamService.getTwoTeams(roomId);
 
     await prs.setRoomParam(roomId, 'status', 'active');
-    await prs.setRoomParam(roomId, 'ownerId', userId);
-    await prs.setRoomParam(roomId, 'member_ids', [userId]);
+    await prs.setRoomParam(roomId, storageKeys.ownerId, userId);
+    await prs.setRoomParam(roomId, storageKeys.memberIds, [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
     await prs.setRoomParam(roomId, 'settings', {
       name: roomName,
       lang: 'ru',
     });
-    await prs.setUserParam(userId, 'room_in', roomId);
+    await prs.setUserParam(userId, storageKeys.roomId, roomId);
 
     await this.refreshRoomDatasets(roomId, true);
 
@@ -131,8 +137,8 @@ class RoomService {
     return {
       roomId:           roomId,
       status:           await prs.getRoomParam(roomId, 'status', 'not_found'),
-      ownerId:          await prs.getRoomParam(roomId, 'ownerId', null),
-      memberIds:        await prs.getRoomParam(roomId, 'member_ids', []),
+      ownerId:          await prs.getRoomParam(roomId, storageKeys.ownerId, null),
+      memberIds:        await prs.getRoomParam(roomId, storageKeys.memberIds, []),
       teams:            await prs.getRoomParam(roomId, 'teams', []),
       settings:         await prs.getRoomParam(roomId, 'settings', {}),
       gameWordDatasets: await this.getRoomGameDatasets(roomId),
@@ -240,7 +246,7 @@ class RoomService {
   }
 
   async getRoomPurchasedDatasetIds(roomId) {
-    const memberIds = await prs.getRoomParam(roomId, 'member_ids', []);
+    const memberIds = await prs.getRoomParam(roomId, storageKeys.memberIds, []);
     const purchasedDatasets = [];
     for(let i = 0; i < memberIds.length; i++) {
       const memberId = memberIds[i];

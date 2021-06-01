@@ -2,6 +2,15 @@ import { prs, logger } from '../libs/index.js';
 
 import { roomService } from './index.js';
 
+const SCREEN__BETWEEN_MOVES = 'between_moves'
+
+const storageKeys = {
+  currentGameId: 'current_game_id',
+  currentMoveTeamId: 'current_move_team_id',
+  round: 'round',
+  screen: 'screen',
+};
+
 class GameService {
   async canStartGame(roomId) {
     const room = await roomService.getRoom(roomId);
@@ -39,7 +48,7 @@ class GameService {
   }
 
   async getRoomGameId(roomId) {
-    return await prs.getRoomParam(roomId, 'current_game_id', null);
+    return await prs.getRoomParam(roomId, storageKeys.currentGameId, null);
   }
 
   async isRoomInGame(roomId) {
@@ -60,9 +69,9 @@ class GameService {
   async startGame(roomId) {
     await roomService.setRoomStatus(roomId, 'game');
     const gameId = await prs.getNextInt(`room_${room_id}_game_id`);
-    await prs.setRoomParam(roomId, 'current_game_id', gameId);
+    await prs.setRoomParam(roomId, storageKeys.currentGameId, gameId);
 
-    await this.setGameScreen(roomId, gameId, 'between_movies');
+    await this.setGameScreen(roomId, gameId, SCREEN__BETWEEN_MOVES);
 
     const currentTeamId = await this.getNextTeamId(roomId, gameId);
     await this.setNextTeamId(roomId, gameId, currentTeamId);
@@ -71,25 +80,25 @@ class GameService {
   }
 
   async setGameScreen(roomId, gameId, screen) {
-    await prs.setRoomGameParam(roomId, gameId, 'screen', screen);
+    await prs.setRoomGameParam(roomId, gameId, storageKeys.screen, screen);
   }
 
   async getGameScreen(roomId, gameId) {
-    return await prs.getRoomGameParam(roomId, gameId, 'screen');
+    return await prs.getRoomGameParam(roomId, gameId, storageKeys.screen);
   }
 
   async setNewRound(roomId, gameId) {
     const round = await prs.getNextInt(`room_${roomId}_game_${gameId}_round`);
-    await prs.setRoomGameParam(roomId, gameId, 'round', round);
+    await prs.setRoomGameParam(roomId, gameId, storageKeys.round, round);
     return round;
   }
 
   async getRound(roomId, gameId) {
-    return await prs.getRoomGameParam(roomId, gameId, 'round');
+    return await prs.getRoomGameParam(roomId, gameId, storageKeys.round);
   }
 
   async getNextTeamId(roomId, gameId) {
-    const previousTeamId = await prs.getRoomGameParam(roomId, gameId, 'current_move_team_id', null);
+    const previousTeamId = await prs.getRoomGameParam(roomId, gameId, storageKeys.currentMoveTeamId, null);
 
     if (previousTeamId === null) {
       return  teams[0].id;
@@ -107,11 +116,11 @@ class GameService {
   }
 
   async setCurrentTeamId(roomId, gameId, teamId) {
-    await prs.setRoomGameParam(roomId, gameId, 'current_move_team_id', teamId);
+    await prs.setRoomGameParam(roomId, gameId, storageKeys.currentMoveTeamId, teamId);
   }
 
   async getCurrentTeamId(roomId, gameId, teamId) {
-    return await prs.getRoomGameParam(roomId, gameId, 'current_move_team_id', teamId);
+    return await prs.getRoomGameParam(roomId, gameId, storageKeys.currentMoveTeamId, teamId);
   }
 
   async getTeamRoles(roomId, gameId, teamId) {
