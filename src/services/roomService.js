@@ -1,11 +1,10 @@
 import { prs, logger } from '../libs/index.js';
 import { ErrorResponse } from '../contracts/index.js';
-import { TeamService } from './teamService.js';
-import { WordService } from './wordService.js';
-import { ProfileService } from './profileService.js';
+import { TeamService, WordService, GameService, ProfileService } from './index.js';
 
 const teamService = new TeamService();
 const wordService = new WordService();
+const gameService = new GameService();
 const profileService = new ProfileService();
  
 class RoomService {
@@ -141,6 +140,7 @@ class RoomService {
       teams:            await prs.getRoomParam(roomId, 'teams', []),
       settings:         await prs.getRoomParam(roomId, 'settings', {}),
       gameWordDatasets: await this.getRoomGameDatasets(roomId),
+      currentGameId:    await gameService.getRoomGameId(roomId),
     };
   }
 
@@ -184,8 +184,18 @@ class RoomService {
   }
 
   async getTeamsCount(roomId) {
-    const teams = await prs.getRoomParam(roomId, 'teams', []);
+    const teams = await this.getTeams(roomId);
     return teams.length;
+  }
+
+  async getTeams(roomId) {
+    return await prs.getRoomParam(roomId, 'teams', []);
+  }
+
+  async getTeam(roomId, teamId) {
+    const teams = await this.getTeams(roomId);
+    const filteredTeams = teams.filter(team => team.teamId === teamId)
+    return filteredTeams.length ? filteredTeams[0] : null;
   }
 
   async deleteTeam(roomId, teamId) {

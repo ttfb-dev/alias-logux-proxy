@@ -265,7 +265,7 @@ const room = (server) => {
 
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToDeactivate;
       } catch (e) {
-        logger.critical(e.message, {type: 'room/activate_game_dataset', action, userId: ctx.userId});
+        logger.critical(e.message, {type: 'room/deactivate_game_dataset', action, userId: ctx.userId});
       }
       return false;
     },

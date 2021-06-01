@@ -17,7 +17,7 @@ class GameService {
       const team = teams[i];
 
       if (team.memberIds.length === 1) {
-        throw new ErrorResponse('not_enouth_teammates_in_team', `Недостаточно игроков в комнате ${team.name}`, {team});
+        throw false;
       }
 
       if (team.memberIds.length) {
@@ -27,14 +27,14 @@ class GameService {
 
     // Есть хотя бы 2 команды с пользователями
     if (notEmptyTeamsCounter < 2) {
-      throw new ErrorResponse('not_enouth_teams_with_members', 'Недостаточно команд с игроками');
+      throw false;
     }
 
     // Есть хотя бы один включенный набор слов
     const activeDatasetIds = await roomService.getRoomActiveGameDatasetIds(roomId);
 
     if (activeDatasetIds.length === 0) {
-      throw new ErrorResponse('not_enouth_word_datasets', 'Не выбрано ни одного набора слов');
+      throw false;
     }
 
     return true;
@@ -49,12 +49,75 @@ class GameService {
     return roomStatus === 'game';
   }
 
+  async getGame(roomId, gameId) {
+    return {
+      roomId: roomId,
+      gameId: gameId,
+      screen: await this.getGameScreen(roomId, gameId),
+      round: await this.getRound(roomId, gameId),
+      currentTeamId: await this.getCurrentTeamId(roomId, gameId),
+    };
+  }
+
   async startGame(roomId) {
     await roomService.setRoomStatus(roomId, 'game');
     const gameId = await prs.getNextInt(`room_${room_id}_game_id`);
     await prs.setRoomParam(roomId, 'current_game_id', gameId);
 
-    await logger.info('game started', {roomId, gameId});
+    await this.setGameScreen(roomId, gameId, 'between_movies');
+
+    const currentTeamId = await this.getNextTeamId(roomId, gameId);
+    await this.setNextTeamId(roomId, gameId, currentTeamId);
+
+    await this.setNewRound(roomId, gameId);
+  }
+
+  async setGameScreen(roomId, gameId, screen) {
+    await prs.setRoomGameParam(roomId, gameId, 'screen', screen);
+  }
+
+  async getGameScreen(roomId, gameId) {
+    return await prs.getRoomGameParam(roomId, gameId, 'screen');
+  }
+
+  async setNewRound(roomId, gameId) {
+    const round = await prs.getNextInt(`room_${roomId}_game_${gameId}_round`);
+    await prs.setRoomGameParam(roomId, gameId, 'round', round);
+    return round;
+  }
+
+  async getRound(roomId, gameId) {
+    return await prs.getRoomGameParam(roomId, gameId, 'round');
+  }
+
+  async getNextTeamId(roomId, gameId) {
+    const previousTeamId = await prs.getRoomGameParam(roomId, gameId, 'current_move_team_id', null);
+
+    if (previousTeamId === null) {
+      return  teams[0].id;
+    }
+
+    const teams = await roomService.getTeams(roomId);
+
+    const currIndex = teams.findIndex(element => { return element.id === previousTeamId });
+
+    if (currIndex === teams.length) {
+      return teams[0].id;
+    }
+
+    return teams[currIndex + 1];
+  }
+
+  async setCurrentTeamId(roomId, gameId, teamId) {
+    await prs.setRoomGameParam(roomId, gameId, 'current_move_team_id', teamId);
+  }
+
+  async getCurrentTeamId(roomId, gameId, teamId) {
+    return await prs.getRoomGameParam(roomId, gameId, 'current_move_team_id', teamId);
+  }
+
+  async getTeamRoles(roomId, gameId, teamId) {
+    const team = await roomService.getTeam(roomId, teamId);
   }
 }
 
