@@ -100,13 +100,19 @@ class GameService {
   async getNextTeamId(roomId, gameId) {
     const previousTeamId = await prs.getRoomGameParam(roomId, gameId, storageKeys.currentMoveTeamId, null);
 
+    console.log(`previousTeamId: ${previousTeamId}`)
+
     const teams = await roomService.getTeams(roomId);
+
+    console.log(`teams:`, teams)
 
     if (previousTeamId === null) {
       return  teams[0].teamId;
     }
 
     const currIndex = teams.findIndex(element => { return element.teamId === previousTeamId });
+
+    console.log(`currIndex: ${currIndex}`)
 
     if (currIndex === teams.length) {
       return teams[0].teamId;
