@@ -68,7 +68,7 @@ class GameService {
 
   async startGame(roomId) {
     await roomService.setRoomStatus(roomId, 'game');
-    const gameId = await prs.getNextInt(`room_${room_id}_game_id`);
+    const gameId = await prs.getNextInt(`room_${roomId}_game_id`);
     await prs.setRoomParam(roomId, storageKeys.currentGameId, gameId);
 
     await this.setGameScreen(roomId, gameId, SCREEN__BETWEEN_MOVES);
