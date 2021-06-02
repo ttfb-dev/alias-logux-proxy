@@ -33,6 +33,8 @@ const game = (server) => {
       const userId = parseInt(ctx.userId);
       const roomId = parseInt(action.roomId);
 
+      ctx.data = { userId, roomId };
+
       try {
         const isRoomOwner = await roomService.amIRoomOwner(userId, roomId);
 
@@ -44,7 +46,7 @@ const game = (server) => {
       }
     },
     async process(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const { userId, roomId } = ctx.data;
       
       try {
         const gameId = await gameService.startGame(roomId);
