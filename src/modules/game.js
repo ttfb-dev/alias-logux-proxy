@@ -19,7 +19,7 @@ const game = (server) => {
     async load(ctx, action, meta) {
       const { roomId, gameId, userId } = ctx.data;
 
-      const game = gameService.getGame(roomId, gameId);
+      const game = await gameService.getGame(roomId, gameId);
       
       return {
         type: 'room/game_state',
