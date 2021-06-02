@@ -74,6 +74,7 @@ class GameService {
     await this.setGameScreen(roomId, gameId, SCREEN__BETWEEN_MOVES);
 
     const currentTeamId = await this.getNextTeamId(roomId, gameId);
+    console.log(currentTeamId);
     await this.setNextTeamId(roomId, gameId, currentTeamId);
 
     await this.setNewRound(roomId, gameId);
@@ -100,11 +101,11 @@ class GameService {
   async getNextTeamId(roomId, gameId) {
     const previousTeamId = await prs.getRoomGameParam(roomId, gameId, storageKeys.currentMoveTeamId, null);
 
+    const teams = await roomService.getTeams(roomId);
+
     if (previousTeamId === null) {
       return  teams[0].id;
     }
-
-    const teams = await roomService.getTeams(roomId);
 
     const currIndex = teams.findIndex(element => { return element.id === previousTeamId });
 
