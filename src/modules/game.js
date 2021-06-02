@@ -22,7 +22,7 @@ const game = (server) => {
       const game = await gameService.getGame(roomId, gameId);
       
       return {
-        type: 'room/game_state',
+        type: 'game/state',
         game,
       };
     },
