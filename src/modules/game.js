@@ -3,27 +3,27 @@ import { roomService, gameService } from '../services/index.js';
 
 const game = (server) => {
 
-  server.channel('room/:roomId/game/:gameId', {
+  server.channel('room/:roomId/game', {
     async access(ctx, action, meta) {
       const roomId = parseInt(ctx.params.roomId);
-      const gameId = parseInt(ctx.params.gameId);
       const userId = parseInt(ctx.userId);
-
-      ctx.data = { roomId, gameId, userId };
 
       const currentRoomId = await roomService.whereIAm(userId);
 
-      const currentGameId = await gameService.getRoomGameId(roomId);
+      const gameId = await gameService.getRoomGameId(roomId);
 
-      return currentRoomId === roomId && currentGameId === gameId;
+      ctx.data = { roomId, gameId, userId };
+
+      return currentRoomId === roomId && gameId;
     },
     async load(ctx, action, meta) {
       const { roomId, gameId, userId } = ctx.data;
-      
-      
 
+      const game = gameService.getGame(roomId, gameId);
+      
       return {
         type: 'room/game_state',
+        game,
       };
     },
   });
