@@ -2,16 +2,23 @@ import { prs, logger } from '../libs/index.js';
 
 import { roomService } from './index.js';
 
-const SCREEN__BETWEEN_MOVES = 'between_moves'
-
-const storageKeys = {
-  currentGameId: 'current_game_id',
-  currentMoveTeamId: 'current_move_team_id',
-  round: 'round',
-  screen: 'screen',
-};
-
 class GameService {
+
+  constructor() {
+    this.storageKeys = {
+      currentGameId: 'current_game_id',
+      currentMoveTeamId: 'current_move_team_id',
+      round: 'round',
+      step: 'step',
+      status: 'status',
+      statuses: {
+        lobby: 'lobby',
+        step: 'step',
+        step_review: 'step_review',
+      },
+    };
+  }
+
   async canStartGame(roomId) {
     const room = await roomService.getRoom(roomId);
 
@@ -48,57 +55,58 @@ class GameService {
   }
 
   async getRoomGameId(roomId) {
-    return await prs.getRoomParam(roomId, storageKeys.currentGameId, null);
+    return await prs.getRoomParam(roomId, this.storageKeys.currentGameId, null);
   }
 
   async isRoomInGame(roomId) {
     const roomStatus = await roomService.getRoomStatus(roomId);
-    return roomStatus === 'game';
+    return roomStatus === roomService.storageKeys.status.game;
   }
 
   async getGame(roomId, gameId) {
     return {
-      roomId: roomId,
-      gameId: gameId,
-      screen: await this.getGameScreen(roomId, gameId),
-      round: await this.getRound(roomId, gameId),
-      currentTeamId: await this.getCurrentTeamId(roomId, gameId),
+      status: await this.getGameStatus(roomId, gameId),
+      round:  await this.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1),
+      step:   await this.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1),
     };
   }
 
   async startGame(roomId) {
-    await roomService.setRoomStatus(roomId, 'game');
+    await roomService.setRoomInGame(roomId);
     const gameId = await prs.getNextInt(`room_${roomId}_game_id`);
-    await prs.setRoomParam(roomId, storageKeys.currentGameId, gameId);
+    await prs.setRoomParam(roomId, this.storageKeys.currentGameId, gameId);
 
-    await this.setGameScreen(roomId, gameId, SCREEN__BETWEEN_MOVES);
+    await this.setGameStatus(roomId, gameId, this.storageKeys.statuses.lobby);
 
-    const currentTeamId = await this.getNextTeamId(roomId, gameId);
-    await this.setCurrentTeamId(roomId, gameId, currentTeamId);
+    // const currentTeamId = await this.getNextTeamId(roomId, gameId);
+    // await this.setCurrentTeamId(roomId, gameId, currentTeamId);
 
-    await this.setNewRound(roomId, gameId);
+    // await this.setNewRound(roomId, gameId);
+
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.round, 1);
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.step, 1);
   }
 
-  async setGameScreen(roomId, gameId, screen) {
-    await prs.setRoomGameParam(roomId, gameId, storageKeys.screen, screen);
+  async setGameStatus(roomId, gameId, status) {
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.status, status);
   }
 
-  async getGameScreen(roomId, gameId) {
-    return await prs.getRoomGameParam(roomId, gameId, storageKeys.screen);
+  async getGameStatus(roomId, gameId) {
+    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.status);
   }
 
   async setNewRound(roomId, gameId) {
     const round = await prs.getNextInt(`room_${roomId}_game_${gameId}_round`);
-    await prs.setRoomGameParam(roomId, gameId, storageKeys.round, round);
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.round, round);
     return round;
   }
 
   async getRound(roomId, gameId) {
-    return await prs.getRoomGameParam(roomId, gameId, storageKeys.round);
+    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round);
   }
 
   async getNextTeamId(roomId, gameId) {
-    const previousTeamId = await prs.getRoomGameParam(roomId, gameId, storageKeys.currentMoveTeamId, null);
+    const previousTeamId = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.currentMoveTeamId, null);
 
     const teams = await roomService.getTeams(roomId);
 
@@ -116,11 +124,11 @@ class GameService {
   }
 
   async setCurrentTeamId(roomId, gameId, teamId) {
-    await prs.setRoomGameParam(roomId, gameId, storageKeys.currentMoveTeamId, teamId);
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.currentMoveTeamId, teamId);
   }
 
   async getCurrentTeamId(roomId, gameId, teamId) {
-    return await prs.getRoomGameParam(roomId, gameId, storageKeys.currentMoveTeamId, teamId);
+    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.currentMoveTeamId, teamId);
   }
 
   async getTeamRoles(roomId, gameId, teamId) {

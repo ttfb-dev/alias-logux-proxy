@@ -1,6 +1,6 @@
 import ErrorResponse from '../contracts/errorResponse.js';
 import { logger } from '../libs/index.js';
-import { roomService, wordService } from '../services/index.js';
+import { gameService, roomService, wordService } from '../services/index.js';
 
 const room = (server) => {
   server.channel('room/:roomId', {
@@ -32,9 +32,6 @@ const room = (server) => {
         randomTeamNames,
       };
     },
-    /*     filter(ctx, action, meta) {
-      return (roomCtx, roomAction, roomMeta) => ctx.userId !== roomCtx.userId;
-    }, */
   });
 
   server.type('room/join', {
@@ -272,6 +269,39 @@ const room = (server) => {
     async process(ctx, action, meta) {
       const { roomId, datasetId } = ctx.data;
       await roomService.deactivateGameDataset(roomId, datasetId);
+    },
+  });
+
+  server.type('room/start_game', {
+    async access(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      const roomId = parseInt(action.roomId);
+
+      ctx.data = { userId, roomId };
+
+      try {
+        const isRoomOwner = await roomService.amIRoomOwner(userId, roomId);
+
+        const canStartGame = await gameService.canStartGame(roomId);
+
+        return isRoomOwner && canStartGame;
+      } catch (e) {
+        await logger.critical(e.message, {type: 'room/start_game', action, userId})
+      }
+      return false;
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`
+    },
+    async process(ctx, action, meta) {
+      const { userId, roomId } = ctx.data;
+      try {
+        const gameId = await gameService.startGame(roomId);
+
+        await logger.info('Игра началась', {type: 'room/start_game', action, gameId });
+      } catch (e) {
+        await logger.critical(e.message, {type: 'room/start_game', action, userId})
+      }
     },
   });
 
