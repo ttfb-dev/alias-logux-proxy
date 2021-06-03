@@ -10,7 +10,7 @@ class RoomService {
       wroomId: 'room_in',
       ownerId: 'owner_id',
       memberIds: 'member_ids',
-      status: {
+      statuses: {
         lobby: 'pregame',
         game: 'game',
         closed: 'closed',
@@ -45,7 +45,7 @@ class RoomService {
 
     // проверяем статус комнаты
     const roomStatus = await prs.getRoomParam(roomId, 'status');
-    const isRoomActive = roomStatus === 'active';
+    const isRoomActive = roomStatus === this.storageKeys.statuses.lobby;
     if (!isRoomActive) {
       return new ErrorResponse(
         'room_does_not_exist_or_closed',
@@ -103,7 +103,7 @@ class RoomService {
 
     const teams = await teamService.getTwoTeams(roomId);
 
-    await prs.setRoomParam(roomId, 'status', this.storageKeys.status.lobby);
+    await prs.setRoomParam(roomId, 'status', this.storageKeys.statuses.lobby);
     await prs.setRoomParam(roomId, this.storageKeys.ownerId, userId);
     await prs.setRoomParam(roomId, this.storageKeys.memberIds, [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
@@ -119,7 +119,7 @@ class RoomService {
   }
 
   async setRoomInGame(roomId) {
-    return await this.setRoomStatus(roomId, this.storageKeys.status.game)
+    return await this.setRoomStatus(roomId, this.storageKeys.statuses.game)
   }
 
   async setRoomStatus(roomId, status) {
