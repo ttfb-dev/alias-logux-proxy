@@ -123,7 +123,7 @@ class RoomService {
   }
 
   async setRoomStatus(roomId, status) {
-    if (!this.storageKeys.roomStatus.hasOwnProperty(status)) {
+    if (!this.storageKeys.statuses.hasOwnProperty(status)) {
       return false;
     }
 
