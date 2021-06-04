@@ -275,11 +275,16 @@ const room = (server) => {
   server.type('room/start_game', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
-      const roomId = parseInt(action.roomId);
-
-      ctx.data = { userId, roomId };
 
       try {
+        const roomId = await roomService.whereIAm(userId);
+
+        if (!roomId) {
+          throw new Error('You are not in room');
+        }
+
+        ctx.data = { userId, roomId };
+
         const isRoomOwner = await roomService.amIRoomOwner(userId, roomId);
 
         const canStartGame = await gameService.canStartGame(roomId);
