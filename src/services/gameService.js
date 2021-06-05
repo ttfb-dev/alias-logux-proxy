@@ -162,7 +162,6 @@ class GameService {
   }
 
   getRandomNumbers(wordsCounters) {
-    console.log(wordsCounters);
     const randomDatasetIndex = Math.floor(Math.random() * wordsCounters.length);
     const randomDatasetWord = Math.floor(Math.random() * wordsCounters[randomDatasetIndex]);
     return { randomDatasetIndex, randomDatasetWord };
