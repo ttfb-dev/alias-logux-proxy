@@ -79,6 +79,7 @@ class WordService {
       type:  dataset.type,
       name:  dataset.name,
       price: dataset.price,
+      counter: dataset.counter,
     }
   }
 
