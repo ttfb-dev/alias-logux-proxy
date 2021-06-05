@@ -7,7 +7,7 @@ class RoomService {
 
   constructor() {
     this.storageKeys = {
-      wroomId: 'room_in',
+      roomId: 'room_in',
       ownerId: 'owner_id',
       memberIds: 'member_ids',
       statuses: {
