@@ -69,7 +69,7 @@ class GameService {
       round:  await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1),
       step:   {
         stepId: await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1),
-        words: 
+        words: await this.getStepWords(roomId, gameId),
       },
     };
   }
@@ -99,7 +99,8 @@ class GameService {
   }
 
   async getStepWords(roomId, gameId) {
-
+    const datasets = await roomService.getRoomGameDatasets(roomId);
+    return await this.getGameWords(roomId, gameId, datasets, 20);
   }
 
   async setNewRound(roomId, gameId) {
