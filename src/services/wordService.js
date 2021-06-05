@@ -7,40 +7,39 @@ class WordService {
   }
 
   async getRandomRoomName (lang = 'ru') {
-    const availableRoomNamesString = await prs.getAppParam(`word_dataset_${lang}_rooms`);
+    const availableRoomNamesString = await prs.getAppParam(`word_dataset_1`);
     const availableRoomNames = availableRoomNamesString.split(',');
     return availableRoomNames[Math.floor(Math.random() * availableRoomNames.length)];
   }
 
   // генерирует пустую команду со случайным неповторяющимся названием
   async getRandomRoomNames(lang = 'ru', count = 10) {
-    const availableRoomNamesString = await prs.getAppParam(`word_dataset_${lang}_rooms`);
+    const availableRoomNamesString = await prs.getAppParam(`word_dataset_1`);
     const availableRoomNames = availableRoomNamesString.split(',');
 
     return this.__getRandomNWords(availableRoomNames, count);
   }
 
   async getRandomTeamNames(lang = 'ru', count = 15) {
-    const availableTeamNamesString = await prs.getAppParam(`word_dataset_${lang}_teams`);
+    const availableTeamNamesString = await prs.getAppParam(`word_dataset_2`);
     const availableTeamNames = availableTeamNamesString.split(',');
 
     return this.__getRandomNWords(availableTeamNames, count);
   }
 
   async getRoomNames(lang = 'ru') {
-    const availableRoomNamesString = await prs.getAppParam(`word_dataset_${lang}_rooms`);
+    const availableRoomNamesString = await prs.getAppParam(`word_dataset_1`);
     return availableRoomNamesString.split(',');
   }
 
   async getTeamNames(lang = 'ru') {
-    const availableTeamNamesString = await prs.getAppParam(`word_dataset_${lang}_teams`);
+    const availableTeamNamesString = await prs.getAppParam(`word_dataset_2`);
     return availableTeamNamesString.split(',');
   }
 
   async getGameDatasetWords(dataset) {
-    const key = `word_dataset_${dataset.lang}_game_${dataset.key}`;
+    const key = `word_dataset_${dataset.datasetId}`;
     if (this.gameDatasets[key]) {
-      console.log(this.gameDatasets[key]);
       return this.gameDatasets[key];
     }
     const availableGameDatasetString = await prs.getAppParam(key);
