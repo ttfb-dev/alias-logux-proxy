@@ -39,8 +39,6 @@ class WordService {
 
   async getGameDatasetWords(dataset) {
     const key = `word_dataset_${dataset.lang}_game_${dataset.key}`;
-    console.log(key);
-    console.log(this.gameDatasets);
     if (this.gameDatasets[key]) {
       console.log(this.gameDatasets[key]);
       return this.gameDatasets[key];
@@ -76,14 +74,8 @@ class WordService {
   }
 
   mapGameDataset(dataset) {
-    return {
-      datasetId: dataset.datasetId,
-      lang:  dataset.lang,
-      type:  dataset.type,
-      name:  dataset.name,
-      price: dataset.price,
-      counter: dataset.counter,
-    }
+    delete dataset.src;
+    return dataset;
   }
 
   __getRandomNWords(wordArray, n) {
