@@ -2,6 +2,10 @@ import { prs, logger } from '../libs/index.js';
 
 class WordService {
 
+  constructor() {
+    this.gameDatasets = [];
+  }
+
   async getRandomRoomName (lang = 'ru') {
     const availableRoomNamesString = await prs.getAppParam(`word_dataset_${lang}_rooms`);
     const availableRoomNames = availableRoomNamesString.split(',');
@@ -33,16 +37,15 @@ class WordService {
     return availableTeamNamesString.split(',');
   }
 
-  __getRandomNWords(wordArray, n) {
-    // Shuffle array
-    const shuffled = wordArray.sort(() => 0.5 - Math.random());
-
-    // Get sub-array of first n elements after shuffled
-    if (n > shuffled.length) {
-      throw new Error('not enouth words');
+  async getGameDatasetWords(dataset) {
+    const index = `word_dataset_${lang}_game_${dataset.key}`;
+    if (this.gameDatasets[index]) {
+      return this.gameDatasets[index];
     }
-
-    return shuffled.slice(0, n);
+    const availableGameDatasetString = await prs.getAppParam();
+    const wordsArray = availableGameDatasetString.split(',');
+    this.gameDatasets[index] = wordsArray;
+    return wordsArray;
   }
 
   async getGameDataset(datasetId) {
@@ -77,6 +80,24 @@ class WordService {
       name:  dataset.name,
       price: dataset.price,
     }
+  }
+
+  __getRandomNWords(wordArray, n) {
+    if (n > wordArray.length) {
+      throw new Error('Not enouth words');
+    }
+    // Shuffle array
+    const shuffled = wordArray.sort(() => 0.5 - Math.random());
+    // Get sub-array of first n elements after shuffled
+    return shuffled.slice(0, n);
+  }
+
+  async getDatasetWord(dataset, wordIndex) {
+    const datasetWords = await this.getGameDatasetWords(dataset);
+    if (wordIndex >= datasetWords.length) {
+      throw new Error(`Cant get index ${index} in dataset ${dataset.datasetId}: it has ${datasetWords.length} words`)
+    }
+    return datasetWords[wordIndex];
   }
 }
 

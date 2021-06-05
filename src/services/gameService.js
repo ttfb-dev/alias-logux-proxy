@@ -1,6 +1,6 @@
 import { prs, logger } from '../libs/index.js';
 
-import { roomService } from './index.js';
+import { roomService, wordService } from './index.js';
 
 class GameService {
 
@@ -67,7 +67,10 @@ class GameService {
     return {
       status: await this.getGameStatus(roomId, gameId),
       round:  await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1),
-      step:   await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1),
+      step:   {
+        stepId: await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1),
+        words: 
+      },
     };
   }
 
@@ -95,6 +98,10 @@ class GameService {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.status);
   }
 
+  async getStepWords(roomId, gameId) {
+
+  }
+
   async setNewRound(roomId, gameId) {
     const round = await prs.getNextInt(`room_${roomId}_game_${gameId}_round`);
     await prs.setRoomGameParam(roomId, gameId, this.storageKeys.round, round);
@@ -105,22 +112,54 @@ class GameService {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round);
   }
 
-  async getNextTeamId(roomId, gameId) {
-    const previousTeamId = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.currentMoveTeamId, null);
-
-    const teams = await roomService.getTeams(roomId);
-
-    if (previousTeamId === null) {
-      return  teams[0].teamId;
+  async getGameWords(roomId, gameId, datasets, limit) {
+    let attempts = 0;
+    let attemptsLimit = 1000;
+    const wordsCounters = datasets.map(dataset => dataset.counter);
+    const usedKeys = await prs.getRoomGameParam(roomId, gameId, 'game_used_keys_map', [])
+    const result = [];
+    while (result.length < limit) {
+      const { randomDatasetIndex, randomDatasetWord } = this.getRandomNumbers(wordsCounters);
+      const index = this.packWordIndex(randomDatasetIndex, randomDatasetWord);
+      if (attempts < attemptsLimit) {
+        if (usedKeys.includes(index)) {
+          continue;
+        }
+      }
+      const word = await wordService.getDatasetWord(datasets[randomDatasetIndex], randomDatasetWord);
+      usedKeys.push(index);
+      result.push({
+        word: word,
+        index: index,
+        guessed: null,
+      })
     }
+    return result;
+  }
 
-    const currIndex = teams.findIndex(element => { return element.teamId === previousTeamId });
+  packWordIndex(randomDatasetIndex, randomDatasetWord) {
+    return (randomDatasetIndex * 100000) + randomDatasetWord;
+  }
 
-    if (currIndex === teams.length) {
-      return teams[0].teamId;
+  unpackWordIndex(index) {
+    return { randomDatasetIndex: parseInt(index / 100000), randomDatasetWord: parseInt(index % 100000) }
+  }
+
+  async getRandomWordsFromDataset(roomId, gameId, randomDataset, n) {
+    const datasetWords = await wordService.getGameDataset(randomDataset);
+    const loadedWords = await prs.getRoomGameParam(roomId, gameId, `played_out_words_dataset_${randomDataset.datasetId}`, []);
+
+    const filteredDatasetWords = datasetWords.filter(word => !loadedWords.includes(word))
+
+    if (filteredDatasetWords < n) {
+      return filteredDatasetWords;
     }
+  }
 
-    return teams[currIndex + 1];
+  getRandomNumbers(wordsCounters) {
+    const randomDatasetIndex = Math.floor(Math.random() * wordsCounters.length);
+    const randomDatasetWord = Math.floor(Math.random() * wordsCounters[randomDatasetIndex]);
+    return { randomDatasetIndex, randomDatasetWord };
   }
 
   async setCurrentTeamId(roomId, gameId, teamId) {
@@ -129,10 +168,6 @@ class GameService {
 
   async getCurrentTeamId(roomId, gameId, teamId) {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.currentMoveTeamId, teamId);
-  }
-
-  async getTeamRoles(roomId, gameId, teamId) {
-    const team = await roomService.getTeam(roomId, teamId);
   }
 }
 
