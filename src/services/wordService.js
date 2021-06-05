@@ -38,7 +38,7 @@ class WordService {
   }
 
   async getGameDatasetWords(dataset) {
-    const index = `word_dataset_${lang}_game_${dataset.key}`;
+    const index = `word_dataset_${dataset.lang}_game_${dataset.key}`;
     if (this.gameDatasets[index]) {
       return this.gameDatasets[index];
     }
