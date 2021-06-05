@@ -12,12 +12,18 @@ const game = (server) => {
 
       const gameId = await gameService.getRoomGameId(roomId);
 
+      console.log(`${currentRoomId}, ${roomId}, ${gameId}, ${userId}`)
+
       ctx.data = { roomId, gameId, userId };
+
+      console.log(`ACCESS GAME ${currentRoomId === roomId && gameId}`)
 
       return currentRoomId === roomId && gameId;
     },
     async load(ctx, action, meta) {
       const { roomId, gameId, userId } = ctx.data;
+
+      console.log(`LOAD GAME ${roomId}, ${gameId}`)
 
       const game = await gameService.getGame(roomId, gameId);
       
