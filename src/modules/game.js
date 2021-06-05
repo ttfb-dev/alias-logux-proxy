@@ -18,17 +18,19 @@ const game = (server) => {
     },
     async load(ctx, action, meta) {
       const { roomId, gameId, userId } = ctx.data;
-
+      console.log('load start')
       try {
         const game = await gameService.getGame(roomId, gameId);
-        await logger.debug('room loaded', game);
+        console.log('load success')
+        console.log(game)
 
         return {
           type: 'game/state',
           game,
         };
       } catch (e) {
-        await logger.critical(e.message, ctx.data);
+        console.log('load failed')
+        console.log(e.message)
       }
     },
   });
