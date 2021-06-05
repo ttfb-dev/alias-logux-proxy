@@ -124,18 +124,23 @@ class GameService {
     while (result.length < limit) {
       const { randomDatasetIndex, randomDatasetWord } = this.getRandomNumbers(wordsCounters);
       const index = this.packWordIndex(randomDatasetIndex, randomDatasetWord);
+      console.log({ randomDatasetIndex, randomDatasetWord, index });
+      console.log(usedKeys);
       if (attempts < attemptsLimit) {
         if (usedKeys.includes(index)) {
           continue;
         }
       }
       const word = await wordService.getDatasetWord(datasets[randomDatasetIndex], randomDatasetWord);
+      console.log(word);
       usedKeys.push(index);
       result.push({
         word: word,
         index: index,
         guessed: null,
       })
+      console.log(result);
+      console.log(usedKeys);
     }
     return result;
   }
