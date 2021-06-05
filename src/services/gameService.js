@@ -102,8 +102,8 @@ class GameService {
 
   async getStepWords(roomId, gameId) {
     const datasets = await roomService.getRoomGameDatasets(roomId);
-    // const availableDatasets = datasets.filter(dataset => dataset.status === 'active');
-    return await this.getGameWords(roomId, gameId, datasets, 20);
+    const availableDatasets = datasets.filter(dataset => dataset.status === 'active');
+    return await this.getGameWords(roomId, gameId, availableDatasets, 20);
   }
 
   async setNewRound(roomId, gameId) {
