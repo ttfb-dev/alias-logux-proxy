@@ -39,7 +39,10 @@ class WordService {
 
   async getGameDatasetWords(dataset) {
     const key = `word_dataset_${dataset.lang}_game_${dataset.key}`;
+    console.log(key);
+    console.log(this.gameDatasets);
     if (this.gameDatasets[key]) {
+      console.log(this.gameDatasets[key]);
       return this.gameDatasets[key];
     }
     const availableGameDatasetString = await prs.getAppParam(key);
