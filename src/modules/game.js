@@ -12,27 +12,23 @@ const game = (server) => {
 
       const gameId = await gameService.getRoomGameId(roomId);
 
-      console.log(`${currentRoomId}, ${roomId}, ${gameId}, ${userId}`)
-
       ctx.data = { roomId, gameId, userId };
-
-      console.log(`ACCESS GAME ${currentRoomId === roomId && gameId}`)
 
       return currentRoomId === roomId && gameId;
     },
     async load(ctx, action, meta) {
       const { roomId, gameId, userId } = ctx.data;
 
-      console.log(`LOAD GAME ${roomId}, ${gameId}`)
+      try {
+        const game = await gameService.getGame(roomId, gameId);
 
-      const game = await gameService.getGame(roomId, gameId);
-
-      console.log(`GAME LOADED`, game);
-      
-      return {
-        type: 'game/state',
-        game,
-      };
+        return {
+          type: 'game/state',
+          game,
+        };
+      } catch (e) {
+        await logger.critical(e.message, ctx.data);
+      }
     },
   });
 
