@@ -96,7 +96,7 @@ class WordService {
   async getDatasetWord(dataset, wordIndex) {
     const datasetWords = await this.getGameDatasetWords(dataset);
     if (wordIndex >= datasetWords.length) {
-      throw new Error(`Cant get index ${index} in dataset ${dataset.datasetId}: it has ${datasetWords.length} words`)
+      throw new Error(`Cant get index ${wordIndex} in dataset ${dataset.datasetId}: it has ${datasetWords.length} words`)
     }
     return datasetWords[wordIndex];
   }
