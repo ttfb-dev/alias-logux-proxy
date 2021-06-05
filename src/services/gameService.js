@@ -102,6 +102,7 @@ class GameService {
 
   async getStepWords(roomId, gameId) {
     const datasets = await roomService.getRoomGameDatasets(roomId);
+    // const availableDatasets = datasets.filter(dataset => dataset.status === 'active');
     return await this.getGameWords(roomId, gameId, datasets, 20);
   }
 
@@ -132,6 +133,7 @@ class GameService {
           continue;
         }
       }
+      console.log('u choose dataset ', datasets[randomDatasetIndex]);
       const word = await wordService.getDatasetWord(datasets[randomDatasetIndex], randomDatasetWord);
       console.log(word);
       usedKeys.push(index);
