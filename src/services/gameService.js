@@ -117,7 +117,7 @@ class GameService {
 
   async getGameWords(roomId, gameId, datasets, limit) {
     let attempts = 0;
-    let attemptsLimit = 1000;
+    const attemptsLimit = 1000;
     const wordsCounters = datasets.map(dataset => dataset.counter);
     const usedKeys = await prs.getRoomGameParam(roomId, gameId, 'game_used_keys_map', [])
     const result = [];
@@ -141,6 +141,7 @@ class GameService {
       })
       console.log(result);
       console.log(usedKeys);
+      attempts += 1;
     }
     return result;
   }
