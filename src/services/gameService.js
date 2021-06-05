@@ -121,6 +121,8 @@ class GameService {
     const wordsCounters = datasets.map(dataset => dataset.counter);
     const usedKeys = await prs.getRoomGameParam(roomId, gameId, 'game_used_keys_map', [])
     const result = [];
+    console.log(wordsCounters);
+    return result;
     while (result.length < limit) {
       const { randomDatasetIndex, randomDatasetWord } = this.getRandomNumbers(wordsCounters);
       const index = this.packWordIndex(randomDatasetIndex, randomDatasetWord);
@@ -166,6 +168,7 @@ class GameService {
   }
 
   getRandomNumbers(wordsCounters) {
+    console.log(wordsCounters);
     const randomDatasetIndex = Math.floor(Math.random() * wordsCounters.length);
     const randomDatasetWord = Math.floor(Math.random() * wordsCounters[randomDatasetIndex]);
     return { randomDatasetIndex, randomDatasetWord };
