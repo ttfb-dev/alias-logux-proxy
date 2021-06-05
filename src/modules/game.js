@@ -21,6 +21,7 @@ const game = (server) => {
 
       try {
         const game = await gameService.getGame(roomId, gameId);
+        await logger.debug('room loaded', game);
 
         return {
           type: 'game/state',
