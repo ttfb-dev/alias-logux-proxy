@@ -26,6 +26,8 @@ const game = (server) => {
       console.log(`LOAD GAME ${roomId}, ${gameId}`)
 
       const game = await gameService.getGame(roomId, gameId);
+
+      console.log(`GAME LOADED`, game);
       
       return {
         type: 'game/state',

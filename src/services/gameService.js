@@ -88,6 +88,8 @@ class GameService {
 
     await prs.setRoomGameParam(roomId, gameId, this.storageKeys.round, 1);
     await prs.setRoomGameParam(roomId, gameId, this.storageKeys.step, 1);
+
+    return gameId;
   }
 
   async setGameStatus(roomId, gameId, status) {
