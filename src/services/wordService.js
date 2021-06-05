@@ -38,13 +38,13 @@ class WordService {
   }
 
   async getGameDatasetWords(dataset) {
-    const index = `word_dataset_${dataset.lang}_game_${dataset.key}`;
-    if (this.gameDatasets[index]) {
-      return this.gameDatasets[index];
+    const key = `word_dataset_${dataset.lang}_game_${dataset.key}`;
+    if (this.gameDatasets[key]) {
+      return this.gameDatasets[key];
     }
-    const availableGameDatasetString = await prs.getAppParam();
+    const availableGameDatasetString = await prs.getAppParam(key);
     const wordsArray = availableGameDatasetString.split(',');
-    this.gameDatasets[index] = wordsArray;
+    this.gameDatasets[key] = wordsArray;
     return wordsArray;
   }
 
