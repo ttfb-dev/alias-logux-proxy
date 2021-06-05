@@ -66,9 +66,9 @@ class GameService {
   async getGame(roomId, gameId) {
     return {
       status: await this.getGameStatus(roomId, gameId),
-      round:  await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1),
-      step:   {
-        stepId: await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1),
+      roundNumber:  await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1),
+      stepNumber: await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1),
+      step: {
         words: await this.getStepWords(roomId, gameId),
       },
     };
