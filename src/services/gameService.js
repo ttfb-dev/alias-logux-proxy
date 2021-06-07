@@ -65,13 +65,14 @@ class GameService {
   }
 
   async getGame(roomId, gameId) {
+    const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
     return {
       status: await this.getGameStatus(roomId, gameId),
       roundNumber:  await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1),
       stepNumber: await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1),
       step: {
         words: await this.getStepWords(roomId, gameId),
-        ... await this.getCurrentTeam(roomId, gameId),
+        ... currentTeamMeta,
       },
     };
   }
