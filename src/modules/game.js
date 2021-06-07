@@ -34,24 +34,6 @@ const game = (server) => {
     },
   });
 
-  server.type('room/setStepNumber', {
-    access() {
-      return true;
-    },
-    resend(ctx, action, meta) {
-      return `room/${action.roomId}`;
-    },
-  });
-
-  server.type('room/setRoundNumber', {
-    access() {
-      return true;
-    },
-    resend(ctx, action, meta) {
-      return `room/${action.roomId}`;
-    },
-  });
-
   server.type('room/setStep', {
     access() {
       return true;
