@@ -174,13 +174,15 @@ class GameService {
   }
 
   async setFirstStepTeamParams(roomId, gameId) {
-    const teamId = await this.getCurrentTeamId(roomId, gameId);
+    const teamId = await this.getFirstTeamId(roomId, gameId);
     const team = await roomService.getTeam(roomId, teamId);
 
     const sortedMembers = team.memberIds;
     sortedMembers.sort();
 
     const teamMeta = { teamId: teamId, explainerId: sortedMembers[0], guesserId: sortedMembers[1] };
+
+    console.log(`team meta`, teamMeta)
 
     await this.setCurrentTeam(roomId, gameId, teamMeta);
   }
