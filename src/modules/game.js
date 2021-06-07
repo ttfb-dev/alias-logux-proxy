@@ -17,39 +17,47 @@ const game = (server) => {
     },
     async load(ctx, action, meta) {
       const { roomId, gameId, userId } = ctx.data;
-      console.log('load start');
       try {
         const game = await gameService.getGame(roomId, gameId);
-        console.log('load success');
-        console.log(game);
 
         return {
           type: 'game/state',
           game,
         };
       } catch (e) {
-        console.log('load failed');
-        console.log(e.message);
+        await logger.critical(e.message, {action: 'room/:roomId/game', method: 'load'})
       }
     },
   });
 
   server.type('room/setStep', {
-    access() {
+    async access(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+      ctx.data = { userId, roomId };
       return true;
     },
     resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
+    async process(ctx, action, meta) {
+      await logger.debug('got action', {action: 'room/setStep', ...action })
+    }
   });
 
   server.type('room/setTimestamp', {
-    access() {
+    async access(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+      ctx.data = { userId, roomId };
       return true;
     },
     resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
+    async process(ctx, action, meta) {
+      await logger.debug('got action', {action: 'room/setTimestamp', ...action })
+    }
   });
 
   // сообщаем всем, что игра началась
