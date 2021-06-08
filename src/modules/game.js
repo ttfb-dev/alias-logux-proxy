@@ -57,13 +57,13 @@ const game = (server) => {
     async process(ctx, action, meta) {
       const { userId, roomId } = ctx.data;
 
-      const memOnStart = process.memoryUsage().heapUsed;
+      const memOnStart = process.memoryUsage().heapTotal;
 
       const gameId = await gameService.getRoomGameId(roomId);
 
       const words = await gameService.getRandomWords(roomId, gameId);
 
-      const memOnEnd = process.memoryUsage().heapUsed;
+      const memOnEnd = process.memoryUsage().heapTotal;
 
       console.log(`memory usage: ${memOnEnd - memOnStart}`);
 
