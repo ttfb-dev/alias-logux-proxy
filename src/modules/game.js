@@ -57,7 +57,7 @@ const game = (server) => {
     async process(ctx, action, meta) {
       const { userId, roomId } = ctx.data;
 
-      const gameId = await roomService.getRoomGameId(roomId);
+      const gameId = await gameService.getRoomGameId(roomId);
 
       const words = await gameService.getRandomWords(roomId, gameId);
 
