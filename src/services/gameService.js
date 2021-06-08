@@ -99,8 +99,9 @@ class GameService {
   async getGameStatus(roomId, gameId) {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.status);
   }
+  async getStepWords(roomId, gameId) {}
 
-  async getStepWords(roomId, gameId) {
+  async getRandomWords(roomId, gameId) {
     const datasets = await roomService.getRoomGameDatasets(roomId);
     const availableDatasets = datasets.filter(dataset => dataset.status === 'active');
     return await this.getGameWords(roomId, gameId, availableDatasets, 20);
@@ -133,6 +134,7 @@ class GameService {
       })
       attempts += 1;
     }
+    await prs.setRoomGameParam(roomId, gameId, 'game_used_keys_map', usedKeys); //тут сохраним а потом вырежем неиспользованные
     return result;
   }
 

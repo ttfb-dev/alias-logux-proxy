@@ -30,7 +30,7 @@ const game = (server) => {
     },
   });
 
-  server.type('room/setStep', {
+  server.type('game/set_step', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
@@ -45,7 +45,30 @@ const game = (server) => {
     }
   });
 
-  server.type('room/setTimestamp', {
+  server.type('game/get_words', {
+    async access(ctx, action, meta) {
+      const roomId = parseInt(action.roomId);
+      const userId = parseInt(ctx.userId);
+
+      ctx.data = { roomId, userId };
+
+      return true;
+    },
+    async process(ctx, action, meta) {
+      const { userId, roomId } = ctx.data;
+
+      const gameId = await roomService.getRoomGameId(roomId);
+
+      const words = await gameService.getRandomWords(roomId, gameId);
+
+      ctx.sendBack({
+        type: 'game/get_words_success',
+        words,
+      });
+    }
+  })
+
+  server.type('game/set_timestamp', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
