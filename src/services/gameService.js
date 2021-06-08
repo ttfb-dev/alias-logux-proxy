@@ -113,14 +113,16 @@ class GameService {
 
   async getGameWords(roomId, gameId, datasets, limit) {
     let attempts = 0;
-    const attemptsLimit = 1000;
+    const attemptsLimit = 50;
     const wordsCounters = datasets.map(dataset => dataset.counter);
     const usedKeys = await prs.getRoomGameParam(roomId, gameId, 'game_used_keys_map', [])
     const result = [];
     while (result.length < limit) {
       const { randomDatasetIndex, randomDatasetWord } = this.getRandomNumbers(wordsCounters);
       const index = this.packWordIndex(randomDatasetIndex, randomDatasetWord);
-      if (attempts < attemptsLimit) {
+      console.log(`attempt: ${attempts}`);
+      console.log(`used keys number: ${usedKeys.length}`);
+      if (attempts < attemptsLimit && false) {
         if (usedKeys.includes(index)) {
           continue;
         }
