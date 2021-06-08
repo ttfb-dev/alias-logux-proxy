@@ -125,6 +125,7 @@ class GameService {
       console.log(`index ${index} in used: ${usedKeys.includes(index)}`);
       if (attempts < attemptsLimit) {
         if (usedKeys.includes(index)) {
+          attempts += 1;
           continue;
         }
       }
