@@ -120,9 +120,7 @@ class GameService {
     while (result.length < limit) {
       const { randomDatasetIndex, randomDatasetWord } = this.getRandomNumbers(wordsCounters);
       const index = this.packWordIndex(randomDatasetIndex, randomDatasetWord);
-      console.log(`attempt: ${attempts}`);
-      console.log(process.memoryUsage().heapTotal);
-      console.log(`used: ${usedKeys.includes(index)}`);
+      console.log(`${attempts}\t${process.memoryUsage().heapUsage}`);
       if (attempts < attemptsLimit) {
         if (usedKeys.includes(index)) {
           attempts += 1;
