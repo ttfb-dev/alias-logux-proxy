@@ -122,10 +122,12 @@ class GameService {
       const index = this.packWordIndex(randomDatasetIndex, randomDatasetWord);
       console.log(`attempt: ${attempts}`);
       console.log(`used keys number: ${usedKeys.length}`);
-      if (attempts < attemptsLimit && false) {
-        if (usedKeys.includes(index)) {
-          continue;
-        }
+      console.log(`index ${index} in used: ${usedKeys.includes(index)}`);
+      if (attempts < attemptsLimit) {
+        // if (usedKeys.includes(index)) {
+        //   continue;
+        // }
+        return result;
       }
       const word = await wordService.getDatasetWord(datasets[randomDatasetIndex], randomDatasetWord);
       usedKeys.push(index);
