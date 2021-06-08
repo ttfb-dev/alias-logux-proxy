@@ -57,9 +57,15 @@ const game = (server) => {
     async process(ctx, action, meta) {
       const { userId, roomId } = ctx.data;
 
+      const memOnStart = process.memoryUsage();
+
       const gameId = await gameService.getRoomGameId(roomId);
 
       const words = await gameService.getRandomWords(roomId, gameId);
+
+      const memOnEnd = process.memoryUsage();
+
+      console.log(`memory usage: ${memOnEnd - memOnStart}`);
 
       ctx.sendBack({
         type: 'game/get_words_success',
