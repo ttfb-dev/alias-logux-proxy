@@ -43,10 +43,10 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${action.roomId}`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
-      await logger.debug('got action', { action: 'room/setStep', ...action });
+      await logger.debug('got action', { action: 'game/set_step', ...action });
     },
   });
 
@@ -83,7 +83,9 @@ const game = (server) => {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
+
       ctx.data = { userId, roomId };
+
       return true;
     },
     resend(ctx, action, meta) {
@@ -91,7 +93,7 @@ const game = (server) => {
     },
     async process(ctx, action, meta) {
       await logger.debug('got action', {
-        action: 'room/setTimestamp',
+        action: 'game/set_timestamp',
         ...action,
       });
     },
