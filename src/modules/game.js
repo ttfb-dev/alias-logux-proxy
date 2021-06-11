@@ -25,7 +25,10 @@ const game = (server) => {
           game,
         };
       } catch (e) {
-        await logger.critical(e.message, {action: 'room/:roomId/game', method: 'load'})
+        await logger.critical(e.message, {
+          action: 'room/:roomId/game',
+          method: 'load',
+        });
       }
     },
   });
@@ -34,28 +37,30 @@ const game = (server) => {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
+
       ctx.data = { userId, roomId };
+
       return true;
     },
     resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
     async process(ctx, action, meta) {
-      await logger.debug('got action', {action: 'room/setStep', ...action })
-    }
+      await logger.debug('got action', { action: 'room/setStep', ...action });
+    },
   });
 
   server.type('game/get_words', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
       const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
 
       ctx.data = { roomId, userId };
 
       return true;
     },
     async process(ctx, action, meta) {
-      const { userId, roomId } = ctx.data;
+      const { roomId } = ctx.data;
 
       const memOnStart = process.memoryUsage().heapTotal;
 
@@ -68,11 +73,11 @@ const game = (server) => {
       console.log(`memory usage: ${memOnEnd - memOnStart}`);
 
       ctx.sendBack({
-        type: 'game/get_words_success',
+        type: 'game/set_words',
         words,
       });
-    }
-  })
+    },
+  });
 
   server.type('game/set_timestamp', {
     async access(ctx, action, meta) {
@@ -85,8 +90,11 @@ const game = (server) => {
       return `room/${action.roomId}`;
     },
     async process(ctx, action, meta) {
-      await logger.debug('got action', {action: 'room/setTimestamp', ...action })
-    }
+      await logger.debug('got action', {
+        action: 'room/setTimestamp',
+        ...action,
+      });
+    },
   });
 
   // сообщаем всем, что игра началась
