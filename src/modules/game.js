@@ -1,4 +1,4 @@
-import { logger } from '../libs/index.js';
+import { prs, logger } from '../libs/index.js';
 import { roomService, gameService } from '../services/index.js';
 
 const game = (server) => {
