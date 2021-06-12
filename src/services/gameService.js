@@ -128,6 +128,12 @@ class GameService {
     await this.setStepWords(roomId, gameId, stepWords);
   }
 
+  async pushStepWord(roomId, gameId, word, index) {
+    const stepWords = await this.getStepWords(roomId, gameId);
+    stepWords[index] = word;
+    await this.setStepWords(roomId, gameId, stepWords);
+  }
+
   async getRandomWords(roomId, gameId) {
     const datasets = await roomService.getRoomGameDatasets(roomId);
     const availableDatasets = datasets.filter(dataset => dataset.status === 'active');

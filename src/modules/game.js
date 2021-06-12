@@ -140,12 +140,32 @@ const game = (server) => {
     },
     async process(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
-      const word = action.word; 
+      const word = action.word;
+      const index = action.index;
       const gameId = await gameService.getRoomGameId(roomId);
 
-      await gameService.pushStepWord(roomId, gameId, word);
+      if (index === undefined) {
+        await gameService.pushStepWord(roomId, gameId, word);
+        return ;
+      }
+      await gameService.replaceStepWord(roomId, gameId, word, index);
     },
   });
+
+  // server.type('game/step_end', {
+  //   async access() {
+  //     return true;
+  //   },
+  //   resend(ctx, action, meta) {
+  //     return `room/${action.roomId}`;
+  //   },
+  //   async process(ctx, action, meta) {
+  //     const roomId = parseInt(action.roomId);
+  //     const gameId = await gameService.getRoomGameId(roomId);
+
+  //     await gameService.pushStepWord(roomId, gameId, word);
+  //   },
+  // });
 };
 
 export { game };
