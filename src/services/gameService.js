@@ -192,6 +192,7 @@ class GameService {
       'game_used_keys_map',
       [],
     );
+    const uniqueRequestWords = [];
     const result = [];
     while (result.length < limit) {
       const { randomDatasetIndex, randomDatasetWord } =
@@ -203,11 +204,16 @@ class GameService {
           continue;
         }
       }
+
+      if (uniqueRequestWords.includes(index)) {
+        continue;
+      }
       const word = await wordService.getDatasetWord(
         datasets[randomDatasetIndex],
         randomDatasetWord,
       );
       usedKeys.push(index);
+      uniqueRequestWords.push(index);
       result.push({
         value: word,
         index: index,
