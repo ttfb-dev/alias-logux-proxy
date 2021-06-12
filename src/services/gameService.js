@@ -17,6 +17,7 @@ class GameService {
         step: 'step',
         step_review: 'step_review',
       },
+      currentStepWords: 'current_step_words',
       stepStartedAt: (round, step) => `round_${round}_step_${step}_started_at`
     };
   }
@@ -87,9 +88,7 @@ class GameService {
   }
 
   async getStepStartedAt(roomId, gameId, roundId, stepId) {
-    const startedAt = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.stepStartedAt(roundId, stepId), null)
-    console.log(`startedat ${startedAt}`);
-    return startedAt;
+    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.stepStartedAt(roundId, stepId), null);
   }
 
   async startGame(roomId) {
@@ -114,8 +113,19 @@ class GameService {
   async getGameStatus(roomId, gameId) {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.status);
   }
+  
   async getStepWords(roomId, gameId) {
-    return [];
+    return await prs.setRoomGameParam(roomId, gameId, this.storageKeys.currentStepWords, []);
+  }
+  
+  async setStepWords(roomId, gameId, words = []) {
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.currentStepWords, words);
+  }
+
+  async pushStepWord(roomId, gameId, word) {
+    const stepWords = await this.getStepWords(roomId, gameId);
+    stepWords.push(word);
+    await this.setStepWords(roomId, gameId, stepWords);
   }
 
   async getRandomWords(roomId, gameId) {
