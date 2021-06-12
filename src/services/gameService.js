@@ -87,7 +87,9 @@ class GameService {
   }
 
   async getStepStartedAt(roomId, gameId, roundId, stepId) {
-    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.stepStartedAt(roundId, stepId), null)
+    const startedAt = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.stepStartedAt(roundId, stepId), null)
+    console.log(`startedat ${startedat}`);
+    return startedAt;
   }
 
   async startGame(roomId) {
