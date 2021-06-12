@@ -16,7 +16,7 @@ const game = (server) => {
       return currentRoomId === roomId && gameId;
     },
     async load(ctx, action, meta) {
-      const { roomId, gameId, userId } = ctx.data;
+      const { roomId, gameId } = ctx.data;
       try {
         const game = await gameService.getGame(roomId, gameId);
 
@@ -113,42 +113,69 @@ const game = (server) => {
 
   server.type('game/step_start', {
     async access() {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${action.roomId}`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
-      const userId = praseInt(ctx.userId);
-      const roomId = parseInt(action.roomId);
-      const startedAt = parseInt(action.startedAt);
+      const { roomId } = ctx.data;
+      const { startedAt } = action;
       const gameId = await gameService.getRoomGameId(roomId);
-      const roundNumber = await prs.getRoomGameParam(roomId, gameId, gameService.storageKeys.round, 1);
-      const stepNumber = await prs.getRoomGameParam(roomId, gameId, gameService.storageKeys.step, 1);
+      const roundNumber = await prs.getRoomGameParam(
+        roomId,
+        gameId,
+        gameService.storageKeys.round,
+        1,
+      );
+      const stepNumber = await prs.getRoomGameParam(
+        roomId,
+        gameId,
+        gameService.storageKeys.step,
+        1,
+      );
 
-      await gameService.setGameStatus(roomId, gameId, gameService.storageKeys.statuses.step);
-      await gameService.setStepStartedAt(roomId, gameId, roundNumber, stepNumber, startedAt);
+      await gameService.setGameStatus(
+        roomId,
+        gameId,
+        gameService.storageKeys.statuses.step,
+      );
+      await gameService.setStepStartedAt(
+        roomId,
+        gameId,
+        roundNumber,
+        stepNumber,
+        startedAt,
+      );
     },
   });
 
   server.type('game/set_step_word', {
     async access() {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+
+      ctx.data = { userId, roomId };
+
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${action.roomId}`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
-      const word = action.word;
-      const index = action.index;
+      const { roomId } = ctx.data;
+      const { word, index } = action;
+
       const gameId = await gameService.getRoomGameId(roomId);
 
       if (index === undefined) {
         await gameService.pushStepWord(roomId, gameId, word);
-        return ;
+      } else {
+        await gameService.replaceStepWord(roomId, gameId, word, index);
       }
-      await gameService.replaceStepWord(roomId, gameId, word, index);
     },
   });
 
