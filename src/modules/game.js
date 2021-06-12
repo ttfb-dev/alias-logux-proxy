@@ -112,9 +112,11 @@ const game = (server) => {
   });
 
   server.type('game/step_start', {
-    async access() {
+    async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
+
+      ctx.data = { userId, roomId };
 
       return true;
     },
@@ -154,7 +156,7 @@ const game = (server) => {
   });
 
   server.type('game/set_step_word', {
-    async access() {
+    async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
 
