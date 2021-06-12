@@ -146,7 +146,7 @@ class GameService {
       const word = await wordService.getDatasetWord(datasets[randomDatasetIndex], randomDatasetWord);
       usedKeys.push(index);
       result.push({
-        word: word,
+        value: word,
         index: index,
         guessed: null,
       })
@@ -202,8 +202,6 @@ class GameService {
     sortedMembers.sort();
 
     const teamMeta = { teamId: teamId, explainerId: sortedMembers[0], guesserId: sortedMembers[1] };
-
-    console.log(`team meta`, teamMeta)
 
     await this.setCurrentTeam(roomId, gameId, teamMeta);
   }
