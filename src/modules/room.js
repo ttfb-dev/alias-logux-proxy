@@ -259,7 +259,11 @@ const room = (server) => {
 
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToDeactivate;
       } catch (e) {
-        logger.critical(e.message, {type: 'room/deactivate_game_dataset', action, userId: ctx.userId});
+        logger.critical(e.message, {
+          type: 'room/deactivate_game_dataset',
+          action,
+          userId: ctx.userId,
+        });
       }
       return false;
     },
@@ -272,7 +276,7 @@ const room = (server) => {
     },
   });
 
-  server.type('room/start_game', {
+  server.type('room/game_start', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
 
@@ -291,21 +295,33 @@ const room = (server) => {
 
         return isRoomOwner && canStartGame;
       } catch (e) {
-        await logger.critical(e.message, {type: 'room/start_game', action, userId})
+        await logger.critical(e.message, {
+          type: 'room/game_start',
+          action,
+          userId,
+        });
       }
       return false;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
       const { userId, roomId } = ctx.data;
       try {
         const gameId = await gameService.startGame(roomId);
 
-        await logger.info('Игра началась', {type: 'room/start_game', action, gameId });
+        await logger.info('Игра началась', {
+          type: 'room/game_start',
+          action,
+          gameId,
+        });
       } catch (e) {
-        await logger.critical(e.message, {type: 'room/start_game', action, userId})
+        await logger.critical(e.message, {
+          type: 'room/game_start',
+          action,
+          userId,
+        });
       }
     },
   });
