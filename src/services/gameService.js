@@ -69,6 +69,7 @@ class GameService {
     const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
     const roundNumber = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1);
     const stepNumber = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1);
+    const startedAt =  await this.getStepStartedAt(roomId, gameId, roundNumber, stepNumber);
     return {
       status: await this.getGameStatus(roomId, gameId),
       roundNumber,
@@ -76,7 +77,7 @@ class GameService {
       step: {
         words: await this.getStepWords(roomId, gameId),
         ... currentTeamMeta,
-        startedAt: await this.getStepStartedAt(roomId, gameId, roundNumber, stepNumber),
+        startedAt,
       },
     };
   }
@@ -111,7 +112,9 @@ class GameService {
   async getGameStatus(roomId, gameId) {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.status);
   }
-  async getStepWords(roomId, gameId) {}
+  async getStepWords(roomId, gameId) {
+    return [];
+  }
 
   async getRandomWords(roomId, gameId) {
     const datasets = await roomService.getRoomGameDatasets(roomId);

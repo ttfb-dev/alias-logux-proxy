@@ -20,6 +20,8 @@ const game = (server) => {
       try {
         const game = await gameService.getGame(roomId, gameId);
 
+        console.log(game);
+
         return {
           type: 'game/state',
           game,
