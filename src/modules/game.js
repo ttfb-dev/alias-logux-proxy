@@ -174,10 +174,8 @@ const game = (server) => {
       const gameId = await gameService.getRoomGameId(roomId);
 
       if (index === undefined) {
-        console.log('push word', roomId, gameId, word)
         await gameService.pushStepWord(roomId, gameId, word);
       } else {
-        console.log('replace word', roomId, gameId, word, index)
         await gameService.replaceStepWord(roomId, gameId, word, index);
       }
     },

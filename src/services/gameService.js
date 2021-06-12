@@ -141,7 +141,7 @@ class GameService {
   }
 
   async getStepWords(roomId, gameId) {
-    return await prs.setRoomGameParam(
+    return await prs.getRoomGameParam(
       roomId,
       gameId,
       this.storageKeys.currentStepWords,
@@ -160,14 +160,12 @@ class GameService {
 
   async pushStepWord(roomId, gameId, word) {
     const stepWords = await this.getStepWords(roomId, gameId);
-    console.log(stepWords, word);
     stepWords.push(word);
     await this.setStepWords(roomId, gameId, stepWords);
   }
 
   async replaceStepWord(roomId, gameId, word, index) {
     const stepWords = await this.getStepWords(roomId, gameId);
-    console.log(stepWords, word);
     stepWords[index] = word;
     await this.setStepWords(roomId, gameId, stepWords);
   }
