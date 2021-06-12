@@ -3,7 +3,6 @@ import { prs, logger } from '../libs/index.js';
 import { roomService, wordService } from './index.js';
 
 class GameService {
-
   constructor() {
     this.storageKeys = {
       currentGameId: 'current_game_id',
@@ -18,7 +17,7 @@ class GameService {
         step_review: 'step_review',
       },
       currentStepWords: 'current_step_words',
-      stepStartedAt: (round, step) => `round_${round}_step_${step}_started_at`
+      stepStartedAt: (round, step) => `round_${round}_step_${step}_started_at`,
     };
   }
 
@@ -48,7 +47,9 @@ class GameService {
     }
 
     // Есть хотя бы один включенный набор слов
-    const activeDatasetIds = await roomService.getRoomActiveGameDatasetIds(roomId);
+    const activeDatasetIds = await roomService.getRoomActiveGameDatasetIds(
+      roomId,
+    );
 
     if (activeDatasetIds.length === 0) {
       throw false;
@@ -68,27 +69,52 @@ class GameService {
 
   async getGame(roomId, gameId) {
     const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
-    const roundNumber = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1);
-    const stepNumber = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1);
-    const startedAt =  await this.getStepStartedAt(roomId, gameId, roundNumber, stepNumber);
+    const roundNumber = await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.round,
+      1,
+    );
+    const stepNumber = await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.step,
+      1,
+    );
+    const startedAt = await this.getStepStartedAt(
+      roomId,
+      gameId,
+      roundNumber,
+      stepNumber,
+    );
     return {
       status: await this.getGameStatus(roomId, gameId),
       roundNumber,
       stepNumber,
       step: {
         words: await this.getStepWords(roomId, gameId),
-        ... currentTeamMeta,
+        ...currentTeamMeta,
         startedAt,
       },
     };
   }
 
   async setStepStartedAt(roomId, gameId, roundId, stepId, value) {
-    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.stepStartedAt(roundId, stepId), value)
+    await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.stepStartedAt(roundId, stepId),
+      value,
+    );
   }
 
   async getStepStartedAt(roomId, gameId, roundId, stepId) {
-    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.stepStartedAt(roundId, stepId), null);
+    return await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.stepStartedAt(roundId, stepId),
+      null,
+    );
   }
 
   async startGame(roomId) {
@@ -113,13 +139,23 @@ class GameService {
   async getGameStatus(roomId, gameId) {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.status);
   }
-  
+
   async getStepWords(roomId, gameId) {
-    return await prs.setRoomGameParam(roomId, gameId, this.storageKeys.currentStepWords, []);
+    return await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.currentStepWords,
+      [],
+    );
   }
-  
+
   async setStepWords(roomId, gameId, words = []) {
-    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.currentStepWords, words);
+    await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.currentStepWords,
+      words,
+    );
   }
 
   async pushStepWord(roomId, gameId, word) {
@@ -128,7 +164,7 @@ class GameService {
     await this.setStepWords(roomId, gameId, stepWords);
   }
 
-  async pushStepWord(roomId, gameId, word, index) {
+  async replaceStepWord(roomId, gameId, word, index) {
     const stepWords = await this.getStepWords(roomId, gameId);
     stepWords[index] = word;
     await this.setStepWords(roomId, gameId, stepWords);
@@ -136,7 +172,9 @@ class GameService {
 
   async getRandomWords(roomId, gameId) {
     const datasets = await roomService.getRoomGameDatasets(roomId);
-    const availableDatasets = datasets.filter(dataset => dataset.status === 'active');
+    const availableDatasets = datasets.filter(
+      (dataset) => dataset.status === 'active',
+    );
     return await this.getGameWords(roomId, gameId, availableDatasets, 20);
   }
 
@@ -147,11 +185,17 @@ class GameService {
   async getGameWords(roomId, gameId, datasets, limit) {
     let attempts = 0;
     const attemptsLimit = 100;
-    const wordsCounters = datasets.map(dataset => dataset.counter);
-    const usedKeys = await prs.getRoomGameParam(roomId, gameId, 'game_used_keys_map', [])
+    const wordsCounters = datasets.map((dataset) => dataset.counter);
+    const usedKeys = await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      'game_used_keys_map',
+      [],
+    );
     const result = [];
     while (result.length < limit) {
-      const { randomDatasetIndex, randomDatasetWord } = this.getRandomNumbers(wordsCounters);
+      const { randomDatasetIndex, randomDatasetWord } =
+        this.getRandomNumbers(wordsCounters);
       const index = this.packWordIndex(randomDatasetIndex, randomDatasetWord);
       if (attempts < attemptsLimit) {
         if (usedKeys.includes(index)) {
@@ -159,13 +203,16 @@ class GameService {
           continue;
         }
       }
-      const word = await wordService.getDatasetWord(datasets[randomDatasetIndex], randomDatasetWord);
+      const word = await wordService.getDatasetWord(
+        datasets[randomDatasetIndex],
+        randomDatasetWord,
+      );
       usedKeys.push(index);
       result.push({
         value: word,
         index: index,
         guessed: null,
-      })
+      });
       attempts += 1;
     }
     await prs.setRoomGameParam(roomId, gameId, 'game_used_keys_map', usedKeys); //тут сохраним а потом вырежем неиспользованные
@@ -173,18 +220,28 @@ class GameService {
   }
 
   packWordIndex(randomDatasetIndex, randomDatasetWord) {
-    return (randomDatasetIndex * 100000) + randomDatasetWord;
+    return randomDatasetIndex * 100000 + randomDatasetWord;
   }
 
   unpackWordIndex(index) {
-    return { randomDatasetIndex: parseInt(index / 100000), randomDatasetWord: parseInt(index % 100000) }
+    return {
+      randomDatasetIndex: parseInt(index / 100000),
+      randomDatasetWord: parseInt(index % 100000),
+    };
   }
 
   async getRandomWordsFromDataset(roomId, gameId, randomDataset, n) {
     const datasetWords = await wordService.getGameDataset(randomDataset);
-    const loadedWords = await prs.getRoomGameParam(roomId, gameId, `played_out_words_dataset_${randomDataset.datasetId}`, []);
+    const loadedWords = await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      `played_out_words_dataset_${randomDataset.datasetId}`,
+      [],
+    );
 
-    const filteredDatasetWords = datasetWords.filter(word => !loadedWords.includes(word))
+    const filteredDatasetWords = datasetWords.filter(
+      (word) => !loadedWords.includes(word),
+    );
 
     if (filteredDatasetWords < n) {
       return filteredDatasetWords;
@@ -193,7 +250,9 @@ class GameService {
 
   getRandomNumbers(wordsCounters) {
     const randomDatasetIndex = Math.floor(Math.random() * wordsCounters.length);
-    const randomDatasetWord = Math.floor(Math.random() * wordsCounters[randomDatasetIndex]);
+    const randomDatasetWord = Math.floor(
+      Math.random() * wordsCounters[randomDatasetIndex],
+    );
     return { randomDatasetIndex, randomDatasetWord };
   }
 
@@ -203,11 +262,20 @@ class GameService {
   }
 
   async setCurrentTeam(roomId, gameId, teamMeta) {
-    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.currentMoveTeam, teamMeta);
+    await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.currentMoveTeam,
+      teamMeta,
+    );
   }
 
   async getCurrentTeam(roomId, gameId) {
-    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.currentMoveTeam);
+    return await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.currentMoveTeam,
+    );
   }
 
   async setFirstStepTeamParams(roomId, gameId) {
@@ -217,7 +285,11 @@ class GameService {
     const sortedMembers = team.memberIds;
     sortedMembers.sort();
 
-    const teamMeta = { teamId: teamId, explainerId: sortedMembers[0], guesserId: sortedMembers[1] };
+    const teamMeta = {
+      teamId: teamId,
+      explainerId: sortedMembers[0],
+      guesserId: sortedMembers[1],
+    };
 
     await this.setCurrentTeam(roomId, gameId, teamMeta);
   }
