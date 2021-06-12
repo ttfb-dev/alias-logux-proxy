@@ -17,6 +17,7 @@ class GameService {
         step: 'step',
         step_review: 'step_review',
       },
+      stepStartedAt: (round, step) => `round_${round}_step_${step}_started_at`
     };
   }
 
@@ -66,15 +67,26 @@ class GameService {
 
   async getGame(roomId, gameId) {
     const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
+    const roundNumber = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1);
+    const stepNumber = await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1);
     return {
       status: await this.getGameStatus(roomId, gameId),
-      roundNumber:  await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round, 1),
-      stepNumber: await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1),
+      roundNumber,
+      stepNumber,
       step: {
         words: await this.getStepWords(roomId, gameId),
         ... currentTeamMeta,
+        startedAt: await this.getStepStartedAt(roomId, gameId, roundNumber, stepNumber),
       },
     };
+  }
+
+  async setStepStartedAt(roomId, gameId, roundId, stepId, value) {
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.stepStartedAt(roundId, stepId), value)
+  }
+
+  async getStepStartedAt(roomId, gameId, roundId, stepId) {
+    await prs.getRoomGameParam(roomId, gameId, this.storageKeys.stepStartedAt(roundId, stepId), null)
   }
 
   async startGame(roomId) {
