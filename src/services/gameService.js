@@ -18,6 +18,8 @@ class GameService {
       },
       currentStepWords: 'current_step_words',
       stepHistory: 'step_history',
+      gameRequestedWords: 'game_requested_words',
+      gameUsedWords: 'game_requested_words',
       stepStartedAt: (round, step) => `round_${round}_step_${step}_started_at`,
       stepScore: (round, step) => `round_${round}_step_${step}_score`,
     };
@@ -80,9 +82,9 @@ class GameService {
       stepNumber,
     );
     const stepScore = await prs.getRoomGameParam(
-      roomId, 
-      gameId, 
-      this.storageKeys.stepScore(roundNumber, stepNumber), 
+      roomId,
+      gameId,
+      this.storageKeys.stepScore(roundNumber, stepNumber),
       0,
     );
     return {
@@ -237,16 +239,26 @@ class GameService {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.round);
   }
 
+  async pushManyUsedGameWords(roomId, gameId, usedWordList) {
+    const usedWords = await this.getUsedGameWords(roomId, gameId);
+    usedWordList.forEach(index => usedWords.push(index));
+    await this.setUsedGameWords(roomId, gameId, usedWords);
+    return usedWords;
+  }
+
+  async getUsedGameWords(roomId, gameId) {
+    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.gameUsedWords, []);
+  }
+
+  async setUsedGameWords(roomId, gameId, usedWords) {
+    await prs.getRoomGameParam(roomId, gameId, this.storageKeys.gameUsedWords, usedWords);
+  }
+
   async getGameWords(roomId, gameId, datasets, limit) {
     let attempts = 0;
     const attemptsLimit = 100;
     const wordsCounters = datasets.map((dataset) => dataset.counter);
-    const usedKeys = await prs.getRoomGameParam(
-      roomId,
-      gameId,
-      'game_used_keys_map',
-      [],
-    );
+    const usedKeys = await this.getRoomGameRequestedWords(roomId, gameId);
     const uniqueRequestWords = [];
     const result = [];
     while (result.length < limit) {
@@ -276,8 +288,16 @@ class GameService {
       });
       attempts += 1;
     }
-    await prs.setRoomGameParam(roomId, gameId, 'game_used_keys_map', usedKeys); //тут сохраним а потом вырежем неиспользованные
+    await this.setRoomGameRequestedWords(roomId, gameId, usedKeys);
     return result;
+  }
+
+  async setRoomGameRequestedWords(roomId, gameId, usedKeys) {
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.gameRequestedWords, usedKeys)
+  }
+
+  async getRoomGameRequestedWords(roomId, gameId) {
+    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.gameRequestedWords, [])
   }
 
   packWordIndex(randomDatasetIndex, randomDatasetWord) {

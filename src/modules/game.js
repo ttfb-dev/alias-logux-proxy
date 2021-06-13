@@ -176,6 +176,14 @@ const game = (server) => {
       const { step, stepNumber, roundNumber } = action;
 
       try {
+        // Пушим отыгравшие слова
+        const stepWords = await gameService.getStepWords(roomId, gameId);
+        const usedWordList = stepWords.map(stepWord => stepWord.value);
+        const usedWords = await gameService.pushManyUsedGameWords(roomId, gameId, usedWordList);
+        // Подменяем запрошенные слова использованными
+        await gameService.setRoomGameRequestedWords(roomId, gameId, usedWords);
+
+
         await gameService.setCurrentStep(roomId, gameId, step);
         await gameService.setRoomGameRound(roomId, gameId, roundNumber);
         await gameService.setRoomGameStep(roomId, gameId, stepNumber);
