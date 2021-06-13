@@ -18,6 +18,7 @@ class GameService {
       },
       currentStepWords: 'current_step_words',
       stepStartedAt: (round, step) => `round_${round}_step_${step}_started_at`,
+      stepScore: (round, step) => `round_${round}_step_${step}_score`,
     };
   }
 
@@ -87,6 +88,12 @@ class GameService {
       roundNumber,
       stepNumber,
     );
+    const stepScore = await prs.getRoomGameParam(
+      roomId, 
+      gameId, 
+      this.storageKeys.stepScore(roundNumber, stepNumber), 
+      0,
+    );
     return {
       status: await this.getGameStatus(roomId, gameId),
       roundNumber,
@@ -95,6 +102,7 @@ class GameService {
         words: await this.getStepWords(roomId, gameId),
         ...currentTeamMeta,
         startedAt,
+        score: stepScore
       },
     };
   }
