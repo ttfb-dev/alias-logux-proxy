@@ -1,4 +1,4 @@
-import { prs, logger } from '../libs/index.js';
+import { logger } from '../libs/index.js';
 import { roomService, gameService } from '../services/index.js';
 
 const game = (server) => {
@@ -56,16 +56,6 @@ const game = (server) => {
     },
   });
 
-  // сообщаем всем, что игра началась
-  server.type('room/game_started', {
-    access() {
-      return true;
-    },
-    resend(ctx, action, meta) {
-      return `room/${action.roomId}`;
-    },
-  });
-
   server.type('game/step_start', {
     async access(ctx) {
       const userId = parseInt(ctx.userId);
@@ -99,7 +89,12 @@ const game = (server) => {
           startedAt,
         );
       } catch (e) {
-        await logger.critical(e.message, {method: 'game/step_start', roomId, gameId, startedAt });
+        await logger.critical(e.message, {
+          method: 'game/step_start',
+          roomId,
+          gameId,
+          startedAt,
+        });
       }
     },
   });
@@ -121,14 +116,24 @@ const game = (server) => {
       const { roomId, gameId } = ctx.data;
       const { word, index } = action;
 
+      const currentScore = await gameService.getStepScore(roomId, gameId);
+      const score = currentScore + Number(word.guessed);
+
       try {
         if (index === undefined) {
           await gameService.pushStepWord(roomId, gameId, word);
+          await gameService.setStepScore(roomId, gameId, score);
         } else {
           await gameService.replaceStepWord(roomId, gameId, word, index);
         }
       } catch (e) {
-        await logger.critical(e.message, {method: 'game/set_step_word', roomId, gameId, word, index });
+        await logger.critical(e.message, {
+          method: 'game/set_step_word',
+          roomId,
+          gameId,
+          word,
+          index,
+        });
       }
     },
   });
@@ -153,7 +158,12 @@ const game = (server) => {
       try {
         await gameService.pushStepHistory(roomId, gameId, step);
       } catch (e) {
-        await logger.critical(e.message, {method: 'game/set_step_history', roomId, gameId, step});
+        await logger.critical(e.message, {
+          method: 'game/set_step_history',
+          roomId,
+          gameId,
+          step,
+        });
       }
     },
   });
@@ -178,17 +188,27 @@ const game = (server) => {
       try {
         // Пушим отыгравшие слова
         const stepWords = await gameService.getStepWords(roomId, gameId);
-        const usedWordList = stepWords.map(stepWord => stepWord.value);
-        const usedWords = await gameService.pushManyUsedGameWords(roomId, gameId, usedWordList);
+        const usedWordList = stepWords.map((stepWord) => stepWord.value);
+        const usedWords = await gameService.pushManyUsedGameWords(
+          roomId,
+          gameId,
+          usedWordList,
+        );
         // Подменяем запрошенные слова использованными
         await gameService.setRoomGameRequestedWords(roomId, gameId, usedWords);
-
 
         await gameService.setCurrentStep(roomId, gameId, step);
         await gameService.setRoomGameRound(roomId, gameId, roundNumber);
         await gameService.setRoomGameStep(roomId, gameId, stepNumber);
       } catch (e) {
-        await logger.critical(e.message, {method: 'game/set_next_step', roomId, gameId, step, stepNumber, roundNumber});
+        await logger.critical(e.message, {
+          method: 'game/set_next_step',
+          roomId,
+          gameId,
+          step,
+          stepNumber,
+          roundNumber,
+        });
       }
     },
   });
@@ -208,10 +228,19 @@ const game = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
+
       try {
-        await gameService.setGameStatus(roomId, gameId, gameService.storageKeys.statuses.lobby);
+        await gameService.setGameStatus(
+          roomId,
+          gameId,
+          gameService.storageKeys.statuses.lobby,
+        );
       } catch (e) {
-        await logger.critical(e.message, {method: 'game/step_end', roomId, gameId});
+        await logger.critical(e.message, {
+          method: 'game/step_end',
+          roomId,
+          gameId,
+        });
       }
     },
   });

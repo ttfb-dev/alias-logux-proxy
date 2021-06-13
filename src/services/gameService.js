@@ -81,12 +81,7 @@ class GameService {
       roundNumber,
       stepNumber,
     );
-    const stepScore = await prs.getRoomGameParam(
-      roomId,
-      gameId,
-      this.storageKeys.stepScore(roundNumber, stepNumber),
-      0,
-    );
+    const stepScore = await this.getStepScore(roomId, gameId);
     return {
       status: await this.getGameStatus(roomId, gameId),
       roundNumber,
@@ -102,12 +97,7 @@ class GameService {
   }
 
   async setRoomGameRound(roomId, gameId, roundId) {
-    await prs.setRoomGameParam(
-      roomId,
-      gameId,
-      this.storageKeys.round,
-      roundId,
-    );
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.round, roundId);
   }
 
   async getRoomGameRound(roomId, gameId) {
@@ -120,40 +110,70 @@ class GameService {
   }
 
   async setRoomGameStep(roomId, gameId, stepId) {
-    await prs.setRoomGameParam(
-      roomId,
-      gameId,
-      this.storageKeys.step,
-      stepId,
-    );
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.step, stepId);
   }
 
   async getRoomGameStep(roomId, gameId) {
-    return await prs.getRoomGameParam(
-      roomId,
-      gameId,
-      this.storageKeys.step,
-      1,
-    );
+    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1);
   }
 
   async setCurrentStep(roomId, gameId, step) {
     await this.setStepWords(roomId, gameId); // очищаем список слов за ход
-    await this.setCurrentTeam(roomId, gameId, step.teamId, step.explainerId, step.guesserId); // проставляем новых участников
+    await this.setCurrentTeam(
+      roomId,
+      gameId,
+      step.teamId,
+      step.explainerId,
+      step.guesserId,
+    ); // проставляем новых участников
   }
 
   async pushStepHistory(roomId, gameId, step) {
     const stepHistory = await this.getStepHistory(roomId, gameId);
-    stepHistory.push(step)
+    stepHistory.push(step);
     await this.setStepHistory(roomId, gameId, stepHistory);
   }
 
   async getStepHistory(roomId, gameId) {
-    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.stepHistory, []);
+    return await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.stepHistory,
+      [],
+    );
+  }
+
+  async getStepScore(roomId, gameId) {
+    const roundNumber = await this.getRoomGameRound(roomId, gameId);
+    const stepNumber = await this.getRoomGameStep(roomId, gameId);
+
+    return await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.stepScore(roundNumber, stepNumber),
+      0,
+    );
+  }
+
+  async setStepScore(roomId, gameId, score) {
+    const roundNumber = await this.getRoomGameRound(roomId, gameId);
+    const stepNumber = await this.getRoomGameStep(roomId, gameId);
+
+    await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.stepScore(roundNumber, stepNumber),
+      score,
+    );
   }
 
   async setStepHistory(roomId, gameId, stepHistory) {
-    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.stepHistory, stepHistory);
+    await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.stepHistory,
+      stepHistory,
+    );
   }
 
   async setStepStartedAt(roomId, gameId, roundId, stepId, value) {
@@ -241,17 +261,27 @@ class GameService {
 
   async pushManyUsedGameWords(roomId, gameId, usedWordList) {
     const usedWords = await this.getUsedGameWords(roomId, gameId);
-    usedWordList.forEach(index => usedWords.push(index));
+    usedWordList.forEach((index) => usedWords.push(index));
     await this.setUsedGameWords(roomId, gameId, usedWords);
     return usedWords;
   }
 
   async getUsedGameWords(roomId, gameId) {
-    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.gameUsedWords, []);
+    return await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.gameUsedWords,
+      [],
+    );
   }
 
   async setUsedGameWords(roomId, gameId, usedWords) {
-    await prs.getRoomGameParam(roomId, gameId, this.storageKeys.gameUsedWords, usedWords);
+    await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.gameUsedWords,
+      usedWords,
+    );
   }
 
   async getGameWords(roomId, gameId, datasets, limit) {
@@ -293,11 +323,21 @@ class GameService {
   }
 
   async setRoomGameRequestedWords(roomId, gameId, usedKeys) {
-    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.gameRequestedWords, usedKeys)
+    await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.gameRequestedWords,
+      usedKeys,
+    );
   }
 
   async getRoomGameRequestedWords(roomId, gameId) {
-    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.gameRequestedWords, [])
+    return await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.gameRequestedWords,
+      [],
+    );
   }
 
   packWordIndex(randomDatasetIndex, randomDatasetWord) {
@@ -367,10 +407,13 @@ class GameService {
     const teamId = await this.getFirstTeamId(roomId, gameId);
     const team = await roomService.getTeam(roomId, teamId);
 
-    const sortedMembers = team.memberIds;
-    sortedMembers.sort();
-
-    await this.setCurrentTeam(roomId, gameId, teamId, sortedMembers[0], sortedMembers[1]);
+    await this.setCurrentTeam(
+      roomId,
+      gameId,
+      teamId,
+      team.memberIds[0],
+      team.memberIds[1],
+    );
   }
 }
 
