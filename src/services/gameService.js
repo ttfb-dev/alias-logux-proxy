@@ -70,7 +70,8 @@ class GameService {
   }
 
   async getGame(roomId, gameId) {
-    const currentTeamMeta = await this.getRoomGameRound(roomId, gameId);
+    const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
+    const roundNumber = await this.getRoomGameRound(roomId, gameId);
     const stepNumber = await this.getRoomGameStep(roomId, gameId);
     const startedAt = await this.getStepStartedAt(
       roomId,
@@ -101,7 +102,7 @@ class GameService {
     await prs.setRoomGameParam(
       roomId,
       gameId,
-      this.storageKeys.round,
+      this.storageKeys.step,
       roundId,
     );
   }
@@ -110,7 +111,7 @@ class GameService {
     await prs.getRoomGameParam(
       roomId,
       gameId,
-      this.storageKeys.round,
+      this.storageKeys.step,
       1,
     );
   }
