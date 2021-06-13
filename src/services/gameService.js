@@ -95,6 +95,7 @@ class GameService {
         startedAt,
         score: stepScore,
       },
+      stepHistory: await this.getStepHistory(roomId, gameId),
     };
   }
 
