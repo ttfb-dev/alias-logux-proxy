@@ -17,6 +17,7 @@ class GameService {
         step_review: 'step_review',
       },
       currentStepWords: 'current_step_words',
+      stepHistory: 'step_history',
       stepStartedAt: (round, step) => `round_${round}_step_${step}_started_at`,
       stepScore: (round, step) => `round_${round}_step_${step}_score`,
     };
@@ -69,19 +70,8 @@ class GameService {
   }
 
   async getGame(roomId, gameId) {
-    const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
-    const roundNumber = await prs.getRoomGameParam(
-      roomId,
-      gameId,
-      this.storageKeys.round,
-      1,
-    );
-    const stepNumber = await prs.getRoomGameParam(
-      roomId,
-      gameId,
-      this.storageKeys.step,
-      1,
-    );
+    const currentTeamMeta = await this.getRoomGameRound(roomId, gameId);
+    const stepNumber = await this.getRoomGameStep(roomId, gameId);
     const startedAt = await this.getStepStartedAt(
       roomId,
       gameId,
@@ -102,9 +92,64 @@ class GameService {
         words: await this.getStepWords(roomId, gameId),
         ...currentTeamMeta,
         startedAt,
-        score: stepScore
+        score: stepScore,
       },
     };
+  }
+
+  async setRoomGameRound(roomId, gameId, roundId) {
+    await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.round,
+      roundId,
+    );
+  }
+
+  async getRoomGameRound(roomId, gameId) {
+    await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.round,
+      1,
+    );
+  }
+
+  async setRoomGameStep(roomId, gameId, stepId) {
+    await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.step,
+      stepId,
+    );
+  }
+
+  async getRoomGameStep(roomId, gameId) {
+    await prs.getRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.step,
+      1,
+    );
+  }
+
+  async setCurrentStep(roomId, gameId, step) {
+    await this.setStepWords(roomId, gameId); // очищаем список слов за ход
+    await this.setCurrentTeam(roomId, gameId, step.teamId, step.explainerId, step.guesserId); // проставляем новых участников
+  }
+
+  async pushStepHistory(roomId, gameId, step) {
+    const stepHistory = await this.getStepHistory(roomId, gameId);
+    stepHistory.push(step)
+    await this.setStepHistory(roomId, gameId, stepHistory);
+  }
+
+  async getStepHistory(roomId, gameId) {
+    return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.stepHistory, []);
+  }
+
+  async setStepHistory(roomId, gameId, stepHistory) {
+    await prs.setRoomGameParam(roomId, gameId, this.storageKeys.stepHistory, stepHistory);
   }
 
   async setStepStartedAt(roomId, gameId, roundId, stepId, value) {
@@ -275,12 +320,16 @@ class GameService {
     return teams[0].teamId;
   }
 
-  async setCurrentTeam(roomId, gameId, teamMeta) {
+  async setCurrentTeam(roomId, gameId, teamId, explainerId, guesserId) {
     await prs.setRoomGameParam(
       roomId,
       gameId,
       this.storageKeys.currentMoveTeam,
-      teamMeta,
+      {
+        teamId,
+        explainerId,
+        guesserId,
+      },
     );
   }
 
@@ -299,13 +348,7 @@ class GameService {
     const sortedMembers = team.memberIds;
     sortedMembers.sort();
 
-    const teamMeta = {
-      teamId: teamId,
-      explainerId: sortedMembers[0],
-      guesserId: sortedMembers[1],
-    };
-
-    await this.setCurrentTeam(roomId, gameId, teamMeta);
+    await this.setCurrentTeam(roomId, gameId, teamId, sortedMembers[0], sortedMembers[1]);
   }
 }
 

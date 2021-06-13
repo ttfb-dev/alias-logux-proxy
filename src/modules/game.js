@@ -20,8 +20,6 @@ const game = (server) => {
       try {
         const game = await gameService.getGame(roomId, gameId);
 
-        console.log(game);
-
         return {
           type: 'game/state',
           game,
@@ -32,23 +30,6 @@ const game = (server) => {
           method: 'load',
         });
       }
-    },
-  });
-
-  server.type('game/set_step', {
-    async access(ctx, action, meta) {
-      const userId = parseInt(ctx.userId);
-      const roomId = await roomService.whereIAm(userId);
-
-      ctx.data = { userId, roomId };
-
-      return true;
-    },
-    resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
-    },
-    async process(ctx, action, meta) {
-      await logger.debug('got action', { action: 'game/set_step', ...action });
     },
   });
 
@@ -64,39 +45,13 @@ const game = (server) => {
     async process(ctx, action, meta) {
       const { roomId } = ctx.data;
 
-      const memOnStart = process.memoryUsage().heapTotal;
-
       const gameId = await gameService.getRoomGameId(roomId);
 
       const words = await gameService.getRandomWords(roomId, gameId);
 
-      const memOnEnd = process.memoryUsage().heapTotal;
-
-      console.log(`memory usage: ${memOnEnd - memOnStart}`);
-
       ctx.sendBack({
         type: 'game/set_words',
         words,
-      });
-    },
-  });
-
-  server.type('game/set_timestamp', {
-    async access(ctx, action, meta) {
-      const userId = parseInt(ctx.userId);
-      const roomId = await roomService.whereIAm(userId);
-
-      ctx.data = { userId, roomId };
-
-      return true;
-    },
-    resend(ctx, action, meta) {
-      return `room/${action.roomId}`;
-    },
-    async process(ctx, action, meta) {
-      await logger.debug('got action', {
-        action: 'game/set_timestamp',
-        ...action,
       });
     },
   });
@@ -159,8 +114,9 @@ const game = (server) => {
     async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
+      const gameId = await gameService.getRoomGameId(roomId);
 
-      ctx.data = { userId, roomId };
+      ctx.data = { userId, roomId, gameId };
 
       return true;
     },
@@ -168,16 +124,78 @@ const game = (server) => {
       return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
-      const { roomId } = ctx.data;
+      const { roomId, gameId } = ctx.data;
       const { word, index } = action;
-
-      const gameId = await gameService.getRoomGameId(roomId);
 
       if (index === undefined) {
         await gameService.pushStepWord(roomId, gameId, word);
       } else {
         await gameService.replaceStepWord(roomId, gameId, word, index);
       }
+    },
+  });
+
+  server.type('game/set_step_history', {
+    async access(ctx) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+      const gameId = await gameService.getRoomGameId(roomId);
+
+      ctx.data = { userId, roomId, gameId };
+
+      return true;
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+    async process(ctx, action, meta) {
+      const { roomId, gameId } = ctx.data;
+      const { step } = action;
+
+      await gameService.pushStepHistory(roomId, gameId, step);
+    },
+  });
+
+  server.type('game/set_next_step', {
+    async access(ctx) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+      const gameId = await gameService.getRoomGameId(roomId);
+
+      ctx.data = { userId, roomId, gameId };
+
+      return true;
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+    async process(ctx, action, meta) {
+      const { roomId, gameId } = ctx.data;
+      const { step, stepNumber, roundNumber } = action;
+
+      await gameService.setCurrentStep(roomId, gameId, step);
+      await gameService.setRoomGameRound(roomId, gameId, roundNumber);
+      await gameService.setRoomGameStep(roomId, gameId, stepNumber);
+    },
+  });
+
+  server.type('game/step_end', {
+    async access(ctx) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+      const gameId = await gameService.getRoomGameId(roomId);
+
+      ctx.data = { userId, roomId, gameId };
+
+      return true;
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+    async process(ctx, action, meta) {
+      const { roomId, gameId } = ctx.data;
+
+      await gameService.setGameStatus(roomId, gameId, gameService.storageKeys.statuses.lobby);
     },
   });
 
