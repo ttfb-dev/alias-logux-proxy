@@ -102,16 +102,16 @@ class GameService {
     await prs.setRoomGameParam(
       roomId,
       gameId,
-      this.storageKeys.step,
+      this.storageKeys.round,
       roundId,
     );
   }
 
   async getRoomGameRound(roomId, gameId) {
-    await prs.getRoomGameParam(
+    return await prs.getRoomGameParam(
       roomId,
       gameId,
-      this.storageKeys.step,
+      this.storageKeys.round,
       1,
     );
   }
@@ -126,7 +126,7 @@ class GameService {
   }
 
   async getRoomGameStep(roomId, gameId) {
-    await prs.getRoomGameParam(
+    return await prs.getRoomGameParam(
       roomId,
       gameId,
       this.storageKeys.step,
