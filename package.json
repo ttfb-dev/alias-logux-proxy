@@ -7,7 +7,7 @@
   "type": "module",
   "dependencies": {
     "@logux/server": "^0.10.1",
-    "@ttfb/aliasgame": "^0.0.28",
+    "@ttfb/aliasgame": "^0.0.29",
     "dotenv": "^10.0.0"
   },
   "devDependencies": {
