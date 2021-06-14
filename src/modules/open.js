@@ -1,35 +1,33 @@
 import { logger } from '../libs/index.js';
 
 const open = (server) => {
-  server.type('log/send_init', {
+  server.type('log/send', {
     async access(ctx, action, meta) {
       return true;
     },
     async process(ctx, action, meta) {
       const { userId } = ctx;
       const { level, data } = action;
-
-      await logger.exec(level, 'vk-miniapp-cli', { ...data, userId });
-
-      ctx.sendBack({
-        type: 'log/send_success',
-      });
+      try {
+        await logger.exec(level, 'vk-miniapp-cli', { ...data, userId });
+      } catch (e) {
+        await logger.critical(e.message, { type: 'log/send', level, data });
+      }
     },
   });
 
-  server.type('analytics/send_init', {
+  server.type('analytics/send', {
     async access(ctx, action, meta) {
       return true;
     },
     async process(ctx, action, meta) {
       const { userId } = ctx;
-      const { action, platform, data } = action;
-
-      await logger.exec(level, 'vk-miniapp-cli', { ...data, userId });
-
-      ctx.sendBack({
-        type: 'log/send_success',
-      });
+      const { action: userAction, data } = action;
+      try {
+        await logger.execAnalytics('vk-miniapp-cli', userAction, userId, data);
+      } catch (e) {
+        await logger.critical(e.message, { type: 'analytics/send', level, data });
+      }
     },
   });
 };
