@@ -1,4 +1,5 @@
 import { logger } from '../libs/index.js';
+import parser from 'ua-parser-js';
 
 const base = (server) => {
   server.type('log/send', {
@@ -23,14 +24,16 @@ const base = (server) => {
     },
     async process(ctx, action, meta) {
       const { userId } = ctx;
-      const { action: userAction, data } = action;
+      const { action: userAction, userAgent, data } = action;
 
       try {
+        const { browser, os, device } = parser(userAgent);
+        
         await logger.execAnalytics(
           'vk-miniapp',
           userAction,
           userId,
-          data,
+          { browser, os, device, ...data },
         );
       } catch (e) {
         await logger.critical(e.message, {

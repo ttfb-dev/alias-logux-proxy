@@ -96,10 +96,10 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@ttfb/aliasgame@^0.0.27":
-  version "0.0.27"
-  resolved "https://registry.yarnpkg.com/@ttfb/aliasgame/-/aliasgame-0.0.27.tgz#c0de460b0f734d6a050ae71778124899ff4e83db"
-  integrity sha512-xIzYvYSZG0sFX2F8FUB03x9+azMPn5+mZ0bbTJ76lB+gz8Dt21WQNKoydh9FB0R9Dkp+mL7NOHR+ybvgFt2z9Q==
+"@ttfb/aliasgame@^0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@ttfb/aliasgame/-/aliasgame-0.0.30.tgz#baf4a5806ae235aea6ec8d39de9dabb82704a817"
+  integrity sha512-qu2Pxsy/hizG2+Z54/LwphN8feLqsZrXZvCaXUuD7h8StACHSgQKhWUBBMS7rXcinP9KoYC+rwOLq0j2WQSmUw==
   dependencies:
     node-fetch "^2.6.1"
 
@@ -1654,6 +1654,11 @@ type-fest@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
+
+ua-parser-js@^0.7.28:
+  version "0.7.28"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.28.tgz#8ba04e653f35ce210239c64661685bf9121dec31"
+  integrity sha512-6Gurc1n//gjp9eQNXjD9O3M/sMwVtN5S8Lv9bvOYBfKfDNiIIhqiyi01vMBO45u4zkDE420w/e0se7Vs+sIg+g==
 
 unbox-primitive@^1.0.0:
   version "1.0.1"
