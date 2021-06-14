@@ -13,10 +13,12 @@ const server = new Server(
   }),
 );
 
-server.auth(async ({ userId, token }) => {
+server.auth(async ({ client, headers, userId, token }) => {
   const isAuthorized = isVkAuthorized(userId, token);
 
   await logger.debug('server.auth', { isAuthorized, userId });
+
+  console.log(client, headers);
 
   if (isAuthorized) {
     await prs.setUserParam(userId, 'last_connect', { value: Date.now() });
