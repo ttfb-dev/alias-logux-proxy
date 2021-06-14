@@ -18,22 +18,14 @@ const clientPool = [];
 
 server.auth(async ({ client, userId, token }) => {
   const isAuthorized = isVkAuthorized(userId, token);
-  console.log(`auth ${client.clientId}`);
 
   await logger.debug('server.auth', { isAuthorized, userId });
 
   if (isAuthorized) {
     await prs.setUserParam(userId, 'last_connect', { value: Date.now() });
 
-    const device = parser(client.httpHeaders['user-agent']);
-
     if (client.clientId) {
-      clientPool[client.clientId] = {
-        clientId: client.clientId,
-        userId,
-        connectedAt: Date.now(),
-        device,
-      }
+      clientPool[client.clientId] = Date.now();
     }
   }
 
@@ -41,8 +33,16 @@ server.auth(async ({ client, userId, token }) => {
 });
 
 server.on('disconnected', (client) => {
-  console.log(`disconnected ${client.clientId}`);
-
+  try {
+    if (clientPool[client.clientId]) {
+      const device = parser(client.httpHeaders['user-agent']);
+      const duration = Date.now() - clientPool[client.clientId];
+      delete clientPool[client.clientId];
+      await logger.analytics('server.connection_duration', client.userId, { ...device, duration });
+    }
+  } catch (e) {
+    await logger.critical(e.message, { type: 'server_on_disconnected' });
+  }
 });
 
 export { server };
