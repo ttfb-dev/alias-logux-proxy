@@ -32,7 +32,7 @@ server.auth(async ({ client, userId, token }) => {
   return isAuthorized;
 });
 
-server.on('disconnected', (client) => {
+server.on('disconnected', async (client) => {
   try {
     if (clientPool[client.clientId]) {
       const device = parser(client.httpHeaders['user-agent']);
