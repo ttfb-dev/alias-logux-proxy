@@ -24,6 +24,8 @@ server.auth(async ({ client, userId, token }) => {
   if (isAuthorized) {
     await prs.setUserParam(userId, 'last_connect', { value: Date.now() });
 
+    await logger.analytics('client.authorized', client.userId, { ...device });
+
     if (client.clientId) {
       clientPool[client.clientId] = Date.now();
     }
@@ -38,7 +40,7 @@ server.on('disconnected', async (client) => {
       const device = parser(client.httpHeaders['user-agent']);
       const duration = Date.now() - clientPool[client.clientId];
       delete clientPool[client.clientId];
-      await logger.analytics('server.connection_duration', client.userId, { ...device, duration });
+      await logger.analytics('client.disconnected', client.userId, { ...device, duration });
     }
   } catch (e) {
     await logger.critical(e.message, { type: 'server_on_disconnected' });
