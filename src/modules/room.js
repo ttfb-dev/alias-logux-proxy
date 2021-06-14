@@ -368,4 +368,4 @@ const room = (server) => {
   });
 };
 
-export { room };
+export default room;

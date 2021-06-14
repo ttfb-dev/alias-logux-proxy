@@ -1,7 +1,6 @@
 import { profileService, roomService } from '../services/index.js';
 
 const profile = (server) => {
-  
   server.type('profile/get_game_datasets', {
     async access(ctx, action, meta) {
       return true;
@@ -17,14 +16,17 @@ const profile = (server) => {
       });
     },
   });
-  
+
   server.type('profile/activate_dataset', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const { datasetId } = action;
 
-      const isActive = await profileService.isDatasetActive(userId, datasetId)
-      const isAvailable = await profileService.isDatasetAvailable(userId, datasetId)
+      const isActive = await profileService.isDatasetActive(userId, datasetId);
+      const isAvailable = await profileService.isDatasetAvailable(
+        userId,
+        datasetId,
+      );
 
       return !isActive && isAvailable;
     },
@@ -42,13 +44,13 @@ const profile = (server) => {
       });
     },
   });
-  
+
   server.type('profile/deactivate_dataset', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const { datasetId } = action;
 
-      const isActive = await profileService.isDatasetActive(userId, datasetId)
+      const isActive = await profileService.isDatasetActive(userId, datasetId);
 
       return isActive;
     },
@@ -99,4 +101,4 @@ const profile = (server) => {
   });
 };
 
-export { profile };
+export default profile;

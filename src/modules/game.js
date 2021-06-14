@@ -246,4 +246,4 @@ const game = (server) => {
   });
 };
 
-export { game };
+export default game;

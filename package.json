@@ -6,8 +6,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@logux/server": "^0.10.0",
-    "@ttfb/aliasgame": "^0.0.27"
+    "@logux/server": "^0.10.1",
+    "@ttfb/aliasgame": "^0.0.27",
+    "dotenv": "^10.0.0"
   },
   "devDependencies": {
     "eslint": "^7.27.0",

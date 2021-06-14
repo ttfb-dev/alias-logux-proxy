@@ -2,7 +2,6 @@ import ErrorResponse from '../contracts/errorResponse.js';
 import { teamService, roomService } from '../services/index.js';
 
 const team = (server) => {
-  
   server.type('room/team_join', {
     async access(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
@@ -41,7 +40,7 @@ const team = (server) => {
       });
     },
   });
-  
+
   server.type('room/team_leave', {
     async access(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
@@ -196,8 +195,8 @@ const team = (server) => {
     access() {
       return true;
     },
-    async resend (ctx, action, meta) {
-      return `room/${ action.roomId }`
+    async resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
     },
   });
 
@@ -206,8 +205,8 @@ const team = (server) => {
     access() {
       return true;
     },
-    async resend (ctx, action, meta) {
-      return `room/${ action.roomId }`
+    async resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
     },
   });
 
@@ -216,8 +215,8 @@ const team = (server) => {
     access() {
       return true;
     },
-    async resend (ctx, action, meta) {
-      return `room/${ action.roomId }`
+    async resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
     },
   });
 
@@ -226,8 +225,8 @@ const team = (server) => {
     access() {
       return true;
     },
-    async resend (ctx, action, meta) {
-      return `room/${ action.roomId }`
+    async resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
     },
   });
 
@@ -236,10 +235,10 @@ const team = (server) => {
     access() {
       return true;
     },
-    async resend (ctx, action, meta) {
-      return `room/${ action.roomId }`
+    async resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
     },
   });
 };
 
-export { team };
+export default team;
