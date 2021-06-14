@@ -31,7 +31,7 @@ server.auth(async ({ client, userId, token }) => {
       clientPool[client.clientId] = {
         clientId: client.clientId,
         userId,
-        connectedAt = Date.now(),
+        connectedAt: Date.now(),
         device,
       }
     }
