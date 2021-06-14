@@ -24,14 +24,14 @@ const base = (server) => {
     },
     async process(ctx, action, meta) {
       const { userId } = ctx;
-      const { action: userAction, userAgent, data } = action;
+      const { event, userAgent, data } = action;
 
       try {
         const { browser, os, device } = parser(userAgent);
         
         await logger.execAnalytics(
           'vk-miniapp',
-          userAction,
+          event,
           userId,
           { browser, os, device, ...data },
         );
