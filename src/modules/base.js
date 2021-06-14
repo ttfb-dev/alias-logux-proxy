@@ -28,7 +28,7 @@ const base = (server) => {
 
       try {
         const { browser, os, device } = parser(userAgent);
-        
+
         await logger.execAnalytics(
           'vk-miniapp',
           event,
@@ -38,6 +38,33 @@ const base = (server) => {
       } catch (e) {
         await logger.critical(e.message, {
           type: 'analytics/send',
+          level,
+          data,
+        });
+      }
+    },
+  });
+
+  server.type('metrics/send', {
+    async access() {
+      return true;
+    },
+    async process(ctx, action, meta) {
+      const { userId } = ctx;
+      const { event, userAgent, data } = action;
+
+      try {
+        const { browser, os, device } = parser(userAgent);
+
+        await logger.execMetrics(
+          'vk-miniapp',
+          event,
+          userId,
+          { browser, os, device, ...data },
+        );
+      } catch (e) {
+        await logger.critical(e.message, {
+          type: 'metrics/send',
           level,
           data,
         });
