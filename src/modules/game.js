@@ -73,8 +73,7 @@ const game = (server) => {
       const { roomId, gameId } = ctx.data;
       const { startedAt } = action;
       try {
-        const roundNumber = await gameService.getRoomGameRound(roomId, gameId);
-        const stepNumber = await gameService.getRoomGameStep(roomId, gameId);
+        const { roundNumber, stepNumber } = await gameService.getGameStepAndRound(roomId, gameId);
 
         await gameService.setGameStatus(
           roomId,
@@ -116,15 +115,16 @@ const game = (server) => {
       const { roomId, gameId } = ctx.data;
       const { word, index } = action;
 
-      const currentScore = await gameService.getStepScore(roomId, gameId);
-      const score = currentScore + Number(word.guessed);
-
       try {
+        const currentScore = await gameService.getStepScore(roomId, gameId);
         if (index === undefined) {
+          const score = currentScore + Number(word.guessed);
           await gameService.pushStepWord(roomId, gameId, word);
           await gameService.setStepScore(roomId, gameId, score);
         } else {
+          const score = currentScore + Number(word.guessed) * 2;
           await gameService.replaceStepWord(roomId, gameId, word, index);
+          await gameService.setStepScore(roomId, gameId, score);
         }
       } catch (e) {
         await logger.critical(e.message, {
@@ -153,16 +153,16 @@ const game = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
-      const { step } = action;
 
       try {
-        await gameService.pushStepHistory(roomId, gameId, step);
+        const { roundNumber, stepNumber } = await gameService.getGameStepAndRound(roomId, gameId);
+        const currentStep = await gameService.getCurrentStep(roomId, gameId, roundNumber, stepNumber);
+        await gameService.pushStepHistory(roomId, gameId, currentStep);
       } catch (e) {
         await logger.critical(e.message, {
           method: 'game/set_step_history',
           roomId,
           gameId,
-          step,
         });
       }
     },
@@ -197,9 +197,9 @@ const game = (server) => {
         // Подменяем запрошенные слова использованными
         await gameService.setRoomGameRequestedWords(roomId, gameId, usedWords);
 
-        await gameService.setCurrentStep(roomId, gameId, step);
         await gameService.setRoomGameRound(roomId, gameId, roundNumber);
         await gameService.setRoomGameStep(roomId, gameId, stepNumber);
+        await gameService.setCurrentStep(roomId, gameId, roundNumber, stepNumber, step);
       } catch (e) {
         await logger.critical(e.message, {
           method: 'game/set_next_step',

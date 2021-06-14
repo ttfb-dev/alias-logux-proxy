@@ -72,26 +72,12 @@ class GameService {
   }
 
   async getGame(roomId, gameId) {
-    const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
-    const roundNumber = await this.getRoomGameRound(roomId, gameId);
-    const stepNumber = await this.getRoomGameStep(roomId, gameId);
-    const startedAt = await this.getStepStartedAt(
-      roomId,
-      gameId,
-      roundNumber,
-      stepNumber,
-    );
-    const stepScore = await this.getStepScore(roomId, gameId);
+    const { roundNumber, stepNumber } = await this.getGameStepAndRound(roomId, gameId);
     return {
       status: await this.getGameStatus(roomId, gameId),
       roundNumber,
       stepNumber,
-      step: {
-        words: await this.getStepWords(roomId, gameId),
-        ...currentTeamMeta,
-        startedAt,
-        score: stepScore,
-      },
+      step: await this.getCurrentStep(roomId, gameId, roundNumber, stepNumber),
       stepHistory: await this.getStepHistory(roomId, gameId),
     };
   }
@@ -117,8 +103,32 @@ class GameService {
     return await prs.getRoomGameParam(roomId, gameId, this.storageKeys.step, 1);
   }
 
-  async setCurrentStep(roomId, gameId, step) {
-    await this.setStepWords(roomId, gameId); // очищаем список слов за ход
+  async getGameStepAndRound(roomId, gameId) {
+    return { 
+      roundNumber: await this.getRoomGameRound(roomId, gameId),
+      stepNumber: await this.getRoomGameStep(roomId, gameId),
+    }
+  }
+
+  async getCurrentStep(roomId, gameId, roundNumber, stepNumber) {
+    const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
+    const startedAt = await this.getStepStartedAt(
+      roomId,
+      gameId,
+      roundNumber,
+      stepNumber,
+    );
+    const stepScore = await this.getStepScore(roomId, gameId);
+    return {
+      words: await this.getStepWords(roomId, gameId),
+      ...currentTeamMeta,
+      startedAt,
+      score: stepScore,
+    };
+  }
+
+  async setCurrentStep(roomId, gameId, roundNumber, stepNumber, step) {
+    await this.setStepWords(roomId, gameId, step.words);
     await this.setCurrentTeam(
       roomId,
       gameId,
@@ -126,6 +136,8 @@ class GameService {
       step.explainerId,
       step.guesserId,
     ); // проставляем новых участников
+    await this.setStepScore(roomId, gameId, step.score);
+    await this.setStepStartedAt(roomId, gameId, roundNumber, stepNumber, step.startedAt);
   }
 
   async pushStepHistory(roomId, gameId, step) {
