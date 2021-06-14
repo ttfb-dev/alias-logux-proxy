@@ -10,7 +10,7 @@ const base = (server) => {
       const { level, data } = action;
 
       try {
-        await logger.exec(level, 'vk-miniapp-cli', { ...data, userId });
+        await logger.exec(level, 'vk-miniapp', { ...data, userId });
       } catch (e) {
         await logger.critical(e.message, { type: 'log/send', level, data });
       }
@@ -27,7 +27,7 @@ const base = (server) => {
 
       try {
         await logger.execAnalytics(
-          'vk-miniapp-cli',
+          'vk-miniapp',
           userAction,
           userId,
           data,
