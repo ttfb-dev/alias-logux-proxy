@@ -1,5 +1,5 @@
-import { prs, logger } from '../libs/index.js';
-import { wordService } from './index.js';
+import { prs } from '../libs';
+import { wordService } from '.';
 
 class TeamService {
   // генерирует пустую команду со случайным неповторяющимся названием
@@ -10,17 +10,18 @@ class TeamService {
       if (team.hasOwnProperty('name')) {
         return team.name;
       }
-    })
-    
+    });
+
     const allTeamNames = await wordService.getTeamNames(lang);
-    
+
     while (tryLeft > 0) {
-      const randomName = allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
+      const randomName =
+        allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
 
       if (!teamNames.includes(randomName)) {
         return randomName;
       }
-      tryLeft =- 1;
+      tryLeft = -1;
     }
 
     return allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
@@ -34,13 +35,14 @@ class TeamService {
   }
 
   async getNewTeam(roomId, lang = 'ru', customTeamName = null) {
-    const teamName = customTeamName || await this.getUniqueRandomTeamName(roomId, lang);
+    const teamName =
+      customTeamName || (await this.getUniqueRandomTeamName(roomId, lang));
     const teamId = await prs.getNextInt(`room_${roomId}_teams`, 0);
     return {
       teamId: teamId,
       name: teamName,
       memberIds: [],
-    }
+    };
   }
 
   async joinTeam(roomId, teamId, userId) {
@@ -49,7 +51,7 @@ class TeamService {
       if (team.teamId === teamId) {
         team.memberIds.push(userId);
       }
-    })
+    });
     await prs.setRoomParam(roomId, 'teams', teams);
 
     return teams;
@@ -59,9 +61,9 @@ class TeamService {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     teams.forEach((team) => {
       if (team.memberIds.includes(userId)) {
-        team.memberIds = team.memberIds.filter(uid => uid !== userId);
+        team.memberIds = team.memberIds.filter((uid) => uid !== userId);
       }
-    })
+    });
     await prs.setRoomParam(roomId, 'teams', teams);
 
     return teams;
@@ -72,17 +74,17 @@ class TeamService {
     return this.findMyTeam(teams, userId);
   }
 
-  findMyTeam (teams, userId) {
+  findMyTeam(teams, userId) {
     let myTeamId = null;
 
-    teams.forEach(team => {
+    teams.forEach((team) => {
       if (team.memberIds.includes(userId)) {
         myTeamId = team.teamId;
       }
     });
-  
+
     return myTeamId;
   }
 }
 
-export default new TeamService;
+export default new TeamService();

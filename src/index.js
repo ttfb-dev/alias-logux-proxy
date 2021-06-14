@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 
-import { base, game, profile, room, team } from './modules/index.js';
-import { server } from './init.js';
+import { base, game, profile, room, team } from './modules';
+import { server } from './init';
 
 dotenv.config();
 

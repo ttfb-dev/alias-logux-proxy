@@ -1,5 +1,6 @@
-import { logger } from '../libs/index.js';
 import parser from 'ua-parser-js';
+
+import { logger } from '../libs';
 
 const base = (server) => {
   server.type('log/send', {
@@ -29,12 +30,12 @@ const base = (server) => {
       try {
         const { browser, os, device } = parser(userAgent);
 
-        await logger.execAnalytics(
-          'vk-miniapp',
-          event,
-          userId,
-          { browser, os, device, ...data },
-        );
+        await logger.execAnalytics('vk-miniapp', event, userId, {
+          browser,
+          os,
+          device,
+          ...data,
+        });
       } catch (e) {
         await logger.critical(e.message, {
           type: 'analytics/send',
@@ -56,12 +57,12 @@ const base = (server) => {
       try {
         const { browser, os, device } = parser(userAgent);
 
-        await logger.execMetrics(
-          'vk-miniapp',
-          event,
-          userId,
-          { browser, os, device, ...data },
-        );
+        await logger.execMetrics('vk-miniapp', event, userId, {
+          browser,
+          os,
+          device,
+          ...data,
+        });
       } catch (e) {
         await logger.critical(e.message, {
           type: 'metrics/send',

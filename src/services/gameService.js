@@ -1,6 +1,6 @@
-import { prs, logger } from '../libs/index.js';
+import { prs } from '../libs';
 
-import { roomService, wordService } from './index.js';
+import { roomService, wordService } from '.';
 
 class GameService {
   constructor() {
@@ -72,7 +72,10 @@ class GameService {
   }
 
   async getGame(roomId, gameId) {
-    const { roundNumber, stepNumber } = await this.getGameStepAndRound(roomId, gameId);
+    const { roundNumber, stepNumber } = await this.getGameStepAndRound(
+      roomId,
+      gameId,
+    );
     return {
       status: await this.getGameStatus(roomId, gameId),
       roundNumber,
@@ -104,10 +107,10 @@ class GameService {
   }
 
   async getGameStepAndRound(roomId, gameId) {
-    return { 
+    return {
       roundNumber: await this.getRoomGameRound(roomId, gameId),
       stepNumber: await this.getRoomGameStep(roomId, gameId),
-    }
+    };
   }
 
   async getCurrentStep(roomId, gameId, roundNumber, stepNumber) {
@@ -137,7 +140,13 @@ class GameService {
       step.guesserId,
     ); // проставляем новых участников
     await this.setStepScore(roomId, gameId, step.score);
-    await this.setStepStartedAt(roomId, gameId, roundNumber, stepNumber, step.startedAt);
+    await this.setStepStartedAt(
+      roomId,
+      gameId,
+      roundNumber,
+      stepNumber,
+      step.startedAt,
+    );
   }
 
   async pushStepHistory(roomId, gameId, step) {
@@ -155,9 +164,20 @@ class GameService {
     );
   }
 
+  async setStepHistory(roomId, gameId, stepHistory) {
+    await prs.setRoomGameParam(
+      roomId,
+      gameId,
+      this.storageKeys.stepHistory,
+      stepHistory,
+    );
+  }
+
   async getStepScore(roomId, gameId) {
-    const roundNumber = await this.getRoomGameRound(roomId, gameId);
-    const stepNumber = await this.getRoomGameStep(roomId, gameId);
+    const { roundNumber, stepNumber } = await this.getGameStepAndRound(
+      roomId,
+      gameId,
+    );
 
     return await prs.getRoomGameParam(
       roomId,
@@ -168,23 +188,16 @@ class GameService {
   }
 
   async setStepScore(roomId, gameId, score) {
-    const roundNumber = await this.getRoomGameRound(roomId, gameId);
-    const stepNumber = await this.getRoomGameStep(roomId, gameId);
+    const { roundNumber, stepNumber } = await this.getGameStepAndRound(
+      roomId,
+      gameId,
+    );
 
     await prs.getRoomGameParam(
       roomId,
       gameId,
       this.storageKeys.stepScore(roundNumber, stepNumber),
       score,
-    );
-  }
-
-  async setStepHistory(roomId, gameId, stepHistory) {
-    await prs.setRoomGameParam(
-      roomId,
-      gameId,
-      this.storageKeys.stepHistory,
-      stepHistory,
     );
   }
 

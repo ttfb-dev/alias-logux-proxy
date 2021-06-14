@@ -1,7 +1,8 @@
 import { Server } from '@logux/server';
-import { isVkAuthorized } from './midlewares/index.js';
-import { logger, prs } from './libs/index.js';
 import parser from 'ua-parser-js';
+
+import { isVkAuthorized } from './midlewares';
+import { logger, prs } from './libs';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -23,7 +24,7 @@ server.auth(async ({ client, userId, token }) => {
 
   if (isAuthorized) {
     await prs.setUserParam(userId, 'last_connect', { value: Date.now() });
-    
+
     const device = parser(client.httpHeaders['user-agent']);
     await logger.analytics('client.authorized', client.userId, { ...device });
 
@@ -41,7 +42,10 @@ server.on('disconnected', async (client) => {
       const device = parser(client.httpHeaders['user-agent']);
       const duration = Date.now() - clientPool[client.clientId];
       delete clientPool[client.clientId];
-      await logger.analytics('client.disconnected', client.userId, { ...device, duration });
+      await logger.analytics('client.disconnected', client.userId, {
+        ...device,
+        duration,
+      });
     }
   } catch (e) {
     await logger.critical(e.message, { type: 'server_on_disconnected' });

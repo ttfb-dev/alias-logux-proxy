@@ -1,3 +1,3 @@
-import { isVkAuthorized } from './isVkAuthorized.js';
+import { isVkAuthorized } from './isVkAuthorized';
 
 export { isVkAuthorized };

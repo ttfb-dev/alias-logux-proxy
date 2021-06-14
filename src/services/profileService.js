@@ -1,8 +1,7 @@
-import { prs, logger } from '../libs/index.js';
-import { wordService } from './index.js';
+import { prs, logger } from '../libs';
+import { wordService } from '.';
 
 class ProfileService {
-
   async getPurchasedDatasetIds(userId) {
     return await prs.getUserParam(userId, 'purchased_dataset_ids', []);
   }
@@ -10,7 +9,11 @@ class ProfileService {
   async addPurchasedDatasetId(userId, datasetId) {
     const purchasedDatasetIds = await this.getPurchasedDatasetIds(userId);
     purchasedDatasetIds.push(datasetId);
-    await prs.setUserParam(userId, 'purchased_dataset_ids', purchasedDatasetIds)
+    await prs.setUserParam(
+      userId,
+      'purchased_dataset_ids',
+      purchasedDatasetIds,
+    );
   }
 
   async getActiveDatasetIds(userId) {
@@ -27,7 +30,9 @@ class ProfileService {
   async deactivateDatasetId(userId, datasetId) {
     const activeDatasetIds = await this.getActiveDatasetIds(userId);
     activeDatasetIds.push(datasetId);
-    const newActiveDatasets = activeDatasetIds.filter(activeDatasetId => activeDatasetId !== datasetId);
+    const newActiveDatasets = activeDatasetIds.filter(
+      (activeDatasetId) => activeDatasetId !== datasetId,
+    );
     await prs.setUserParam(userId, 'activated_dataset_ids', newActiveDatasets);
     return newActiveDatasets;
   }
@@ -67,21 +72,21 @@ class ProfileService {
   }
 
   mapDatasetsWithStatus(activeIds, purchasedIds, datasets) {
-    datasets.forEach(dataset => {
-      const isActive = activeIds.includes(dataset.datasetId)
-      const isPurchased = purchasedIds.includes(dataset.datasetId)
-      const isFree = dataset.price === 0
+    datasets.forEach((dataset) => {
+      const isActive = activeIds.includes(dataset.datasetId);
+      const isPurchased = purchasedIds.includes(dataset.datasetId);
+      const isFree = dataset.price === 0;
       const isAvailable = isFree || isPurchased;
 
-      dataset.status = isActive 
-        ? 'active' 
-        : isAvailable 
-          ? 'inactive'
-          : 'available';
-    })
+      dataset.status = isActive
+        ? 'active'
+        : isAvailable
+        ? 'inactive'
+        : 'available';
+    });
 
     return datasets;
   }
 }
 
-export default new ProfileService;
+export default new ProfileService();

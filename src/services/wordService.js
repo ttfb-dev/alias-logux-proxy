@@ -1,15 +1,16 @@
-import { prs, logger } from '../libs/index.js';
+import { prs } from '../libs';
 
 class WordService {
-
   constructor() {
     this.gameDatasets = [];
   }
 
-  async getRandomRoomName (lang = 'ru') {
+  async getRandomRoomName(lang = 'ru') {
     const availableRoomNamesString = await prs.getAppParam(`word_dataset_1`);
     const availableRoomNames = availableRoomNamesString.split(',');
-    return availableRoomNames[Math.floor(Math.random() * availableRoomNames.length)];
+    return availableRoomNames[
+      Math.floor(Math.random() * availableRoomNames.length)
+    ];
   }
 
   // генерирует пустую команду со случайным неповторяющимся названием
@@ -49,11 +50,11 @@ class WordService {
   }
 
   async getGameDataset(datasetId) {
-    const gameDatasets = await this.getGameDatasets()
+    const gameDatasets = await this.getGameDatasets();
 
     let dataset = null;
 
-    gameDatasets.forEach(gameDataset => {
+    gameDatasets.forEach((gameDataset) => {
       if (gameDataset.datasetId === datasetId) {
         dataset = gameDataset;
       }
@@ -64,12 +65,16 @@ class WordService {
 
   async getLangGameDatasets(lang) {
     const datasets = await prs.getAppParam('word_datasets', {});
-    return datasets.filter(dataset => dataset.type === 'game' && dataset.lang === lang).map(this.mapGameDataset);
+    return datasets
+      .filter((dataset) => dataset.type === 'game' && dataset.lang === lang)
+      .map(this.mapGameDataset);
   }
 
   async getGameDatasets() {
     const datasets = await prs.getAppParam('word_datasets', {});
-    return datasets.filter(dataset => dataset.type === 'game').map(this.mapGameDataset);
+    return datasets
+      .filter((dataset) => dataset.type === 'game')
+      .map(this.mapGameDataset);
   }
 
   mapGameDataset(dataset) {
@@ -90,10 +95,12 @@ class WordService {
   async getDatasetWord(dataset, wordIndex) {
     const datasetWords = await this.getGameDatasetWords(dataset);
     if (wordIndex >= datasetWords.length) {
-      throw new Error(`Cant get index ${wordIndex} in dataset ${dataset.datasetId}: it has ${datasetWords.length} words`)
+      throw new Error(
+        `Cant get index ${wordIndex} in dataset ${dataset.datasetId}: it has ${datasetWords.length} words`,
+      );
     }
     return datasetWords[wordIndex];
   }
 }
 
-export default new WordService;
+export default new WordService();

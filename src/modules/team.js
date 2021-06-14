@@ -1,5 +1,5 @@
-import ErrorResponse from '../contracts/errorResponse.js';
-import { teamService, roomService } from '../services/index.js';
+import ErrorResponse from '../contracts/errorResponse';
+import { teamService, roomService } from '../services';
 
 const team = (server) => {
   server.type('room/team_join', {

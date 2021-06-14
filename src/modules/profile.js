@@ -1,4 +1,4 @@
-import { profileService, roomService } from '../services/index.js';
+import { profileService, roomService } from '../services';
 
 const profile = (server) => {
   server.type('profile/get_game_datasets', {

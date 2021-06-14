@@ -1,3 +1,3 @@
-import ErrorResponse from './errorResponse.js';
+import ErrorResponse from './errorResponse';
 
 export { ErrorResponse };

@@ -1,5 +1,5 @@
-import { logger } from '../libs/index.js';
-import { roomService, gameService } from '../services/index.js';
+import { logger } from '../libs';
+import { roomService, gameService } from '../services';
 
 const game = (server) => {
   server.channel('room/:roomId/game', {
@@ -73,7 +73,8 @@ const game = (server) => {
       const { roomId, gameId } = ctx.data;
       const { startedAt } = action;
       try {
-        const { roundNumber, stepNumber } = await gameService.getGameStepAndRound(roomId, gameId);
+        const { roundNumber, stepNumber } =
+          await gameService.getGameStepAndRound(roomId, gameId);
 
         await gameService.setGameStatus(
           roomId,
@@ -118,7 +119,7 @@ const game = (server) => {
       try {
         const currentScore = await gameService.getStepScore(roomId, gameId);
         if (index === undefined) {
-          const score = currentScore + Number(word.guessed);
+          const score = word.guessed ? currentScore + 1 : currentScore - 1;
           await gameService.pushStepWord(roomId, gameId, word);
           await gameService.setStepScore(roomId, gameId, score);
         } else {
@@ -155,8 +156,14 @@ const game = (server) => {
       const { roomId, gameId } = ctx.data;
 
       try {
-        const { roundNumber, stepNumber } = await gameService.getGameStepAndRound(roomId, gameId);
-        const currentStep = await gameService.getCurrentStep(roomId, gameId, roundNumber, stepNumber);
+        const { roundNumber, stepNumber } =
+          await gameService.getGameStepAndRound(roomId, gameId);
+        const currentStep = await gameService.getCurrentStep(
+          roomId,
+          gameId,
+          roundNumber,
+          stepNumber,
+        );
         await gameService.pushStepHistory(roomId, gameId, currentStep);
       } catch (e) {
         await logger.critical(e.message, {
@@ -199,7 +206,13 @@ const game = (server) => {
 
         await gameService.setRoomGameRound(roomId, gameId, roundNumber);
         await gameService.setRoomGameStep(roomId, gameId, stepNumber);
-        await gameService.setCurrentStep(roomId, gameId, roundNumber, stepNumber, step);
+        await gameService.setCurrentStep(
+          roomId,
+          gameId,
+          roundNumber,
+          stepNumber,
+          step,
+        );
       } catch (e) {
         await logger.critical(e.message, {
           method: 'game/set_next_step',

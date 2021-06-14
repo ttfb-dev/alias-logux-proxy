@@ -1,4 +1,4 @@
-import { logger } from './logger.js';
-import { prs } from './prs.js';
+import { logger } from './logger';
+import { prs } from './prs';
 
 export { logger, prs };
