@@ -23,7 +23,8 @@ server.auth(async ({ client, userId, token }) => {
 
   if (isAuthorized) {
     await prs.setUserParam(userId, 'last_connect', { value: Date.now() });
-
+    
+    const device = parser(client.httpHeaders['user-agent']);
     await logger.analytics('client.authorized', client.userId, { ...device });
 
     if (client.clientId) {
