@@ -12,6 +12,7 @@ const server = new Server(
     port: 31337,
     subprotocol: '1.0.0',
     supports: '1.0.0',
+    root: './src',
   }),
 );
 
