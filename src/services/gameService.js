@@ -80,7 +80,7 @@ class GameService {
       status: await this.getGameStatus(roomId, gameId),
       roundNumber,
       stepNumber,
-      step: await this.getCurrentStep(roomId, gameId, roundNumber, stepNumber),
+      step: await this.getCurrentStep(roomId, gameId),
       stepHistory: await this.getStepHistory(roomId, gameId),
     };
   }
@@ -113,7 +113,11 @@ class GameService {
     };
   }
 
-  async getCurrentStep(roomId, gameId, roundNumber, stepNumber) {
+  async getCurrentStep(roomId, gameId) {
+    const { roundNumber, stepNumber } = await this.getGameStepAndRound(
+      roomId,
+      gameId,
+    );
     const currentTeamMeta = await this.getCurrentTeam(roomId, gameId);
     const startedAt = await this.getStepStartedAt(
       roomId,
@@ -122,6 +126,7 @@ class GameService {
       stepNumber,
     );
     const stepScore = await this.getStepScore(roomId, gameId);
+
     return {
       words: await this.getStepWords(roomId, gameId),
       ...currentTeamMeta,
@@ -130,7 +135,12 @@ class GameService {
     };
   }
 
-  async setCurrentStep(roomId, gameId, roundNumber, stepNumber, step) {
+  async setCurrentStep(roomId, gameId, step) {
+    const { roundNumber, stepNumber } = await this.getGameStepAndRound(
+      roomId,
+      gameId,
+    );
+
     await this.setStepWords(roomId, gameId, step.words);
     await this.setCurrentTeam(
       roomId,
@@ -260,16 +270,38 @@ class GameService {
     );
   }
 
-  async pushStepWord(roomId, gameId, word) {
-    const stepWords = await this.getStepWords(roomId, gameId);
-    stepWords.push(word);
-    await this.setStepWords(roomId, gameId, stepWords);
+  async setStepWord(roomId, gameId, word) {
+    const words = await this.getStepWords(roomId, gameId);
+
+    words.push(word);
+
+    await this.setStepWords(roomId, gameId, words);
   }
 
-  async replaceStepWord(roomId, gameId, word, index) {
-    const stepWords = await this.getStepWords(roomId, gameId);
-    stepWords[index] = word;
-    await this.setStepWords(roomId, gameId, stepWords);
+  async editStepWord(roomId, gameId, word, index) {
+    const words = await this.getStepWords(roomId, gameId);
+
+    words[index] = word;
+
+    await this.setStepWords(roomId, gameId, words);
+  }
+
+  async setStepWordWithScore(roomId, gameId, word) {
+    const oldScore = await this.getStepScore(roomId, gameId);
+
+    const score = word.guessed ? oldScore + 1 : oldScore - 1;
+
+    await this.setStepWord(roomId, gameId, word);
+    await this.setStepScore(roomId, gameId, score);
+  }
+
+  async editStepWordWithScore(roomId, gameId, word, index) {
+    const oldScore = await this.getStepScore(roomId, gameId);
+
+    const score = word.guessed ? oldScore + 1 : oldScore - 1;
+
+    await this.editStepWord(roomId, gameId, word, index);
+    await this.setStepScore(roomId, gameId, score);
   }
 
   async getRandomWords(roomId, gameId) {

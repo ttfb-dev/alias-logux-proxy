@@ -114,22 +114,43 @@ const game = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
-      const { word, index } = action;
+      const { word } = action;
 
       try {
-        const currentScore = await gameService.getStepScore(roomId, gameId);
-        if (index === undefined) {
-          const score = word.guessed ? currentScore + 1 : currentScore - 1;
-          await gameService.pushStepWord(roomId, gameId, word);
-          await gameService.setStepScore(roomId, gameId, score);
-        } else {
-          const score = currentScore + Number(word.guessed) * 2;
-          await gameService.replaceStepWord(roomId, gameId, word, index);
-          await gameService.setStepScore(roomId, gameId, score);
-        }
+        await gameService.setStepWordWithScore(roomId, gameId, word);
       } catch (e) {
         await logger.critical(e.message, {
           method: 'game/set_step_word',
+          roomId,
+          gameId,
+          word,
+        });
+      }
+    },
+  });
+
+  server.type('game/edit_step_word', {
+    async access(ctx) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+      const gameId = await gameService.getRoomGameId(roomId);
+
+      ctx.data = { userId, roomId, gameId };
+
+      return true;
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+    async process(ctx, action, meta) {
+      const { roomId, gameId } = ctx.data;
+      const { word, index } = action;
+
+      try {
+        await gameService.editStepWordWithScore(roomId, gameId, word, index);
+      } catch (e) {
+        await logger.critical(e.message, {
+          method: 'game/edit_step_word',
           roomId,
           gameId,
           word,
