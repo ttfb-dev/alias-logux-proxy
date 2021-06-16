@@ -218,15 +218,12 @@ const game = (server) => {
       try {
         // Пушим отыгравшие слова
         const stepWords = await gameService.getStepWords(roomId, gameId);
-        await logger.debug('step words: ', {roomId, gameId, stepWords});
         const usedWordList = stepWords.map(stepWord => stepWord.index);
-        await logger.debug('step words index list: ', {roomId, gameId, index_list: usedWordList});
         const usedWords = await gameService.pushManyUsedGameWords(
           roomId,
           gameId,
           usedWordList,
         );
-        await logger.debug('new used words: ', {roomId, gameId, usedWords});
         // Подменяем запрошенные слова использованными
         await gameService.setRoomGameRequestedWords(roomId, gameId, usedWords);
 

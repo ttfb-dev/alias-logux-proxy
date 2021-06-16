@@ -135,11 +135,7 @@ class GameService {
     };
   }
 
-  async setCurrentStep(roomId, gameId, step) {
-    const { roundNumber, stepNumber } = await this.getGameStepAndRound(
-      roomId,
-      gameId,
-    );
+  async setCurrentStep(roomId, gameId, roundNumber, stepNumber, step) {
 
     await this.setStepWords(roomId, gameId, step.words);
     await this.setCurrentTeam(
