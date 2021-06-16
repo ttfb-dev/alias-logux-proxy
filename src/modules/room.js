@@ -326,6 +326,44 @@ const room = (server) => {
     },
   });
 
+  server.type('room/game_end', {
+    async accessAndProcess(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      try {
+        const roomId = await roomService.whereIAm(userId);
+
+        if (!roomId) {
+          throw new Error('You are not in room');
+        }
+
+        ctx.data = { userId, roomId };
+
+        const canFinishGame = await gameService.isRoomInGame(roomId);
+
+        if (canFinishGame) {
+          await roomService.setRoomStatus(roomId, roomService.storageKeys.statuses.lobby);
+          await logger.info('game.end', {
+            type: 'room/game_end',
+            action,
+            roomId,
+          });
+        }
+
+        return canFinishGame;
+      } catch (e) {
+        await logger.critical(e.message, {
+          type: 'room/game_end',
+          action,
+          userId,
+        });
+      }
+      return false;
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+  });
+
   /** client actions */
   //событие присоединения к комнате
   server.type('room/user_joined', {
