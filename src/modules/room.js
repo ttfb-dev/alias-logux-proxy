@@ -277,7 +277,7 @@ const room = (server) => {
   });
 
   server.type('room/game_start', {
-    async access(ctx, action, meta) {
+    async accessAndProcess(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
 
       try {
@@ -293,6 +293,24 @@ const room = (server) => {
 
         const canStartGame = await gameService.canStartGame(roomId);
 
+        try {
+          if (isRoomOwner && canStartGame) {
+            const gameId = await gameService.startGame(roomId);
+            await logger.info('game.start', {
+              type: 'room/game_start',
+              action,
+              roomId,
+              gameId,
+            });
+          }
+        } catch (e) {
+          await logger.critical(e.message, {
+            type: 'room/game_start',
+            action,
+            userId,
+          });
+        }
+
         return isRoomOwner && canStartGame;
       } catch (e) {
         await logger.critical(e.message, {
@@ -305,24 +323,6 @@ const room = (server) => {
     },
     resend(ctx, action, meta) {
       return `room/${ctx.data.roomId}`;
-    },
-    async process(ctx, action, meta) {
-      const { userId, roomId } = ctx.data;
-      try {
-        const gameId = await gameService.startGame(roomId);
-
-        await logger.info('Игра началась', {
-          type: 'room/game_start',
-          action,
-          gameId,
-        });
-      } catch (e) {
-        await logger.critical(e.message, {
-          type: 'room/game_start',
-          action,
-          userId,
-        });
-      }
     },
   });
 
