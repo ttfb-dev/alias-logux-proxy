@@ -213,8 +213,6 @@ const game = (server) => {
       const { roomId, gameId } = ctx.data;
       const { step, stepNumber, roundNumber } = action;
 
-      await logger.debug('game/set_next_step: ', { action });
-
       try {
         // Пушим отыгравшие слова
         const stepWords = await gameService.getStepWords(roomId, gameId);
