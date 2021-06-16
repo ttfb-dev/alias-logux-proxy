@@ -136,7 +136,6 @@ class GameService {
   }
 
   async setCurrentStep(roomId, gameId, roundNumber, stepNumber, step) {
-
     await this.setStepWords(roomId, gameId, step.words);
     await this.setCurrentTeam(
       roomId,
@@ -199,7 +198,7 @@ class GameService {
       gameId,
     );
 
-    await prs.getRoomGameParam(
+    await prs.setRoomGameParam(
       roomId,
       gameId,
       this.storageKeys.stepScore(roundNumber, stepNumber),
