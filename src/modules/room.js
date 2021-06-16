@@ -279,6 +279,7 @@ const room = (server) => {
   server.type('room/game_start', {
     async accessAndProcess(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
+      console.log('start accessAndProcess');
 
       try {
         const roomId = await roomService.whereIAm(userId);
@@ -310,6 +311,7 @@ const room = (server) => {
             userId,
           });
         }
+        console.log('end accessAndProcess');
 
         return isRoomOwner && canStartGame;
       } catch (e) {
@@ -322,6 +324,7 @@ const room = (server) => {
       return false;
     },
     resend(ctx, action, meta) {
+      console.log('start resend');
       return `room/${ctx.data.roomId}`;
     },
   });
