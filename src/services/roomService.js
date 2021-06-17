@@ -9,7 +9,7 @@ class RoomService {
       ownerId: 'owner_id',
       memberIds: 'member_ids',
       statuses: {
-        lobby: 'pregame',
+        lobby: 'lobby',
         game: 'game',
         closed: 'closed',
       },
@@ -18,6 +18,11 @@ class RoomService {
 
   async whereIAm(userId) {
     return await prs.getUserParam(userId, this.storageKeys.roomId, null);
+  }
+
+  async isRoomInGame(roomId) {
+    const roomStatus = await this.getRoomStatus(roomId);
+    return roomStatus === this.storageKeys.statuses.game;
   }
 
   async isItMyRoomId(userId, roomId) {

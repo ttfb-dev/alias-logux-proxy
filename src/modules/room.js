@@ -278,7 +278,6 @@ const room = (server) => {
 
   server.type('room/game_start', {
     async accessAndProcess(ctx, action, meta) {
-      console.log('start accessAndProcess');
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
 
@@ -313,10 +312,8 @@ const room = (server) => {
           userId,
         });
       }
-      console.log('end accessAndProcess');
     },
     resend(ctx, action, meta) {
-      console.log('start resend');
       return `room/${ctx.data.roomId}`;
     },
   });
@@ -336,7 +333,7 @@ const room = (server) => {
       ctx.data = { userId, roomId };
 
       try {
-        const canFinishGame = await gameService.isRoomInGame(roomId);
+        const canFinishGame = await roomService.isRoomInGame(roomId);
 
         if (canFinishGame) {
           await roomService.setRoomStatus(

@@ -66,11 +66,6 @@ class GameService {
     return await prs.getRoomParam(roomId, this.storageKeys.currentGameId, null);
   }
 
-  async isRoomInGame(roomId) {
-    const roomStatus = await roomService.getRoomStatus(roomId);
-    return roomStatus === roomService.storageKeys.status.game;
-  }
-
   async getGame(roomId, gameId) {
     const { roundNumber, stepNumber } = await this.getGameStepAndRound(
       roomId,
