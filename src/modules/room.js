@@ -36,39 +36,35 @@ const room = (server) => {
 
   server.type('room/join', {
     async access(ctx, action, meta) {
-      return true;
-    },
-    async process(ctx, action, meta) {
-      const { roomId } = action;
       const userId = parseInt(ctx.userId);
 
-      const result = await roomService.joinRoom(userId, roomId);
+      ctx.data = { userId };
 
-      if (result instanceof ErrorResponse) {
+      return true;
+    },
+
+    async process(ctx, action, meta) {
+      const { roomId } = action;
+      const { userId } = ctx.data;
+
+      try {
+        await roomService.joinRoom(userId, roomId);
+        await roomService.refreshRoomDatasets(roomId);
+
+        const room = await roomService.getRoomDetail(roomId, userId);
+
+        await server.log.add({
+          type: 'room/user_joined',
+          roomId,
+          userId,
+          memberIds: room.memberIds,
+          gameWordDatasets: room.gameWordDatasets,
+        });
+      } catch (e) {
         server.undo(action, meta, 'error', {
           message: 'Братишка, ты не прав! Такой комнаты не существует :(',
-          result,
         });
-
-        return;
       }
-
-      await roomService.refreshRoomDatasets(roomId);
-
-      const room = await roomService.getRoomDetail(roomId, userId);
-
-      await server.log.add({
-        type: 'room/user_joined',
-        roomId,
-        userId,
-        memberIds: room.memberIds,
-        gameWordDatasets: room.gameWordDatasets,
-      });
-
-      ctx.sendBack({
-        type: 'room/join_success',
-        roomId,
-      });
     },
   });
 

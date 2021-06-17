@@ -43,7 +43,7 @@ class RoomService {
     // если уже присоеденены к какой-либо комнате
     const currentRoomId = await this.whereIAm(userId);
     if (currentRoomId) {
-      return new ErrorResponse(
+      throw new ErrorResponse(
         'user_already_in_room',
         'Вы уже присоеденены к комнате {room_id}',
         { room_id: currentRoomId },
@@ -54,7 +54,7 @@ class RoomService {
     const roomStatus = await prs.getRoomParam(roomId, 'status');
     const isRoomActive = roomStatus === this.storageKeys.statuses.lobby;
     if (!isRoomActive) {
-      return new ErrorResponse(
+      throw new ErrorResponse(
         'room_does_not_exist_or_closed',
         'Комната, к которой вы пытаетесь присоединиться не существует или закрыта',
       );
@@ -77,11 +77,11 @@ class RoomService {
   async leaveRoom(userId, roomId) {
     const currentRoomId = await this.whereIAm(userId);
     if (!currentRoomId) {
-      return new ErrorResponse('user_not_in_room', 'Вы вне комнаты');
+      throw new ErrorResponse('user_not_in_room', 'Вы вне комнаты');
     }
 
     if (parseInt(roomId) !== currentRoomId) {
-      return new ErrorResponse(
+      throw new ErrorResponse(
         'user_in_another_room',
         'Вы присоеденены к другой комнате {room_id}',
         { room_id: currentRoomId },
@@ -105,7 +105,7 @@ class RoomService {
   async createRoom(userId) {
     const currentRoomId = await this.whereIAm(userId);
     if (currentRoomId) {
-      return new ErrorResponse(
+      throw new ErrorResponse(
         'user_already_in_room',
         'Вы уже присоеденены к комнате {room_id}',
         { room_id: currentRoomId },
