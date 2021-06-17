@@ -67,7 +67,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
+      return `room/${ctx.data.roomId}/game`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -110,7 +110,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
+      return `room/${ctx.data.roomId}/game`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -140,7 +140,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
+      return `room/${ctx.data.roomId}/game`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -171,7 +171,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
+      return `room/${ctx.data.roomId}/game`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -207,7 +207,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
+      return `room/${ctx.data.roomId}/game`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -216,7 +216,7 @@ const game = (server) => {
       try {
         // Пушим отыгравшие слова
         const stepWords = await gameService.getStepWords(roomId, gameId);
-        const usedWordList = stepWords.map(stepWord => stepWord.index);
+        const usedWordList = stepWords.map((stepWord) => stepWord.index);
         const usedWords = await gameService.pushManyUsedGameWords(
           roomId,
           gameId,
@@ -258,7 +258,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
+      return `room/${ctx.data.roomId}/game`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;

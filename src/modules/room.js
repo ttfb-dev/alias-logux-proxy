@@ -278,42 +278,34 @@ const room = (server) => {
 
   server.type('room/game_start', {
     async accessAndProcess(ctx, action, meta) {
-      const userId = parseInt(ctx.userId);
       console.log('start accessAndProcess');
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+
+      if (!roomId) {
+        server.undo(action, meta, {
+          title: 'Ошибка',
+          message: 'Вы не находитесь в комнате.',
+        });
+      }
+
+      ctx.data = { userId, roomId };
 
       try {
-        const roomId = await roomService.whereIAm(userId);
-
-        if (!roomId) {
-          throw new Error('You are not in room');
-        }
-
-        ctx.data = { userId, roomId };
-
         const isRoomOwner = await roomService.amIRoomOwner(userId, roomId);
 
         const canStartGame = await gameService.canStartGame(roomId);
 
-        try {
-          if (isRoomOwner && canStartGame) {
-            const gameId = await gameService.startGame(roomId);
-            await logger.info('game.start', {
-              type: 'room/game_start',
-              action,
-              roomId,
-              gameId,
-            });
-          }
-        } catch (e) {
-          await logger.critical(e.message, {
+        if (isRoomOwner && canStartGame) {
+          const gameId = await gameService.startGame(roomId);
+
+          await logger.info('game.start', {
             type: 'room/game_start',
             action,
-            userId,
+            roomId,
+            gameId,
           });
         }
-        console.log('end accessAndProcess');
-
-        return isRoomOwner && canStartGame;
       } catch (e) {
         await logger.critical(e.message, {
           type: 'room/game_start',
@@ -321,7 +313,7 @@ const room = (server) => {
           userId,
         });
       }
-      return false;
+      console.log('end accessAndProcess');
     },
     resend(ctx, action, meta) {
       console.log('start resend');
@@ -332,27 +324,32 @@ const room = (server) => {
   server.type('room/game_end', {
     async accessAndProcess(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+
+      if (!roomId) {
+        server.undo(action, meta, {
+          title: 'Ошибка',
+          message: 'Вы не находитесь в комнате.',
+        });
+      }
+
+      ctx.data = { userId, roomId };
+
       try {
-        const roomId = await roomService.whereIAm(userId);
-
-        if (!roomId) {
-          throw new Error('You are not in room');
-        }
-
-        ctx.data = { userId, roomId };
-
         const canFinishGame = await gameService.isRoomInGame(roomId);
 
         if (canFinishGame) {
-          await roomService.setRoomStatus(roomId, roomService.storageKeys.statuses.lobby);
+          await roomService.setRoomStatus(
+            roomId,
+            roomService.storageKeys.statuses.lobby,
+          );
+
           await logger.info('game.end', {
             type: 'room/game_end',
             action,
             roomId,
           });
         }
-
-        return canFinishGame;
       } catch (e) {
         await logger.critical(e.message, {
           type: 'room/game_end',
@@ -360,10 +357,9 @@ const room = (server) => {
           userId,
         });
       }
-      return false;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
+      return `room/${ctx.data.roomId}/game`;
     },
   });
 
