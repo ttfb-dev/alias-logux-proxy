@@ -42,33 +42,30 @@ const room = (server) => {
       const { roomId } = action;
       const userId = parseInt(ctx.userId);
 
-      const result = await roomService.joinRoom(userId, roomId);
+      try {
+        await roomService.joinRoom(userId, roomId);
 
-      if (result instanceof ErrorResponse) {
-        ctx.sendBack({
-          type: 'room/join_error',
-          ...result,
+        await roomService.refreshRoomDatasets(roomId);
+
+        const room = await roomService.getRoomDetail(roomId, userId);
+
+        await server.log.add({
+          type: 'room/user_joined',
+          roomId,
+          userId,
+          memberIds: room.memberIds,
+          gameWordDatasets: room.gameWordDatasets,
         });
 
-        return;
+        ctx.sendBack({
+          type: 'room/join_success',
+          roomId,
+        });
+      } catch (e) {
+        server.undo(action, meta, {
+          message: 'Братишка, ты не прав! Такой комнаты не существует :(',
+        });
       }
-
-      await roomService.refreshRoomDatasets(roomId);
-
-      const room = await roomService.getRoomDetail(roomId, userId);
-
-      await server.log.add({
-        type: 'room/user_joined',
-        roomId,
-        userId,
-        memberIds: room.memberIds,
-        gameWordDatasets: room.gameWordDatasets,
-      });
-
-      ctx.sendBack({
-        type: 'room/join_success',
-        roomId,
-      });
     },
   });
 
