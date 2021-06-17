@@ -45,7 +45,7 @@ const room = (server) => {
       await roomService.joinRoom(userId, roomId);
 
       if (result instanceof ErrorResponse) {
-        server.undo(action, meta, {
+        server.undo(action, meta, 'error', {
           message: 'Братишка, ты не прав! Такой комнаты не существует :(',
         });
 
