@@ -42,7 +42,7 @@ const room = (server) => {
       const { roomId } = action;
       const userId = parseInt(ctx.userId);
 
-      await roomService.joinRoom(userId, roomId);
+      const result = await roomService.joinRoom(userId, roomId);
 
       if (result instanceof ErrorResponse) {
         server.undo(action, meta, 'error', {
