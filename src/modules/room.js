@@ -47,6 +47,7 @@ const room = (server) => {
       if (result instanceof ErrorResponse) {
         server.undo(action, meta, 'error', {
           message: 'Братишка, ты не прав! Такой комнаты не существует :(',
+          result,
         });
 
         return;
