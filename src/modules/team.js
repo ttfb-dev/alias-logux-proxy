@@ -121,7 +121,7 @@ const team = (server) => {
       ctx.data = {roomId, teamId, userId};
       const currentRoom = await roomService.whereIAm(userId);
       //проверяем, что комната пустая и удаляющий в текущей комнате
-      return currentRoom === roomId && ;
+      return currentRoom === roomId;
     },
     async process(ctx, action, meta) {
       const {roomId, teamId, userId} = ctx.data;
