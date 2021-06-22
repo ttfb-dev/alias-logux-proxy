@@ -130,18 +130,12 @@ const team = (server) => {
       const teamsCount = await roomService.getTeamsCount(roomId);
 
       if (!isEmpty) {
-        ctx.sendBack({
-          type: 'logux/undo',
-          message: 'В команде остались люди!!1',
-        });
+        server.undo(action, meta, 'error', { message: 'В команде остались люди!!1' });
         return ;
       }
 
       if (teamsCount <= 2) {
-        ctx.sendBack({
-          type: 'logux/undo',
-          message: 'Для игры нужно минимум две команды',
-        });
+        server.undo(action, meta, 'error', { message: 'Для игры нужно минимум две команды' });
         return ;
       }
 
