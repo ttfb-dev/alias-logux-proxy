@@ -118,15 +118,32 @@ const team = (server) => {
       const roomId = parseInt(action.roomId);
       const teamId = parseInt(action.teamId);
       const userId = parseInt(ctx.userId);
+      ctx.data = {roomId, teamId, userId};
       const currentRoom = await roomService.whereIAm(userId);
-      const isEmpty = await roomService.isTeamEmpty(roomId, teamId);
-      const teamsCount = await roomService.getTeamsCount(roomId);
       //проверяем, что комната пустая и удаляющий в текущей комнате
-      return isEmpty && currentRoom === roomId && teamsCount > 2;
+      return currentRoom === roomId && ;
     },
     async process(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
-      const teamId = parseInt(action.teamId);
+      const {roomId, teamId, userId} = ctx.data;
+
+      const isEmpty = await roomService.isTeamEmpty(roomId, teamId);
+      const teamsCount = await roomService.getTeamsCount(roomId);
+
+      if (!isEmpty) {
+        ctx.sendBack({
+          type: 'logux/undo',
+          message: 'В команде остались люди!!1',
+        });
+        return ;
+      }
+
+      if (teamsCount <= 2) {
+        ctx.sendBack({
+          type: 'logux/undo',
+          message: 'Для игры нужно минимум две команды',
+        });
+        return ;
+      }
 
       const result = await roomService.deleteTeam(roomId, teamId);
 
