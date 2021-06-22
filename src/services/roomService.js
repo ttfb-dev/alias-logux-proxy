@@ -9,7 +9,7 @@ class RoomService {
       ownerId: 'owner_id',
       memberIds: 'member_ids',
       statuses: {
-        lobby: 'pregame',
+        lobby: 'lobby',
         game: 'game',
         closed: 'closed',
       },
@@ -18,6 +18,11 @@ class RoomService {
 
   async whereIAm(userId) {
     return await prs.getUserParam(userId, this.storageKeys.roomId, null);
+  }
+
+  async isRoomInGame(roomId) {
+    const roomStatus = await this.getRoomStatus(roomId);
+    return roomStatus === this.storageKeys.statuses.game;
   }
 
   async isItMyRoomId(userId, roomId) {
@@ -38,7 +43,7 @@ class RoomService {
     // если уже присоеденены к какой-либо комнате
     const currentRoomId = await this.whereIAm(userId);
     if (currentRoomId) {
-      return new ErrorResponse(
+      throw new ErrorResponse(
         'user_already_in_room',
         'Вы уже присоеденены к комнате {room_id}',
         { room_id: currentRoomId },
@@ -49,7 +54,7 @@ class RoomService {
     const roomStatus = await prs.getRoomParam(roomId, 'status');
     const isRoomActive = roomStatus === this.storageKeys.statuses.lobby;
     if (!isRoomActive) {
-      return new ErrorResponse(
+      throw new ErrorResponse(
         'room_does_not_exist_or_closed',
         'Комната, к которой вы пытаетесь присоединиться не существует или закрыта',
       );
@@ -72,11 +77,11 @@ class RoomService {
   async leaveRoom(userId, roomId) {
     const currentRoomId = await this.whereIAm(userId);
     if (!currentRoomId) {
-      return new ErrorResponse('user_not_in_room', 'Вы вне комнаты');
+      throw new ErrorResponse('user_not_in_room', 'Вы вне комнаты');
     }
 
     if (parseInt(roomId) !== currentRoomId) {
-      return new ErrorResponse(
+      throw new ErrorResponse(
         'user_in_another_room',
         'Вы присоеденены к другой комнате {room_id}',
         { room_id: currentRoomId },
@@ -100,7 +105,7 @@ class RoomService {
   async createRoom(userId) {
     const currentRoomId = await this.whereIAm(userId);
     if (currentRoomId) {
-      return new ErrorResponse(
+      throw new ErrorResponse(
         'user_already_in_room',
         'Вы уже присоеденены к комнате {room_id}',
         { room_id: currentRoomId },
