@@ -17,10 +17,8 @@ class ProfileService {
   }
 
   async getActiveDatasetIds(userId) {
-    let datasets = await prs.getUserParam(userId, 'activated_dataset_ids', 'empty');
-    logger.debug('check datasets on empty key', {datasets});
-    if (datasets === 'epmty') {
-      logger.debug('datasets is empty', {});
+    let datasets = await prs.getUserParam(userId, 'activated_dataset_ids', null);
+    if (datasets === null) {
       await this.activateDatasetId(userId, 3);
       datasets = [3];
     }
