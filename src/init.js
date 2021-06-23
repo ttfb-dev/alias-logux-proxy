@@ -1,8 +1,8 @@
 import { Server } from '@logux/server';
 import parser from 'ua-parser-js';
 
-import { isVkAuthorized } from './midlewares';
 import { logger, prs } from './libs';
+import { isVkAuthorized } from './midlewares';
 
 const isProd = process.env.NODE_ENV === 'production';
 

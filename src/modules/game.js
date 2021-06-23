@@ -1,5 +1,5 @@
 import { logger } from '../libs';
-import { roomService, gameService } from '../services';
+import { gameService, roomService } from '../services';
 
 const game = (server) => {
   server.channel('room/:roomId/game', {

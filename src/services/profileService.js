@@ -1,4 +1,5 @@
-import { prs, logger } from '../libs';
+import { logger, prs } from '../libs';
+
 import { wordService } from '.';
 
 class ProfileService {
@@ -17,10 +18,14 @@ class ProfileService {
   }
 
   async getActiveDatasetIds(userId) {
-    let datasets = await prs.getUserParam(userId, 'activated_dataset_ids', null);
+    let datasets = await prs.getUserParam(
+      userId,
+      'activated_dataset_ids',
+      null,
+    );
     if (datasets === null) {
       datasets = [3];
-      await prs.setUserParam(userId, 'activated_dataset_ids', datasets)
+      await prs.setUserParam(userId, 'activated_dataset_ids', datasets);
     }
     return datasets;
   }

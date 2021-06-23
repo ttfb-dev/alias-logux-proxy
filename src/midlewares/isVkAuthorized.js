@@ -1,5 +1,6 @@
-import qs from 'querystring';
 import crypto from 'crypto';
+import qs from 'querystring';
+
 const secretKey = process.env.VK_PROTECTED_KEY;
 
 const isVkAuthorized = function (userId, queryString) {
