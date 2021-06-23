@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@logux/server": "^0.10.1",
-    "@ttfb/aliasgame": "^0.0.33",
+    "@ttfb/aliasgame": "^0.0.34",
     "dotenv": "^10.0.0",
     "ua-parser-js": "^0.7.28"
   },

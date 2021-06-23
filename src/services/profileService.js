@@ -1,4 +1,4 @@
-import { prs, logger } from '../libs';
+import { prs, logger, udatasets } from '../libs';
 import { wordService } from '.';
 
 class ProfileService {
@@ -17,29 +17,15 @@ class ProfileService {
   }
 
   async getActiveDatasetIds(userId) {
-    let datasets = await prs.getUserParam(userId, 'activated_dataset_ids', null);
-    if (datasets === null) {
-      datasets = [3];
-      await prs.setUserParam(userId, 'activated_dataset_ids', datasets)
-    }
-    return datasets;
+    return await udatasets.getActive(userId);
   }
 
   async activateDatasetId(userId, datasetId) {
-    const activeDatasetIds = await this.getActiveDatasetIds(userId);
-    activeDatasetIds.push(datasetId);
-    await prs.setUserParam(userId, 'activated_dataset_ids', activeDatasetIds);
-    return activeDatasetIds;
+    return await udatasets.activate(userId, datasetId);
   }
 
   async deactivateDatasetId(userId, datasetId) {
-    const activeDatasetIds = await this.getActiveDatasetIds(userId);
-    activeDatasetIds.push(datasetId);
-    const newActiveDatasets = activeDatasetIds.filter(
-      (activeDatasetId) => activeDatasetId !== datasetId,
-    );
-    await prs.setUserParam(userId, 'activated_dataset_ids', newActiveDatasets);
-    return newActiveDatasets;
+    return await udatasets.deactivate(userId, datasetId);
   }
 
   async getDatasetsWithStatus(userId) {
