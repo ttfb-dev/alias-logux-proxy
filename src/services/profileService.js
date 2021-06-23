@@ -18,11 +18,9 @@ class ProfileService {
 
   async getActiveDatasetIds(userId) {
     let datasets = await prs.getUserParam(userId, 'activated_dataset_ids', null);
-    logger.debug('get active expect null', {datasets: datasets})
     if (datasets === null) {
-      logger.debug('datasets === null', {})
-      await this.activateDatasetId(userId, 3);
       datasets = [3];
+      await prs.setUserParam(userId, 'activated_dataset_ids', datasets)
     }
     return datasets;
   }
