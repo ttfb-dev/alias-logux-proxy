@@ -17,7 +17,12 @@ class ProfileService {
   }
 
   async getActiveDatasetIds(userId) {
-    return await prs.getUserParam(userId, 'activated_dataset_ids', [3]);
+    let datasets = await prs.getUserParam(userId, 'activated_dataset_ids', 'empty');
+    if (datasets === 'epmty') {
+      await this.activateDatasetId(userId, 3);
+      return [3];
+    }
+    return datasets;
   }
 
   async activateDatasetId(userId, datasetId) {
