@@ -1,5 +1,5 @@
 import ErrorResponse from '../contracts/errorResponse';
-import { teamService, roomService } from '../services';
+import { roomService, teamService } from '../services';
 
 const team = (server) => {
   server.type('room/team_join', {
@@ -118,25 +118,29 @@ const team = (server) => {
       const roomId = parseInt(action.roomId);
       const teamId = parseInt(action.teamId);
       const userId = parseInt(ctx.userId);
-      ctx.data = {roomId, teamId, userId};
+      ctx.data = { roomId, teamId, userId };
       const currentRoom = await roomService.whereIAm(userId);
       //проверяем, что комната пустая и удаляющий в текущей комнате
       return currentRoom === roomId;
     },
     async process(ctx, action, meta) {
-      const {roomId, teamId, userId} = ctx.data;
+      const { roomId, teamId, userId } = ctx.data;
 
       const isEmpty = await roomService.isTeamEmpty(roomId, teamId);
       const teamsCount = await roomService.getTeamsCount(roomId);
 
       if (!isEmpty) {
-        server.undo(action, meta, 'error', { message: 'В команде остались люди!!1' });
-        return ;
+        server.undo(action, meta, 'error', {
+          message: 'В команде остались люди!!1',
+        });
+        return;
       }
 
       if (teamsCount <= 2) {
-        server.undo(action, meta, 'error', { message: 'Для игры нужно минимум две команды' });
-        return ;
+        server.undo(action, meta, 'error', {
+          message: 'Для игры нужно минимум две команды',
+        });
+        return;
       }
 
       const result = await roomService.deleteTeam(roomId, teamId);

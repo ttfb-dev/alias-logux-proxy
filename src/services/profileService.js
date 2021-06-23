@@ -1,4 +1,4 @@
-import { prs, logger, udatasets } from '../libs';
+import { prs, udatasets } from '../libs';
 import { wordService } from '.';
 
 class ProfileService {

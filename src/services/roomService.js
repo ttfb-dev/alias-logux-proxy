@@ -1,5 +1,6 @@
-import { prs } from '../libs';
 import { ErrorResponse } from '../contracts';
+import { prs } from '../libs';
+
 import { gameService, profileService, teamService, wordService } from '.';
 
 class RoomService {

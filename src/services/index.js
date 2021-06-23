@@ -1,7 +1,7 @@
+import gameService from './gameService';
+import profileService from './profileService';
 import roomService from './roomService';
 import teamService from './teamService';
 import wordService from './wordService';
-import gameService from './gameService';
-import profileService from './profileService';
 
-export { roomService, teamService, wordService, profileService, gameService };
+export { gameService, profileService, roomService, teamService, wordService };
