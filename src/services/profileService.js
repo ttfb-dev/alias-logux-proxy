@@ -17,7 +17,7 @@ class ProfileService {
   }
 
   async getActiveDatasetIds(userId) {
-    return await prs.getUserParam(userId, 'activated_dataset_ids', []);
+    return await prs.getUserParam(userId, 'activated_dataset_ids', [3]);
   }
 
   async activateDatasetId(userId, datasetId) {
