@@ -37,7 +37,7 @@ const room = (server) => {
           randomTeamNames,
         };
       } catch ({ message }) {
-        await logger.critical(e.message, {
+        await logger.critical(message, {
           action: 'room/:roomId',
           method: 'load',
         });
@@ -230,8 +230,8 @@ const room = (server) => {
           await roomService.isDatasetAvailableToActivate(roomId, datasetId);
 
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToActivate;
-      } catch (e) {
-        logger.critical(e.message, {
+      } catch ({ message }) {
+        logger.critical(message, {
           type: 'room/activate_word_dataset/access',
           action,
           userId: ctx.userId,
@@ -246,8 +246,8 @@ const room = (server) => {
       try {
         const { roomId, datasetId } = ctx.data;
         await roomService.activateGameDataset(roomId, datasetId);
-      } catch (e) {
-        logger.critical(e.message, {
+      } catch ({ message }) {
+        logger.critical(message, {
           type: 'room/activate_word_dataset/access',
           action,
           userId: ctx.userId,
@@ -273,8 +273,8 @@ const room = (server) => {
           await roomService.isDatasetAvailableToDeactivate(roomId, datasetId);
 
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToDeactivate;
-      } catch (e) {
-        logger.critical(e.message, {
+      } catch ({ message }) {
+        logger.critical(message, {
           type: 'room/deactivate_game_dataset',
           action,
           userId: ctx.userId,
