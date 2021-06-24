@@ -206,10 +206,9 @@ const room = (server) => {
         return;
       }
 
-      ctx.sendBack({
-        type: 'room/where_i_am_success',
+      return {
         roomId: result,
-      });
+      };
     },
   });
 
@@ -371,7 +370,7 @@ const room = (server) => {
       }
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}/game`;
+      return `room/${ctx.data.roomId}`;
     },
   });
 
