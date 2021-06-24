@@ -2,37 +2,6 @@ import { logger } from '../libs';
 import { gameService, roomService } from '../services';
 
 const game = (server) => {
-  server.channel('room/:roomId/game', {
-    async access(ctx, action, meta) {
-      const roomId = parseInt(ctx.params.roomId);
-      const userId = parseInt(ctx.userId);
-
-      const currentRoomId = await roomService.whereIAm(userId);
-
-      const gameId = await gameService.getRoomGameId(roomId);
-
-      ctx.data = { roomId, gameId, userId };
-
-      return currentRoomId === roomId && gameId;
-    },
-    async load(ctx, action, meta) {
-      const { roomId, gameId } = ctx.data;
-      try {
-        const game = await gameService.getGame(roomId, gameId);
-
-        return {
-          type: 'game/state',
-          game,
-        };
-      } catch (e) {
-        await logger.critical(e.message, {
-          action: 'room/:roomId/game',
-          method: 'load',
-        });
-      }
-    },
-  });
-
   server.type('game/get_words', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
@@ -67,7 +36,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}/game`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -110,7 +79,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}/game`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -140,7 +109,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}/game`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -171,7 +140,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}/game`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -207,7 +176,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}/game`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
@@ -258,7 +227,7 @@ const game = (server) => {
       return true;
     },
     resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}/game`;
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;

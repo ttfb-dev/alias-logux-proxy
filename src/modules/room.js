@@ -16,21 +16,32 @@ const room = (server) => {
     },
     async load(ctx, action, meta) {
       const { roomId, userId } = ctx.data;
-      const room = await roomService.getRoomDetail(roomId, userId);
 
-      const randomRoomNames = await wordService.getRandomRoomNames(
-        room.settings.lang,
-      );
-      const randomTeamNames = await wordService.getRandomTeamNames(
-        room.settings.lang,
-      );
+      try {
+        const room = await roomService.getRoomDetail(roomId, userId);
+        const gameId = await gameService.getRoomGameId(roomId);
+        const game = await gameService.getGame(roomId, gameId);
 
-      return {
-        type: 'room/state',
-        room,
-        randomRoomNames,
-        randomTeamNames,
-      };
+        const randomRoomNames = await wordService.getRandomRoomNames(
+          room.settings.lang,
+        );
+        const randomTeamNames = await wordService.getRandomTeamNames(
+          room.settings.lang,
+        );
+
+        return {
+          type: 'room/state',
+          room,
+          game,
+          randomRoomNames,
+          randomTeamNames,
+        };
+      } catch ({ message }) {
+        await logger.critical(e.message, {
+          action: 'room/:roomId',
+          method: 'load',
+        });
+      }
     },
   });
 
