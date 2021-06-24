@@ -1,13 +1,9 @@
-import { prs } from '../libs';
+import { datasets } from '../libs';
 
 class WordService {
-  constructor() {
-    this.gameDatasets = [];
-  }
 
   async getRandomRoomName(lang = 'ru') {
-    const availableRoomNamesString = await prs.getAppParam(`word_dataset_1`);
-    const availableRoomNames = availableRoomNamesString.split(',');
+    const availableRoomNames = await datasets.getWordsById(1);
     return availableRoomNames[
       Math.floor(Math.random() * availableRoomNames.length)
     ];
@@ -15,71 +11,43 @@ class WordService {
 
   // генерирует пустую команду со случайным неповторяющимся названием
   async getRandomRoomNames(lang = 'ru', count = 10) {
-    const availableRoomNamesString = await prs.getAppParam(`word_dataset_1`);
-    const availableRoomNames = availableRoomNamesString.split(',');
+    const availableRoomNames = await datasets.getWordsById(1);
 
     return this.__getRandomNWords(availableRoomNames, count);
   }
 
   async getRandomTeamNames(lang = 'ru', count = 15) {
-    const availableTeamNamesString = await prs.getAppParam(`word_dataset_2`);
-    const availableTeamNames = availableTeamNamesString.split(',');
+    const availableTeamNames = await datasets.getWordsById(2);
 
     return this.__getRandomNWords(availableTeamNames, count);
   }
 
   async getRoomNames(lang = 'ru') {
-    const availableRoomNamesString = await prs.getAppParam(`word_dataset_1`);
-    return availableRoomNamesString.split(',');
+    return await datasets.getWordsById(1);
   }
 
   async getTeamNames(lang = 'ru') {
-    const availableTeamNamesString = await prs.getAppParam(`word_dataset_2`);
-    return availableTeamNamesString.split(',');
+    return await datasets.getWordsById(2);
   }
 
-  async getGameDatasetWords(dataset) {
-    const key = `word_dataset_${dataset.datasetId}`;
-    if (this.gameDatasets[key]) {
-      return this.gameDatasets[key];
-    }
-    const availableGameDatasetString = await prs.getAppParam(key);
-    const wordsArray = availableGameDatasetString.split(',');
-    this.gameDatasets[key] = wordsArray;
-    return wordsArray;
+  async getGameDatasetWords(datasetId) {
+    return await datasets.getWordsById(datasetId);
   }
 
   async getGameDataset(datasetId) {
-    const gameDatasets = await this.getGameDatasets();
-
-    let dataset = null;
-
-    gameDatasets.forEach((gameDataset) => {
-      if (gameDataset.datasetId === datasetId) {
-        dataset = gameDataset;
-      }
-    });
-
-    return dataset;
+    return await datasets.getById(datasetId);
   }
 
   async getLangGameDatasets(lang) {
-    const datasets = await prs.getAppParam('word_datasets', {});
-    return datasets
-      .filter((dataset) => dataset.type === 'game' && dataset.lang === lang)
-      .map(this.mapGameDataset);
+    const datasetList = await datasets.getAll();
+    return datasetList
+      .filter((dataset) => dataset.type === 'game' && dataset.lang === lang);
   }
 
   async getGameDatasets() {
-    const datasets = await prs.getAppParam('word_datasets', {});
-    return datasets
-      .filter((dataset) => dataset.type === 'game')
-      .map(this.mapGameDataset);
-  }
-
-  mapGameDataset(dataset) {
-    delete dataset.src;
-    return dataset;
+    const datasetList = await datasets.getAll();
+    return datasetList
+      .filter((dataset) => dataset.type === 'game');
   }
 
   __getRandomNWords(wordArray, n) {
@@ -93,7 +61,7 @@ class WordService {
   }
 
   async getDatasetWord(dataset, wordIndex) {
-    const datasetWords = await this.getGameDatasetWords(dataset);
+    const datasetWords = await this.getGameDatasetWords(dataset.datasetId);
     if (wordIndex >= datasetWords.length) {
       throw new Error(
         `Cant get index ${wordIndex} in dataset ${dataset.datasetId}: it has ${datasetWords.length} words`,

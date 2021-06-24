@@ -1,6 +1,8 @@
-import { UDatasets } from '@ttfb/aliasgame';
+import { Datasets, UDatasets } from '@ttfb/aliasgame';
+
 import { logger } from './logger';
 
+const datasets = new Datasets(logger);
 const udatasets = new UDatasets(logger);
 
-export { udatasets };
+export { datasets, udatasets };
