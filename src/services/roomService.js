@@ -337,7 +337,6 @@ class RoomService {
     for (let i = 0; i < datasets.length; i++) {
       const dataset = datasets[i];
       if (dataset.datasetId === datasetId) {
-        console.log(dataset.status);
         return dataset.status === 'inactive';
       }
     }
