@@ -207,6 +207,7 @@ const room = (server) => {
       }
 
       return {
+        type: 'room/where_i_am_success',
         roomId: result,
       };
     },
