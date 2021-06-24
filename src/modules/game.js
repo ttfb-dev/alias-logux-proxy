@@ -231,7 +231,7 @@ const game = (server) => {
     },
   });
 
-  server.type('step/history', {
+  server.type('step/set_history', {
     async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
@@ -259,7 +259,7 @@ const game = (server) => {
         await gameService.pushStepHistory(roomId, gameId, currentStep);
       } catch (e) {
         await logger.critical(e.message, {
-          method: 'step/history',
+          method: 'step/set_history',
           roomId,
           gameId,
         });
