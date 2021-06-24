@@ -206,10 +206,10 @@ const room = (server) => {
         return;
       }
 
-      return {
+      ctx.sendBack({
         type: 'room/where_i_am_success',
         roomId: result,
-      };
+      });
     },
   });
 
