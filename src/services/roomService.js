@@ -1,5 +1,5 @@
 import { ErrorResponse } from '../contracts';
-import { prs } from '../libs';
+import { gdatasets, prs } from '../libs';
 
 import { gameService, profileService, teamService, wordService } from '.';
 
@@ -260,32 +260,12 @@ class RoomService {
     return teams;
   }
 
-  async getRoomActiveGameDatasetIds(roomId) {
-    return await prs.getRoomParam(roomId, 'active_game_dataset_ids', []);
-  }
-
   async activateGameDataset(roomId, datasetId) {
-    const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
-    activeGameDatasetIds.push(datasetId);
-    await prs.setRoomParam(
-      roomId,
-      'active_game_dataset_ids',
-      activeGameDatasetIds,
-    );
-    return activeGameDatasetIds;
+    return await gdatasets.activate(roomId, datasetId);
   }
 
   async deactivateGameDataset(roomId, datasetId) {
-    const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
-    const filteredActiveGameDatasetIds = activeGameDatasetIds.filter(
-      (id) => id !== datasetId,
-    );
-    await prs.setRoomParam(
-      roomId,
-      'active_game_dataset_ids',
-      filteredActiveGameDatasetIds,
-    );
-    return filteredActiveGameDatasetIds;
+    return await gdatasets.deactivate(roomId, datasetId);
   }
 
   async getRoomPurchasedDatasetIds(roomId) {
@@ -331,7 +311,7 @@ class RoomService {
   async getRoomGameDatasets(roomId) {
     const lang = await this.getRoomLang(roomId);
     const datasets = await wordService.getLangGameDatasets(lang);
-    const activeGameDatasetIds = await this.getRoomActiveGameDatasetIds(roomId);
+    const activeGameDatasetIds = await gdatasets.getActive(roomId);
     const purchasedDatasetIds = await this.getRoomPurchasedDatasetIds(roomId);
 
     return profileService.mapDatasetsWithStatus(

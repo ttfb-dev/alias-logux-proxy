@@ -1,4 +1,4 @@
-import { prs } from '../libs';
+import { gdatasets, prs } from '../libs';
 
 import { roomService, wordService } from '.';
 
@@ -51,9 +51,7 @@ class GameService {
     }
 
     // Есть хотя бы один включенный набор слов
-    const activeDatasetIds = await roomService.getRoomActiveGameDatasetIds(
-      roomId,
-    );
+    const activeDatasetIds = await gdatasets.getActive(roomId);
 
     if (activeDatasetIds.length === 0) {
       throw false;
