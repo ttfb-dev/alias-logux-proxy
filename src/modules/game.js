@@ -2,7 +2,77 @@ import { logger } from '../libs';
 import { gameService, roomService } from '../services';
 
 const game = (server) => {
-  server.type('game/get_words', {
+  server.type('game/start', {
+    async accessAndProcess(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+
+      ctx.data = { userId, roomId };
+
+      try {
+        const isRoomOwner = await roomService.amIRoomOwner(userId, roomId);
+
+        const canStartGame = await gameService.canStartGame(roomId);
+
+        if (isRoomOwner && canStartGame) {
+          const gameId = await gameService.startGame(roomId);
+
+          await logger.info('game.start', {
+            type: 'game/start',
+            action,
+            roomId,
+            gameId,
+          });
+        }
+      } catch (e) {
+        await logger.critical(e.message, {
+          type: 'game/start',
+          action,
+          userId,
+        });
+      }
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+  });
+
+  server.type('game/finish', {
+    async accessAndProcess(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+
+      ctx.data = { userId, roomId };
+
+      try {
+        const canFinishGame = await roomService.isRoomInGame(roomId);
+
+        if (canFinishGame) {
+          await roomService.setRoomStatus(
+            roomId,
+            roomService.storageKeys.statuses.lobby,
+          );
+
+          await logger.info('game.finish', {
+            type: 'game/finish',
+            action,
+            roomId,
+          });
+        }
+      } catch (e) {
+        await logger.critical(e.message, {
+          type: 'game/finish',
+          action,
+          userId,
+        });
+      }
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+  });
+
+  server.type('step/get_words', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
@@ -19,13 +89,13 @@ const game = (server) => {
       const words = await gameService.getRandomWords(roomId, gameId);
 
       ctx.sendBack({
-        type: 'game/set_words',
+        type: 'step/set_words',
         words,
       });
     },
   });
 
-  server.type('game/step_start', {
+  server.type('step/start', {
     async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
@@ -59,7 +129,7 @@ const game = (server) => {
         );
       } catch (e) {
         await logger.critical(e.message, {
-          method: 'game/step_start',
+          method: 'step/start',
           roomId,
           gameId,
           startedAt,
@@ -68,7 +138,39 @@ const game = (server) => {
     },
   });
 
-  server.type('game/set_step_word', {
+  server.type('step/finish', {
+    async access(ctx) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+      const gameId = await gameService.getRoomGameId(roomId);
+
+      ctx.data = { userId, roomId, gameId };
+
+      return true;
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+    async process(ctx, action, meta) {
+      const { roomId, gameId } = ctx.data;
+
+      try {
+        await gameService.setGameStatus(
+          roomId,
+          gameId,
+          gameService.storageKeys.statuses.lobby,
+        );
+      } catch (e) {
+        await logger.critical(e.message, {
+          method: 'step/finish',
+          roomId,
+          gameId,
+        });
+      }
+    },
+  });
+
+  server.type('step/set_word', {
     async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
@@ -89,7 +191,7 @@ const game = (server) => {
         await gameService.setStepWordWithScore(roomId, gameId, word);
       } catch (e) {
         await logger.critical(e.message, {
-          method: 'game/set_step_word',
+          method: 'step/set_word',
           roomId,
           gameId,
           word,
@@ -98,7 +200,7 @@ const game = (server) => {
     },
   });
 
-  server.type('game/edit_step_word', {
+  server.type('step/edit_word', {
     async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
@@ -119,7 +221,7 @@ const game = (server) => {
         await gameService.editStepWordWithScore(roomId, gameId, word, index);
       } catch (e) {
         await logger.critical(e.message, {
-          method: 'game/edit_step_word',
+          method: 'step/edit_word',
           roomId,
           gameId,
           word,
@@ -129,7 +231,7 @@ const game = (server) => {
     },
   });
 
-  server.type('game/set_step_history', {
+  server.type('step/history', {
     async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
@@ -157,7 +259,7 @@ const game = (server) => {
         await gameService.pushStepHistory(roomId, gameId, currentStep);
       } catch (e) {
         await logger.critical(e.message, {
-          method: 'game/set_step_history',
+          method: 'step/history',
           roomId,
           gameId,
         });
@@ -165,7 +267,7 @@ const game = (server) => {
     },
   });
 
-  server.type('game/set_next_step', {
+  server.type('step/next', {
     async access(ctx) {
       const userId = parseInt(ctx.userId);
       const roomId = await roomService.whereIAm(userId);
@@ -205,44 +307,12 @@ const game = (server) => {
         );
       } catch (e) {
         await logger.critical(e.message, {
-          method: 'game/set_next_step',
+          method: 'step/next',
           roomId,
           gameId,
           step,
           stepNumber,
           roundNumber,
-        });
-      }
-    },
-  });
-
-  server.type('game/step_end', {
-    async access(ctx) {
-      const userId = parseInt(ctx.userId);
-      const roomId = await roomService.whereIAm(userId);
-      const gameId = await gameService.getRoomGameId(roomId);
-
-      ctx.data = { userId, roomId, gameId };
-
-      return true;
-    },
-    resend(ctx, action, meta) {
-      return `room/${ctx.data.roomId}`;
-    },
-    async process(ctx, action, meta) {
-      const { roomId, gameId } = ctx.data;
-
-      try {
-        await gameService.setGameStatus(
-          roomId,
-          gameId,
-          gameService.storageKeys.statuses.lobby,
-        );
-      } catch (e) {
-        await logger.critical(e.message, {
-          method: 'game/step_end',
-          roomId,
-          gameId,
         });
       }
     },

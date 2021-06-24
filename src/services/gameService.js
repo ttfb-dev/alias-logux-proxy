@@ -76,7 +76,7 @@ class GameService {
       roundNumber,
       stepNumber,
       step: await this.getCurrentStep(roomId, gameId),
-      stepHistory: await this.getStepHistory(roomId, gameId),
+      history: await this.getStepHistory(roomId, gameId),
     };
   }
 
