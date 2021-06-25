@@ -317,8 +317,7 @@ class RoomService {
     let isJoinedGroup = false;
     let isDonut = false;
 
-    for (const index in memberIds) {
-      const userId = memberIds[index];
+    for (const userId of memberIds) {
       if (!isJoinedGroup && (await profileService.isJoinedGroup(userId))) {
         isJoinedGroup = true;
       }
