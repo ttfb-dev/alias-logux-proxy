@@ -2,6 +2,20 @@
   "name": "server-logux",
   "private": true,
   "main": "src/index.js",
+  "author": {
+    "name": "Dmitry",
+    "email": "bobrov@ttfb.dev"
+  },
+  "contributors": [
+    {
+      "name": "Ilia Klimov",
+      "email": "klimov@ttfb.dev"
+    },
+    {
+      "name": "Dmitry",
+      "email": "bobrov@ttfb.dev"
+    }
+  ],
   "scripts": {
     "start": "node --experimental-specifier-resolution=node src/index.js",
     "lint": "run-s lint:all:*",
