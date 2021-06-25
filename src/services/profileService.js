@@ -55,16 +55,25 @@ class ProfileService {
 
   async isDatasetFree(datasetId) {
     const dataset = await wordService.getGameDataset(datasetId);
-    return dataset.price === 0;
+    return dataset.type === 'free';
   }
 
   async isDatasetAvailable(userId, datasetId) {
-    const isFree = await this.isDatasetFree(datasetId);
-    if (isFree) {
+    const dataset = await wordService.getGameDataset(datasetId);
+
+    if (dataset.type === 'free') {
       return true;
     }
-    const isPurchased = await this.isDatasetPurchased(userId, datasetId);
-    return isPurchased;
+
+    if (dataset.type === 'subscribe') {
+      return await this.isJoinedGroup(userId);
+    }
+
+    if (dataset.type === 'donut') {
+      return await this.isDonut(userId);
+    }
+
+    return false;
   }
 
   async isDatasetPurchased(userId, datasetId) {
