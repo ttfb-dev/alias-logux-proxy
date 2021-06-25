@@ -80,6 +80,8 @@ class ProfileService {
       const isFree = dataset.type === 'free';
       const isAvailable = isAvaliableByGroupJoin && isAvaliableByDonut && isFree;
 
+      console.log(`isActive: ${isActive}, isAvaliableByGroupJoin: ${isAvaliableByGroupJoin}, isAvaliableByDonut: ${isAvaliableByDonut}, isFree: ${isFree}, isAvailable: ${isAvailable}`, {isJoinedGroup, isDonut})
+
       dataset.status = isActive
         ? 'active'
         : isAvailable
