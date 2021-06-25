@@ -62,12 +62,13 @@ class ProfileService {
     return purchasedDatasetIds.includes(datasetId);
   }
 
-  mapDatasetsWithStatus(activeIds, purchasedIds, datasets) {
+  mapDatasetsWithStatus(activeIds, isJoinedGroup, isDonut, datasets) {
     datasets.forEach((dataset) => {
       const isActive = activeIds.includes(dataset.datasetId);
-      const isPurchased = purchasedIds.includes(dataset.datasetId);
-      const isFree = dataset.price === 0;
-      const isAvailable = isFree || isPurchased;
+      const isAvaliableByGroupJoin = dataset.type === 'subscribe' && isJoinedGroup;
+      const isAvaliableByDonut = dataset.type === 'donut' && isDonut;
+      const isFree = dataset.type === 'free';
+      const isAvailable = isAvaliableByGroupJoin && isAvaliableByDonut && isFree;
 
       dataset.status = isActive
         ? 'active'

@@ -39,9 +39,9 @@ class WordService {
   }
 
   async getLangGameDatasets(lang) {
-    const datasetList = await datasets.getAll();
-    return datasetList
-      .filter((dataset) => dataset.content === 'game' && dataset.lang === lang);
+    const gameDatasets = await this.getGameDatasets();
+    return gameDatasets
+      .filter(dataset => dataset.lang === lang);
   }
 
   async getGameDatasets() {
