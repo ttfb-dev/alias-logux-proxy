@@ -78,13 +78,11 @@ class ProfileService {
       const isAvaliableByGroupJoin = dataset.type === 'subscribe' && isJoinedGroup;
       const isAvaliableByDonut = dataset.type === 'donut' && isDonut;
       const isFree = dataset.type === 'free';
-      const isAvailable = isAvaliableByGroupJoin && isAvaliableByDonut && isFree;
-
-      console.log(`isActive: ${isActive}, isAvaliableByGroupJoin: ${isAvaliableByGroupJoin}, isAvaliableByDonut: ${isAvaliableByDonut}, isFree: ${isFree}, isAvailable: ${isAvailable}`, {isJoinedGroup, isDonut})
+      const isAvailableToActivate = isAvaliableByGroupJoin || isAvaliableByDonut || isFree;
 
       dataset.status = isActive
         ? 'active'
-        : isAvailable
+        : isAvailableToActivate
         ? 'inactive'
         : 'available';
     });
