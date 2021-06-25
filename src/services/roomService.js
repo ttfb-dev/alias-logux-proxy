@@ -314,8 +314,6 @@ class RoomService {
     const activeGameDatasetIds = await gdatasets.getActive(roomId);
     const memberIds = await prs.getRoomParam(roomId, this.storageKeys.memberIds, []);
 
-    console.log(memberIds, typeof memberIds);
-
     let isJoinedGroup = false;
     let isDonut = false;
 
