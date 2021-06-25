@@ -312,7 +312,7 @@ class RoomService {
     const lang = await this.getRoomLang(roomId);
     const datasets = await wordService.getLangGameDatasets(lang);
     const activeGameDatasetIds = await gdatasets.getActive(roomId);
-    const memberIds = prs.getRoomParam(roomId, this.storageKeys.memberIds, []);
+    const memberIds = await prs.getRoomParam(roomId, this.storageKeys.memberIds, []);
 
     console.log(memberIds, typeof memberIds);
 
