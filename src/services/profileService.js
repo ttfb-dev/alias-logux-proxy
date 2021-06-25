@@ -31,11 +31,21 @@ class ProfileService {
   async getDatasetsWithStatus(userId) {
     const datasets = await wordService.getGameDatasets();
 
-    const purchasedIds = await this.getPurchasedDatasetIds(userId);
-
     const activeIds = await this.getActiveDatasetIds(userId);
 
-    return this.mapDatasetsWithStatus(activeIds, purchasedIds, datasets);
+    const isJoinedGroup = await this.isJoinedGroup(userId);
+
+    const isDonut = await this.isDonut(userId);
+
+    return this.mapDatasetsWithStatus(activeIds, isJoinedGroup, isDonut, datasets);
+  }
+
+  async isJoinedGroup(userId) {
+    return prs.getUserParam(userId, 'is_group_member', false);
+  }
+
+  async isDonut(userId) {
+    return prs.getUserParam(userId, 'is_donut', false);
   }
 
   async isDatasetActive(userId, datasetId) {
