@@ -1,4 +1,4 @@
-import { datasets, prs, udatasets } from '../libs';
+import { prs, udatasets } from '../libs';
 
 import { wordService } from '.';
 
@@ -38,7 +38,12 @@ class ProfileService {
 
     const isDonut = await this.isDonut(userId);
 
-    return this.mapDatasetsWithStatus(activeIds, isJoinedGroup, isDonut, datasets);
+    return this.mapDatasetsWithStatus(
+      activeIds,
+      isJoinedGroup,
+      isDonut,
+      datasets,
+    );
   }
 
   async isJoinedGroup(userId) {
@@ -55,12 +60,12 @@ class ProfileService {
   }
 
   async isDatasetFree(datasetId) {
-    const dataset = await datasets.getById(datasetId);
+    const dataset = await udatasets.getById(datasetId);
     return dataset.type === 'free';
   }
 
   async isDatasetAvailable(userId, datasetId) {
-    const dataset = await datasets.getById(datasetId);
+    const dataset = await udatasets.getById(datasetId);
 
     if (dataset.type === 'free') {
       return true;
@@ -85,16 +90,19 @@ class ProfileService {
   mapDatasetsWithStatus(activeIds, isJoinedGroup, isDonut, datasets) {
     datasets.forEach((dataset) => {
       const isActive = activeIds.includes(dataset.datasetId);
-      const isAvaliableByGroupJoin = dataset.type === 'subscribe' && isJoinedGroup;
+      const isAvaliableByGroupJoin =
+        dataset.type === 'subscribe' && isJoinedGroup;
       const isAvaliableByDonut = dataset.type === 'donut' && isDonut;
       const isFree = dataset.type === 'free';
-      const isAvailableToActivate = isAvaliableByGroupJoin || isAvaliableByDonut || isFree;
+      const isAvailableToActivate =
+        isAvaliableByGroupJoin || isAvaliableByDonut || isFree;
 
-      dataset.status = (isAvailableToActivate && isActive)
-        ? 'active'
-        : isAvailableToActivate
-        ? 'inactive'
-        : 'available';
+      dataset.status =
+        isAvailableToActivate && isActive
+          ? 'active'
+          : isAvailableToActivate
+          ? 'inactive'
+          : 'available';
     });
 
     return datasets;
