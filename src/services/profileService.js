@@ -1,4 +1,4 @@
-import { prs, udatasets } from '../libs';
+import { datasets, prs, udatasets } from '../libs';
 
 import { wordService } from '.';
 
@@ -60,12 +60,12 @@ class ProfileService {
   }
 
   async isDatasetFree(datasetId) {
-    const dataset = await udatasets.getById(datasetId);
+    const dataset = await datasets.getById(datasetId);
     return dataset.type === 'free';
   }
 
   async isDatasetAvailable(userId, datasetId) {
-    const dataset = await udatasets.getById(datasetId);
+    const dataset = await datasets.getById(datasetId);
 
     if (dataset.type === 'free') {
       return true;
