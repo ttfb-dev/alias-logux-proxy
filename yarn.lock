@@ -103,10 +103,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@ttfb/aliasgame@^0.0.41":
-  version "0.0.41"
-  resolved "https://registry.yarnpkg.com/@ttfb/aliasgame/-/aliasgame-0.0.41.tgz#303e6676ced6d04b32d6a6008c14c635f04b99b1"
-  integrity sha512-i1NTPWdudhkpscdehERHloTzxTHVSBu9cDIsTEXyVSaglQZqa6qwELkNFvt/iRbWNkzJwq9EQW8Kg7HTMVmMsw==
+"@ttfb/aliasgame@^0.0.42":
+  version "0.0.42"
+  resolved "https://registry.yarnpkg.com/@ttfb/aliasgame/-/aliasgame-0.0.42.tgz#637a0760b342143437b0f26a9126981830afe670"
+  integrity sha512-Qzrepnfd9hl3OOUK6OJlI5Xb4oIKdn15T8EKNl61W/OEUN4IO0hBpa86jPdM7cTork3TOSeLVncoFTlIneGJ7w==
   dependencies:
     node-fetch "^2.6.1"
 
