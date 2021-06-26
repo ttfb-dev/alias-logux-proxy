@@ -312,11 +312,24 @@ class RoomService {
     const lang = await this.getRoomLang(roomId);
     const datasets = await wordService.getLangGameDatasets(lang);
     const activeGameDatasetIds = await gdatasets.getActive(roomId);
-    const purchasedDatasetIds = await this.getRoomPurchasedDatasetIds(roomId);
+    const memberIds = await prs.getRoomParam(roomId, this.storageKeys.memberIds, []);
+
+    let isJoinedGroup = false;
+    let isDonut = false;
+
+    for (const userId of memberIds) {
+      if (!isJoinedGroup && (await profileService.isJoinedGroup(userId))) {
+        isJoinedGroup = true;
+      }
+      if (!isDonut && (await profileService.isDonut(userId))) {
+        isDonut = true;
+      }
+    }
 
     return profileService.mapDatasetsWithStatus(
       activeGameDatasetIds,
-      purchasedDatasetIds,
+      isJoinedGroup,
+      isDonut,
       datasets,
     );
   }

@@ -1,4 +1,5 @@
-import { prs, udatasets } from '../libs';
+import { datasets, prs, udatasets } from '../libs';
+
 import { wordService } from '.';
 
 class ProfileService {
@@ -31,11 +32,21 @@ class ProfileService {
   async getDatasetsWithStatus(userId) {
     const datasets = await wordService.getGameDatasets();
 
-    const purchasedIds = await this.getPurchasedDatasetIds(userId);
-
     const activeIds = await this.getActiveDatasetIds(userId);
 
-    return this.mapDatasetsWithStatus(activeIds, purchasedIds, datasets);
+    const isJoinedGroup = await this.isJoinedGroup(userId);
+
+    const isDonut = await this.isDonut(userId);
+
+    return this.mapDatasetsWithStatus(activeIds, isJoinedGroup, isDonut, datasets);
+  }
+
+  async isJoinedGroup(userId) {
+    return prs.getUserParam(userId, 'is_group_member', false);
+  }
+
+  async isDonut(userId) {
+    return prs.getUserParam(userId, 'is_donut', false);
   }
 
   async isDatasetActive(userId, datasetId) {
@@ -44,17 +55,26 @@ class ProfileService {
   }
 
   async isDatasetFree(datasetId) {
-    const dataset = await wordService.getGameDataset(datasetId);
-    return dataset.price === 0;
+    const dataset = await datasets.getById(datasetId);
+    return dataset.type === 'free';
   }
 
   async isDatasetAvailable(userId, datasetId) {
-    const isFree = await this.isDatasetFree(datasetId);
-    if (isFree) {
+    const dataset = await datasets.getById(datasetId);
+
+    if (dataset.type === 'free') {
       return true;
     }
-    const isPurchased = await this.isDatasetPurchased(userId, datasetId);
-    return isPurchased;
+
+    if (dataset.type === 'subscribe') {
+      return await this.isJoinedGroup(userId);
+    }
+
+    if (dataset.type === 'donut') {
+      return await this.isDonut(userId);
+    }
+
+    return false;
   }
 
   async isDatasetPurchased(userId, datasetId) {
@@ -62,16 +82,17 @@ class ProfileService {
     return purchasedDatasetIds.includes(datasetId);
   }
 
-  mapDatasetsWithStatus(activeIds, purchasedIds, datasets) {
+  mapDatasetsWithStatus(activeIds, isJoinedGroup, isDonut, datasets) {
     datasets.forEach((dataset) => {
       const isActive = activeIds.includes(dataset.datasetId);
-      const isPurchased = purchasedIds.includes(dataset.datasetId);
-      const isFree = dataset.price === 0;
-      const isAvailable = isFree || isPurchased;
+      const isAvaliableByGroupJoin = dataset.type === 'subscribe' && isJoinedGroup;
+      const isAvaliableByDonut = dataset.type === 'donut' && isDonut;
+      const isFree = dataset.type === 'free';
+      const isAvailableToActivate = isAvaliableByGroupJoin || isAvaliableByDonut || isFree;
 
-      dataset.status = isActive
+      dataset.status = (isAvailableToActivate && isActive)
         ? 'active'
-        : isAvailable
+        : isAvailableToActivate
         ? 'inactive'
         : 'available';
     });
