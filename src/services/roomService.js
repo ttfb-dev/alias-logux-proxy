@@ -312,7 +312,11 @@ class RoomService {
     const lang = await this.getRoomLang(roomId);
     const datasets = await wordService.getLangGameDatasets(lang);
     const activeGameDatasetIds = await gdatasets.getActive(roomId);
-    const memberIds = await prs.getRoomParam(roomId, this.storageKeys.memberIds, []);
+    const memberIds = await prs.getRoomParam(
+      roomId,
+      this.storageKeys.memberIds,
+      [],
+    );
 
     let isJoinedGroup = false;
     let isDonut = false;
@@ -347,23 +351,23 @@ class RoomService {
 
   async isDatasetAvailableToActivate(roomId, datasetId) {
     const datasets = await this.getRoomGameDatasets(roomId);
-    for (let i = 0; i < datasets.length; i++) {
-      const dataset = datasets[i];
-      if (dataset.datasetId === datasetId) {
-        return dataset.status === 'inactive';
-      }
+    const dataset = datasets.find((dataset) => dataset.datasetId === datasetId);
+
+    if (dataset) {
+      return dataset.status === 'inactive';
     }
+
     return false;
   }
 
   async isDatasetAvailableToDeactivate(roomId, datasetId) {
     const datasets = await this.getRoomGameDatasets(roomId);
-    for (let i = 0; i < datasets.length; i++) {
-      const dataset = datasets[i];
-      if (dataset.datasetId === datasetId) {
-        return dataset.status === 'active';
-      }
+    const dataset = datasets.find((dataset) => dataset.datasetId === datasetId);
+
+    if (dataset) {
+      return dataset.status === 'active';
     }
+
     return false;
   }
 
