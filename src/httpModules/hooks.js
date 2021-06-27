@@ -3,7 +3,7 @@ import { profileService, roomService } from '../services';
 const hooks = {
   renewDatasets: (httpServer, server) => {
     httpServer.get(
-      '/user/:user_id/change-subscription-status',
+      '/user/:user_id/refresh-datasets',
       async (request, response) => {
         const userId = parseInt(request.params.user_id);
         const roomId = await roomService.whereIAm(userId);
@@ -25,6 +25,7 @@ const hooks = {
           type: 'profile/buy_game_dataset_success',
           datasets,
         });
+
         response.send('OK');
       },
     );
