@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-import { hooks } from './httpModules'; 
+import { hooks } from './httpModules';
 import { server } from './init';
 import { httpServer, port } from './initHttpServer.js';
 
@@ -11,7 +11,7 @@ server.listen();
 
 hooks.renewDatasets(httpServer, server);
 
-httpServer.listen(port, err => {
+httpServer.listen(port, (err) => {
   if (err) {
     return console.log('something bad happened', err);
   }

@@ -1,7 +1,6 @@
 import { datasets } from '../libs';
 
 class WordService {
-
   async getRandomRoomName(lang = 'ru') {
     const availableRoomNames = await datasets.getWordsById(1);
     return availableRoomNames[
@@ -40,14 +39,12 @@ class WordService {
 
   async getLangGameDatasets(lang) {
     const gameDatasets = await this.getGameDatasets();
-    return gameDatasets
-      .filter(dataset => dataset.lang === lang);
+    return gameDatasets.filter((dataset) => dataset.lang === lang);
   }
 
   async getGameDatasets() {
     const datasetList = await datasets.getAll();
-    return datasetList
-      .filter((dataset) => dataset.content === 'game');
+    return datasetList.filter((dataset) => dataset.content === 'game');
   }
 
   __getRandomNWords(wordArray, n) {
