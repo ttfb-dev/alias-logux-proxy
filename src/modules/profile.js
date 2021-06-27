@@ -76,7 +76,7 @@ const profile = (server) => {
     },
     resend(ctx, action, meta) {
       console.log('resend to user');
-      return action.userId;
+      return {users: [action.userId]};
     },
   });
 };
