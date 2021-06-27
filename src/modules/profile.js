@@ -69,34 +69,13 @@ const profile = (server) => {
     },
   });
 
-  server.type('profile/buy_game_dataset', {
-    async access(ctx, action, meta) {
+  //событие покупки набора слов в комнате
+  server.type('profile/buy_game_dataset_success', {
+    access() {
       return true;
     },
-    async process(ctx, action, meta) {
-      const userId = parseInt(ctx.userId);
-      const { datasetId } = action;
-
-      const roomId = await roomService.whereIAm(userId);
-
-      await profileService.addPurchasedDatasetId(userId, datasetId);
-
-      const datasets = await profileService.getDatasetsWithStatus(userId);
-
-      if (roomId) {
-        await roomService.refreshRoomDatasets(roomId);
-        const room = await roomService.getRoomDetail(roomId);
-        await server.log.add({
-          type: 'room/dataset_purchased',
-          roomId,
-          gameWordDatasets: room.gameWordDatasets,
-        });
-      }
-
-      ctx.sendBack({
-        type: 'profile/buy_game_dataset_success',
-        datasets,
-      });
+    resend(ctx, action, meta) {
+      return action.userId;
     },
   });
 };
