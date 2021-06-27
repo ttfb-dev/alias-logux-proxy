@@ -1,2 +1,25 @@
+# dependencies
+/node_modules
+/.pnp
+.npm
+.pnp.js
+
+# testing
+/coverage
+
+# production
+*.zip
+
+# misc
+.idea
+.DS_Store
 .env
-node_modules
+.env.local
+.env.development
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
