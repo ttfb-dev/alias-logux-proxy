@@ -21,8 +21,6 @@ const clientPool = [];
 server.auth(async ({ client, userId, token }) => {
   const isAuthorized = isVkAuthorized(userId, token);
 
-  await logger.debug('server.auth', { isAuthorized, userId });
-
   if (isAuthorized) {
     await prs.setUserParam(userId, 'last_connect', { value: Date.now() });
 
