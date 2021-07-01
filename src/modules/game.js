@@ -256,6 +256,7 @@ const game = (server) => {
           roundNumber,
           stepNumber,
         );
+        console.log(currentStep);
         await gameService.pushStepHistory(roomId, gameId, currentStep);
       } catch (e) {
         await logger.critical(e.message, {
