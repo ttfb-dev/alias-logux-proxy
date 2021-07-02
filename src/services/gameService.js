@@ -46,7 +46,7 @@ class GameService {
     }
 
     // Есть хотя бы 2 команды с пользователями
-    if (notEmptyTeamsCounter < 2) {
+    if (notEmptyTeamsCounter < 1) { // Временно поставили для одной команды
       throw false;
     }
 
