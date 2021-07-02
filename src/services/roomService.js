@@ -1,5 +1,5 @@
 import { ErrorResponse } from '../contracts';
-import { gdatasets, prs } from '../libs';
+import { gdatasets, prs, vkapi } from '../libs';
 
 import { gameService, profileService, teamService, wordService } from '.';
 
@@ -166,11 +166,22 @@ class RoomService {
       status: await prs.getRoomParam(roomId, 'status', 'not_found'),
       ownerId: await prs.getRoomParam(roomId, this.storageKeys.ownerId, null),
       memberIds: await prs.getRoomParam(roomId, this.storageKeys.memberIds, []),
+      members: await this.getMembers(roomId),
       teams: await prs.getRoomParam(roomId, 'teams', []),
       settings: await prs.getRoomParam(roomId, 'settings', {}),
       gameWordDatasets: await this.getRoomGameDatasets(roomId),
       currentGameId: await gameService.getRoomGameId(roomId),
     };
+  }
+
+  async getMembers(roomId) {
+    const memberIds = await prs.getRoomParam(
+      roomId,
+      this.storageKeys.memberIds,
+      [],
+    );
+
+    return await vkapi.getUsers(memberIds);
   }
 
   async getRoomDetail(roomId, userId) {

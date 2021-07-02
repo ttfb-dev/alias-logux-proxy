@@ -11,6 +11,7 @@ build_images:
     - master
   script:
     - export VK_PROTECTED_KEY=$CI_VK_PROTECTED_KEY
+    - export VK_APP_TOKEN=$CI_VK_APP_TOKEN
     - ./build/run-build
     - ./build/run
   tags:

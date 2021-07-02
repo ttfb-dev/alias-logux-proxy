@@ -69,6 +69,7 @@ const room = (server) => {
           roomId,
           userId,
           memberIds: room.memberIds,
+          members: room.members,
           gameWordDatasets: room.gameWordDatasets,
         });
       } catch ({ message }) {
@@ -180,6 +181,7 @@ const room = (server) => {
         roomId,
         userId,
         memberIds: room.memberIds,
+        members: room.members,
         gameWordDatasets: room.gameWordDatasets,
       });
 
