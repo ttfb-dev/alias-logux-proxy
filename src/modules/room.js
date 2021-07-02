@@ -174,15 +174,17 @@ const room = (server) => {
 
       await roomService.refreshRoomDatasets(roomId);
 
-      const room = await roomService.getRoomDetail(roomId, userId);
+      const { teams, memberIds, gameWordDatasets, members } =
+        await roomService.getRoomDetail(roomId, userId);
 
       await server.log.add({
         type: 'room/user_left',
         roomId,
         userId,
-        memberIds: room.memberIds,
-        members: room.members,
-        gameWordDatasets: room.gameWordDatasets,
+        teams,
+        memberIds,
+        members,
+        gameWordDatasets,
       });
 
       ctx.sendBack({

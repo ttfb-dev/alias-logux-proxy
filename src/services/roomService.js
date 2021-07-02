@@ -46,7 +46,7 @@ class RoomService {
     if (currentRoomId) {
       throw new ErrorResponse(
         'user_already_in_room',
-        `Вы уже присоеденены к комнате ${room_id}`,
+        `Вы уже находитесь в ${currentRoomId} комнате.`,
         { room_id: currentRoomId },
       );
     }
@@ -84,9 +84,14 @@ class RoomService {
     if (parseInt(roomId) !== currentRoomId) {
       throw new ErrorResponse(
         'user_in_another_room',
-        'Вы присоеденены к другой комнате {room_id}',
+        `Вы находитесь в ${currentRoomId} комнате.`,
         { room_id: currentRoomId },
       );
+    }
+
+    const team = teamService.getTeamByUserId(roomId, userId);
+    if (team) {
+      await teamService.leaveTeam(roomId, userId);
     }
 
     const roomMemberIds = await prs.getRoomParam(
@@ -96,8 +101,8 @@ class RoomService {
     );
     if (roomMemberIds.includes(userId)) {
       roomMemberIds.splice(roomMemberIds.indexOf(userId), 1);
+      await prs.setRoomParam(roomId, this.storageKeys.memberIds, roomMemberIds);
     }
-    await prs.setRoomParam(roomId, this.storageKeys.memberIds, roomMemberIds);
     await prs.delUserParam(userId, this.storageKeys.roomId);
 
     return true;
