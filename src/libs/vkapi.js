@@ -19,7 +19,7 @@ const vkapi = {
         throw new Error(`Response status is not OK: ${response.status}`);
       }
 
-      return await response.json();
+      return (await response.json()).response;
     } catch ({ message }) {
       logger.critical(message, { user_ids });
     }
