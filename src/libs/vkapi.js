@@ -13,6 +13,11 @@ const vkapi = {
         `${apiHost}/method/users.get?user_ids=${user_ids.join(
           ',',
         )}&access_token=${token}&v=5.131`,
+        {
+          headers: {
+            'Accept-Language': 'ru',
+          },
+        },
       );
 
       if (!response.ok) {
