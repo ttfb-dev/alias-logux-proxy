@@ -70,6 +70,12 @@ class TeamService {
     return teams;
   }
 
+  async getTeamByUserId(roomId, userId) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+
+    return teams.find((team) => team.memberIds.includes(userId)) || {};
+  }
+
   async getMyTeam(roomId, userId) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     return this.findMyTeam(teams, userId);
