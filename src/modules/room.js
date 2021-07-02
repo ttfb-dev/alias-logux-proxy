@@ -71,9 +71,10 @@ const room = (server) => {
           memberIds: room.memberIds,
           gameWordDatasets: room.gameWordDatasets,
         });
-      } catch (e) {
+      } catch ({ message }) {
+        logger.error(message, { roomId, userId });
         server.undo(action, meta, 'error', {
-          message: 'Братишка, ты не прав! Такой комнаты не существует :(',
+          message,
         });
       }
     },
