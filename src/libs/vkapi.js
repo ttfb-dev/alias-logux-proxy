@@ -12,7 +12,7 @@ const vkapi = {
       const response = await fetch(
         `${apiHost}/method/users.get?user_ids=${user_ids.join(
           ',',
-        )}&access_token=${token}&v=5.131`,
+        )}&fields=photo_50&access_token=${token}&v=5.131`,
         {
           headers: {
             'Accept-Language': 'ru',
