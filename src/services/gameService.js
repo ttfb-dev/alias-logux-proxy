@@ -46,7 +46,8 @@ class GameService {
     }
 
     // Есть хотя бы 2 команды с пользователями
-    if (notEmptyTeamsCounter < 1) { // Временно поставили для одной команды
+    if (notEmptyTeamsCounter < 1) {
+      // Временно поставили для одной команды
       throw false;
     }
 
@@ -286,7 +287,7 @@ class GameService {
   async editStepWordWithScore(roomId, gameId, word, index) {
     const oldScore = await this.getStepScore(roomId, gameId);
 
-    const score = word.guessed ? oldScore + 1 : oldScore - 1;
+    const score = word.guessed ? oldScore + 2 : oldScore - 2;
 
     await this.editStepWord(roomId, gameId, word, index);
     await this.setStepScore(roomId, gameId, score);
