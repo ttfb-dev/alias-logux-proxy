@@ -46,7 +46,7 @@ class RoomService {
     if (currentRoomId) {
       throw new ErrorResponse(
         'user_already_in_room',
-        `Вы уже присоеденены к комнате ${room_id}`,
+        `Вы уже находитесь в ${currentRoomId} комнате.`,
         { room_id: currentRoomId },
       );
     }
