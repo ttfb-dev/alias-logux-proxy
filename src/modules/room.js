@@ -62,15 +62,17 @@ const room = (server) => {
         await roomService.joinRoom(userId, roomId);
         await roomService.refreshRoomDatasets(roomId);
 
-        const room = await roomService.getRoomDetail(roomId, userId);
+        const { members, gameWordDatasets } = await roomService.getRoomDetail(
+          roomId,
+          userId,
+        );
 
         await server.log.add({
           type: 'room/user_joined',
           roomId,
           userId,
-          memberIds: room.memberIds,
-          members: room.members,
-          gameWordDatasets: room.gameWordDatasets,
+          members,
+          gameWordDatasets,
         });
       } catch ({ message }) {
         logger.error(message, { roomId, userId });
@@ -174,7 +176,7 @@ const room = (server) => {
 
       await roomService.refreshRoomDatasets(roomId);
 
-      const { teams, memberIds, gameWordDatasets, members } =
+      const { teams, gameWordDatasets, members } =
         await roomService.getRoomDetail(roomId, userId);
 
       await server.log.add({
@@ -182,7 +184,6 @@ const room = (server) => {
         roomId,
         userId,
         teams,
-        memberIds,
         members,
         gameWordDatasets,
       });

@@ -194,6 +194,8 @@ class RoomService {
 
     room.myTeamId = teamService.findMyTeam(room.teams, userId);
 
+    delete room.memberIds;
+
     return room;
   }
 
@@ -302,9 +304,8 @@ class RoomService {
   }
 
   async refreshRoomDatasets(roomId, onRoomCreate = false) {
-    const room = await this.getRoom(roomId);
-
     if (onRoomCreate) {
+      const room = await this.getRoom(roomId);
       const activeDatasetIds = await profileService.getActiveDatasetIds(
         room.ownerId,
       );
