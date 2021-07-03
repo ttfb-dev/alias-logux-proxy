@@ -6,9 +6,6 @@ const analytics = {
       await logger.analytics('word.guessing_result', '', {
         word: stepWord.value,
         guessed: stepWord.guessed,
-        device,
-        os,
-        browser,
       });
     });
   },
