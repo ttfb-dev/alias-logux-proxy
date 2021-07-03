@@ -17,6 +17,8 @@ const room = (server) => {
     async load(ctx, action, meta) {
       const { roomId, userId } = ctx.data;
 
+      console.log(meta);
+
       try {
         const room = await roomService.getRoomDetail(roomId, userId);
         const gameId = await gameService.getRoomGameId(roomId);
