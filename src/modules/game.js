@@ -1,4 +1,4 @@
-import { logger } from '../libs';
+import { analytics, logger } from '../libs';
 import { gameService, roomService } from '../services';
 
 const game = (server) => {
@@ -256,6 +256,7 @@ const game = (server) => {
           roundNumber,
           stepNumber,
         );
+        await analytics.setStepWordsGuessed(step.words);
         await gameService.pushStepHistory(roomId, gameId, currentStep);
       } catch (e) {
         await logger.critical(e.message, {
