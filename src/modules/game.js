@@ -256,6 +256,7 @@ const game = (server) => {
           roundNumber,
           stepNumber,
         );
+        console.log(currentStep);
         await analytics.setStepWordsGuessed(currentStep.words);
         await gameService.pushStepHistory(roomId, gameId, currentStep);
       } catch (e) {
