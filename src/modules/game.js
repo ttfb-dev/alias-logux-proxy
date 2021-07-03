@@ -245,7 +245,7 @@ const game = (server) => {
       return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
-      const { roomId, gameId } = ctx.data;
+      const { roomId, gameId, userId } = ctx.data;
 
       try {
         const { roundNumber, stepNumber } =
@@ -256,7 +256,7 @@ const game = (server) => {
           roundNumber,
           stepNumber,
         );
-        analytics.setStepWordsGuessed(currentStep.words);
+        analytics.setStepWordsGuessed(userId, currentStep.words);
         await gameService.pushStepHistory(roomId, gameId, currentStep);
       } catch (e) {
         await logger.critical(e.message, {
