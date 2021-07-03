@@ -25,10 +25,12 @@ const base = (server) => {
     },
     async process(ctx, action, meta) {
       const { userId } = ctx;
-      const { event, userAgent, data } = action;
+      const { event, data } = action;
 
       try {
-        const { browser, os, device } = parser(userAgent);
+        const { browser, os, device } = parser(
+          ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
+        );
 
         await logger.execAnalytics('vk-miniapp', event, userId, {
           browser,
@@ -52,10 +54,12 @@ const base = (server) => {
     },
     async process(ctx, action, meta) {
       const { userId } = ctx;
-      const { event, userAgent, data } = action;
+      const { event, data } = action;
 
       try {
-        const { browser, os, device } = parser(userAgent);
+        const { browser, os, device } = parser(
+          ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
+        );
 
         await logger.execMetrics('vk-miniapp', event, userId, {
           browser,
