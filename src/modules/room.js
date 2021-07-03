@@ -5,7 +5,7 @@ import { gameService, roomService, wordService } from '../services';
 const room = (server) => {
   server.channel('room/:roomId', {
     async access(ctx, action, meta) {
-      console.log(ctx.clientId, ctx.server.clientIds[ctx.clientId]);
+      console.log(ctx.clientId, ctx.server.clientIds);
       const roomId = parseInt(ctx.params.roomId);
       const userId = parseInt(ctx.userId);
 
