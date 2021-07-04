@@ -62,7 +62,7 @@ const room = (server) => {
         await roomService.joinRoom(userId, roomId);
         await roomService.refreshRoomDatasets(roomId);
 
-        const { members, gameWordDatasets } = await roomService.getRoomDetail(
+        const { members, teams, gameWordDatasets } = await roomService.getRoomDetail(
           roomId,
           userId,
         );
@@ -72,6 +72,7 @@ const room = (server) => {
           roomId,
           userId,
           members,
+          teams,
           gameWordDatasets,
         });
       } catch ({ message }) {
