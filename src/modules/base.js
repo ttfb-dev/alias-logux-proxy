@@ -86,7 +86,7 @@ const base = (server) => {
       console.log(meta);
       ctx.sendBack({
         type: 'server/time_set',
-        time: Date.now(),
+        serverTime: Date.now(),
       });
     },
   });
