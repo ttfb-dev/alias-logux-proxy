@@ -78,6 +78,9 @@ const base = (server) => {
   });
 
   server.type('server/time_get', {
+    async access() {
+      return true;
+    },
     async process(ctx, action, meta) {
       ctx.sendBack({
         type: 'server/time_set',
