@@ -82,6 +82,8 @@ const base = (server) => {
       return true;
     },
     async process(ctx, action, meta) {
+      console.log(ctx);
+      console.log(meta);
       ctx.sendBack({
         type: 'server/time_set',
         time: Date.now(),
