@@ -76,20 +76,6 @@ const base = (server) => {
       }
     },
   });
-
-  server.type('server/time_get', {
-    async access() {
-      return true;
-    },
-    async process(ctx, action, meta) {
-      console.log(ctx);
-      console.log(meta);
-      ctx.sendBack({
-        type: 'server/time_set',
-        serverTime: Date.now(),
-      });
-    },
-  });
 };
 
 export default base;
