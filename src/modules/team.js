@@ -85,7 +85,7 @@ const team = (server) => {
 
       ctx.data = { userId, roomId };
 
-      return roomId;
+      return !!roomId;
     },
     resend(ctx, action, meta) {
       return `room/${ctx.data.roomId}`;
