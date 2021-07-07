@@ -96,6 +96,13 @@ const team = (server) => {
 
       try {
         await teamService.changeTeam(roomId, teams);
+
+        const teamId = await teamService.getTeamIdByUserId(roomId, userId);
+
+        ctx.sendBack({
+          type: 'room/team_change_success',
+          myTeamId: teamId,
+        });
       } catch (e) {
         await logger.critical(e.message, {
           method: 'room/team_change',

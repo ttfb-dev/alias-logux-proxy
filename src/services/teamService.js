@@ -86,7 +86,7 @@ class TeamService {
     return teams.find((team) => team.teamId === id) || {};
   }
 
-  async getIdByUserId(roomId, userId) {
+  async getTeamIdByUserId(roomId, userId) {
     const team = await this.getTeamByUserId(roomId, userId);
 
     return team.teamId;
