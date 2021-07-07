@@ -91,7 +91,7 @@ const team = (server) => {
       return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
-      const { roomId } = ctx.data;
+      const { roomId, userId } = ctx.data;
       const { teams } = action;
 
       try {

@@ -80,10 +80,10 @@ class TeamService {
     return teams.find((team) => team.memberIds.includes(userId)) || {};
   }
 
-  async getTeamById(roomId, id) {
+  async getTeamById(roomId, teamId) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
 
-    return teams.find((team) => team.teamId === id) || {};
+    return teams.find((team) => team.teamId === teamId) || {};
   }
 
   async getTeamIdByUserId(roomId, userId) {
