@@ -70,24 +70,8 @@ class TeamService {
     return teams;
   }
 
-  async changeTeam(roomId, teamId, userId) {
-    const teams = await prs.getRoomParam(roomId, 'teams', []);
-
-    teams.forEach((team) => {
-      if (team.memberIds.includes(userId)) {
-        team.memberIds = team.memberIds.filter(
-          (memberId) => memberId !== userId,
-        );
-      }
-
-      if (team.teamId === teamId) {
-        team.memberIds.push(userId);
-      }
-    });
-
+  async changeTeam(roomId, teams) {
     await prs.setRoomParam(roomId, 'teams', teams);
-
-    return teams;
   }
 
   async getTeamByUserId(roomId, userId) {
@@ -96,10 +80,16 @@ class TeamService {
     return teams.find((team) => team.memberIds.includes(userId)) || {};
   }
 
-  async getTeamById(roomId, teamId) {
+  async getTeamById(roomId, id) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
 
-    return teams.find((team) => team.teamId === teamId) || {};
+    return teams.find((team) => team.teamId === id) || {};
+  }
+
+  async getIdByUserId(roomId, userId) {
+    const team = await this.getTeamByUserId(roomId, userId);
+
+    return team.teamId;
   }
 
   async getMyTeam(roomId, userId) {

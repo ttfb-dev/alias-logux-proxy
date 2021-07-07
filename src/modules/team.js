@@ -78,6 +78,31 @@ const team = (server) => {
     },
   });
 
+  server.type('room/team_change', {
+    async access(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      const roomId = await roomService.whereIAm(userId);
+
+      ctx.data = { userId, roomId };
+
+      return roomId;
+    },
+    async process(ctx, action, meta) {
+      const { roomId } = ctx.data;
+      const { teams } = action;
+
+      try {
+        await teamService.changeTeam(roomId, teams);
+      } catch (e) {
+        await logger.critical(e.message, {
+          method: 'room/team_change',
+          roomId,
+          teams,
+        });
+      }
+    },
+  });
+
   server.type('room/team_create', {
     async access(ctx, action, meta) {
       const roomId = parseInt(action.roomId);
@@ -221,6 +246,15 @@ const team = (server) => {
       return true;
     },
     async resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
+    },
+  });
+
+  server.type('room/user_left_team', {
+    access() {
+      return true;
+    },
+    resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
   });
