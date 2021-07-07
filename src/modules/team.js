@@ -87,6 +87,9 @@ const team = (server) => {
 
       return roomId;
     },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
     async process(ctx, action, meta) {
       const { roomId } = ctx.data;
       const { teams } = action;
@@ -246,15 +249,6 @@ const team = (server) => {
       return true;
     },
     async resend(ctx, action, meta) {
-      return `room/${action.roomId}`;
-    },
-  });
-
-  server.type('room/user_left_team', {
-    access() {
-      return true;
-    },
-    resend(ctx, action, meta) {
       return `room/${action.roomId}`;
     },
   });
