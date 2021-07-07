@@ -70,10 +70,36 @@ class TeamService {
     return teams;
   }
 
+  async changeTeam(roomId, teamId, userId) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+
+    teams.forEach((team) => {
+      if (team.memberIds.includes(userId)) {
+        team.memberIds = team.memberIds.filter(
+          (memberId) => memberId !== userId,
+        );
+      }
+
+      if (team.teamId === teamId) {
+        team.memberIds.push(userId);
+      }
+    });
+
+    await prs.setRoomParam(roomId, 'teams', teams);
+
+    return teams;
+  }
+
   async getTeamByUserId(roomId, userId) {
     const teams = await prs.getRoomParam(roomId, 'teams', []);
 
     return teams.find((team) => team.memberIds.includes(userId)) || {};
+  }
+
+  async getTeamById(roomId, teamId) {
+    const teams = await prs.getRoomParam(roomId, 'teams', []);
+
+    return teams.find((team) => team.teamId === teamId) || {};
   }
 
   async getMyTeam(roomId, userId) {
