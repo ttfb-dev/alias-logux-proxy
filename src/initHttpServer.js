@@ -1,6 +1,8 @@
+import bodyParser from 'body-parser';
 import express from 'express';
 
 const httpServer = express();
-const port = 9000;
+httpServer.use(bodyParser.json());
+const port = 80;
 
 export { httpServer, port };

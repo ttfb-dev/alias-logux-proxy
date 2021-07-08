@@ -1,15 +1,16 @@
 import dotenv from 'dotenv';
 
-import { hooks } from './httpModules';
+import httpModules from './httpModules';
 import { server } from './init';
-import { httpServer, port } from './initHttpServer.js';
+import { httpServer, port } from './initHttpServer';
 
 dotenv.config();
 
 server.autoloadModules();
 server.listen();
 
-hooks.renewDatasets(httpServer, server);
+httpModules.hooks(httpServer, server);
+httpModules.metrics(httpServer);
 
 httpServer.listen(port, (err) => {
   if (err) {

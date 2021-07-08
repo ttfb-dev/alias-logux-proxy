@@ -1,3 +1,4 @@
-import hooks from './hooks.js';
+import hooks from './hooks';
+import metrics from './metrics';
 
-export { hooks };
+export default { hooks, metrics };
