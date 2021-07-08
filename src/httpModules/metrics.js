@@ -7,10 +7,10 @@ const metrics = (httpServer) => {
       await rows.forEach(async ({ event, userId, ...data }) => {
         await logger.metrics(event ? event : '', userId, data);
       });
-      response.status(200).send();
     } catch ({ message }) {
       await logger.critical(message);
     }
+    response.end();
   });
 };
 
