@@ -8,7 +8,7 @@ const metrics = (httpServer) => {
         await logger.metrics(event, userId, data);
       });
     } catch ({ message }) {
-      await logger.critical(message);
+      await logger.critical(message, { body: request.body });
     }
     response.end();
   });
