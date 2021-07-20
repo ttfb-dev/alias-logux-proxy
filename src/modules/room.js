@@ -5,7 +5,7 @@ import { gameService, roomService, wordService } from '../services';
 const room = (server) => {
   server.channel('room/:roomId', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(ctx.params.roomId);
+      const roomId = ctx.params.roomId;
       const userId = parseInt(ctx.userId);
 
       ctx.data = { roomId, userId };
@@ -62,10 +62,8 @@ const room = (server) => {
         await roomService.joinRoom(userId, roomId);
         await roomService.refreshRoomDatasets(roomId);
 
-        const { members, teams, gameWordDatasets } = await roomService.getRoomDetail(
-          roomId,
-          userId,
-        );
+        const { members, teams, gameWordDatasets } =
+          await roomService.getRoomDetail(roomId, userId);
 
         await server.log.add({
           type: 'room/user_joined',
@@ -112,7 +110,7 @@ const room = (server) => {
   server.type('room/rename', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
 
       ctx.data = { roomId, userId };
 
@@ -223,7 +221,7 @@ const room = (server) => {
   server.type('room/activate_game_dataset', {
     async access(ctx, action, meta) {
       try {
-        const roomId = parseInt(action.roomId);
+        const roomId = action.roomId;
         const userId = parseInt(ctx.userId);
         const datasetId = parseInt(action.datasetId);
 
@@ -266,7 +264,7 @@ const room = (server) => {
   server.type('room/deactivate_game_dataset', {
     async access(ctx, action, meta) {
       try {
-        const roomId = parseInt(action.roomId);
+        const roomId = action.roomId;
         const userId = parseInt(ctx.userId);
         const datasetId = parseInt(action.datasetId);
 

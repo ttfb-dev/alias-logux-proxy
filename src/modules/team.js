@@ -4,14 +4,14 @@ import { roomService, teamService } from '../services';
 const team = (server) => {
   server.type('room/team_join', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
       const userId = parseInt(ctx.userId);
       const currentTeam = await teamService.getMyTeam(roomId, userId);
       //допускаем только тех кто не в команде
       return currentTeam === null;
     },
     async process(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
       const teamId = parseInt(action.teamId);
       const userId = parseInt(ctx.userId);
 
@@ -43,14 +43,14 @@ const team = (server) => {
 
   server.type('room/team_leave', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
       const userId = parseInt(ctx.userId);
       const currentTeam = await teamService.getMyTeam(roomId, userId);
       //допускаем только тех кто находится в команде
       return currentTeam !== null;
     },
     async process(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
       const userId = parseInt(ctx.userId);
 
       const result = await teamService.leaveTeam(roomId, userId);
@@ -115,14 +115,14 @@ const team = (server) => {
 
   server.type('room/team_create', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
       const userId = parseInt(ctx.userId);
       const currentRoom = await roomService.whereIAm(userId);
       //допускаем только тех кто находится в комнате
       return currentRoom === roomId;
     },
     async process(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
       const teamName = action.teamName;
 
       const result = await roomService.createTeam(roomId, teamName);
@@ -150,7 +150,7 @@ const team = (server) => {
 
   server.type('room/team_delete', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
       const teamId = parseInt(action.teamId);
       const userId = parseInt(ctx.userId);
       ctx.data = { roomId, teamId, userId };
@@ -203,7 +203,7 @@ const team = (server) => {
 
   server.type('room/team_rename', {
     async access(ctx, action, meta) {
-      const roomId = parseInt(action.roomId);
+      const roomId = action.roomId;
       const userId = parseInt(ctx.userId);
       const currentRoom = await roomService.whereIAm(userId);
 

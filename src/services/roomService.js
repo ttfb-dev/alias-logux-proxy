@@ -1,7 +1,11 @@
+import { customAlphabet } from 'nanoid';
+
 import { ErrorResponse } from '../contracts';
 import { gdatasets, prs, vkapi } from '../libs';
 
 import { gameService, profileService, teamService, wordService } from '.';
+
+const nanoid = customAlphabet('1234567890abcdef', 10);
 
 class RoomService {
   constructor() {
@@ -81,7 +85,7 @@ class RoomService {
       throw new ErrorResponse('user_not_in_room', 'Вы вне комнаты');
     }
 
-    if (parseInt(roomId) !== currentRoomId) {
+    if (roomId !== currentRoomId) {
       throw new ErrorResponse(
         'user_in_another_room',
         `Вы находитесь в ${currentRoomId} комнате.`,
@@ -118,7 +122,7 @@ class RoomService {
       );
     }
 
-    const roomId = await prs.getNextInt('room_id');
+    const roomId = nanoid();
 
     const roomName = await wordService.getRandomRoomName('ru');
 
