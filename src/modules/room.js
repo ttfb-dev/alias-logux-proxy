@@ -221,9 +221,10 @@ const room = (server) => {
   server.type('room/activate_game_dataset', {
     async access(ctx, action, meta) {
       try {
-        const roomId = action.roomId;
         const userId = parseInt(ctx.userId);
         const datasetId = parseInt(action.datasetId);
+
+        const roomId = await roomService.whereIAm(userId);
 
         ctx.data = { roomId, userId, datasetId };
 
@@ -264,9 +265,10 @@ const room = (server) => {
   server.type('room/deactivate_game_dataset', {
     async access(ctx, action, meta) {
       try {
-        const roomId = action.roomId;
         const userId = parseInt(ctx.userId);
         const datasetId = parseInt(action.datasetId);
+
+        const roomId = await roomService.whereIAm(userId);
 
         ctx.data = { roomId, userId, datasetId };
 
