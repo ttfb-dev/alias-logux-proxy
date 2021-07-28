@@ -89,8 +89,8 @@ const profile = (server) => {
     },
   });
 
-  //событие покупки набора слов в комнате
-  server.type('profile/buy_game_dataset_success', {
+  //событие обновления списка наборов профиля
+  server.type('profile/datasets_changed', {
     access() {
       return true;
     },
