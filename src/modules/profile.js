@@ -69,6 +69,26 @@ const profile = (server) => {
     },
   });
 
+  server.type('user/toggle_set', {
+    async access(ctx, action, meta) {
+      const userId = parseInt(ctx.userId);
+      const { id } = action;
+
+      ctx.data = { userId, id };
+
+      return true;
+    },
+    async process(ctx, action, meta) {
+      const { userId, id } = ctx.data;
+
+      try {
+        await profileService.toggleSet(userId, id);
+      } catch (e) {
+        server.undo(action, meta);
+      }
+    },
+  });
+
   //событие покупки набора слов в комнате
   server.type('profile/buy_game_dataset_success', {
     access() {

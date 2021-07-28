@@ -29,6 +29,16 @@ class ProfileService {
     return await udatasets.deactivate(userId, datasetId);
   }
 
+  async toggleSet(userId, datasetId) {
+    const isActive = await this.isDatasetActive(userId, datasetId);
+
+    if (isActive) {
+      await udatasets.deactivate(userId, datasetId);
+    } else {
+      await udatasets.activate(userId, datasetId);
+    }
+  }
+
   async getDatasetsWithStatus(userId) {
     const datasets = await wordService.getGameDatasets();
 
