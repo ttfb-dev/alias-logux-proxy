@@ -21,7 +21,7 @@ const hooks = (httpServer, server) => {
 
       await server.log.add({
         userId,
-        type: 'profile/buy_game_dataset_success',
+        type: 'profile/datasets_changed',
         datasets,
       });
 
