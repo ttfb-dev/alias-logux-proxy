@@ -69,7 +69,7 @@ const profile = (server) => {
     },
   });
 
-  server.type('profile/toggle_set', {
+  server.type('profile/toggle_dataset', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId);
       const { id } = action;
