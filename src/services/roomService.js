@@ -396,8 +396,10 @@ class RoomService {
     const datasets = await this.getRoomGameDatasets(roomId);
     const dataset = datasets.find((dataset) => dataset.datasetId === datasetId);
 
+    console.log(dataset.status);
+
     if (dataset) {
-      return dataset.status === 'active' || dataset.status === 'inactive';
+      return ['active', 'inactive'].includes(dataset.status);
     }
 
     return false;
