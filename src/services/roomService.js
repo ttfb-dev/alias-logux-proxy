@@ -392,6 +392,28 @@ class RoomService {
     return false;
   }
 
+  async isDatasetAvailableToToggle(roomId, datasetId) {
+    const datasets = await this.getRoomGameDatasets(roomId);
+    const dataset = datasets.find((dataset) => dataset.datasetId === datasetId);
+
+    if (dataset) {
+      return dataset.status === 'active' || dataset.status === 'inactive';
+    }
+
+    return false;
+  }
+
+  async getDatasetStatus(roomId, datasetId) {
+    const datasets = await this.getRoomGameDatasets(roomId);
+    const dataset = datasets.find((dataset) => dataset.datasetId === datasetId);
+
+    if (dataset) {
+      return dataset.status;
+    }
+
+    return false;
+  }
+
   async getRoomLang(roomId) {
     const roomSettings = await prs.getRoomParam(roomId, 'settings', {
       lang: 'ru',

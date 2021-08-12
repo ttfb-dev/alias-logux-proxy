@@ -218,6 +218,59 @@ const room = (server) => {
     },
   });
 
+  server.type('room/toggle_dataset', {
+    async access(ctx, action, meta) {
+      try {
+        const userId = parseInt(ctx.userId);
+        const datasetId = parseInt(action.datasetId);
+
+        const roomId = await roomService.whereIAm(userId);
+
+        ctx.data = { roomId, userId, datasetId };
+
+        const isItMyRoomId = await roomService.isItMyRoomId(userId, roomId);
+
+        const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
+
+        const isDatasetAvailableToToggle =
+          await roomService.isDatasetAvailableToToggle(roomId, datasetId);
+
+        return isItMyRoomId && amIRoomOwner && isDatasetAvailableToToggle;
+      } catch ({ message }) {
+        logger.critical(message, {
+          type: 'room/toggle_dataset/access',
+          action,
+          userId: ctx.userId,
+        });
+      }
+      return false;
+    },
+    resend(ctx, action, meta) {
+      return `room/${action.roomId}`;
+    },
+    async process(ctx, action, meta) {
+      try {
+        const { roomId, datasetId } = ctx.data;
+        const datasetStatus = await roomService.getDatasetStatus(
+          roomId,
+          datasetId,
+        );
+        if (datasetStatus === 'inactive') {
+          await roomService.activateGameDataset(roomId, datasetId);
+        } else if (datasetStatus === 'active') {
+          await roomService.deactivateGameDataset(roomId, datasetId);
+        }
+      } catch ({ message }) {
+        logger.critical(message, {
+          type: 'room/activate_word_dataset/access',
+          action,
+          userId: ctx.userId,
+        });
+      }
+    },
+  });
+
+  //deprecated, see room/toggle_dataset
   server.type('room/activate_game_dataset', {
     async access(ctx, action, meta) {
       try {
@@ -262,6 +315,7 @@ const room = (server) => {
     },
   });
 
+  //deprecated, see room/toggle_dataset
   server.type('room/deactivate_game_dataset', {
     async access(ctx, action, meta) {
       try {
