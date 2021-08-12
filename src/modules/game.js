@@ -29,6 +29,7 @@ const game = (server) => {
           type: 'game/start',
           action,
           userId,
+          e,
         });
       }
     },
