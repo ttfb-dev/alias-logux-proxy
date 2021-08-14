@@ -166,7 +166,7 @@ const team = (server) => {
 
       if (!isEmpty) {
         server.undo(action, meta, 'error', {
-          message: 'В команде остались люди!!1',
+          message: 'В команде остались люди',
         });
         return;
       }
