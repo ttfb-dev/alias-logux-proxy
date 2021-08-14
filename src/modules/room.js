@@ -246,8 +246,8 @@ const room = (server) => {
       return false;
     },
     resend(ctx, action, meta) {
-      console.log(`room/toggle_dataset resended to room/${action.roomId}`);
-      return `room/${action.roomId}`;
+      console.log(`room/toggle_dataset resended to room/${ctx.data.roomId}`);
+      return `room/${ctx.data.roomId}`;
     },
     async process(ctx, action, meta) {
       try {
