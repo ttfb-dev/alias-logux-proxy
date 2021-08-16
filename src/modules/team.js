@@ -171,9 +171,9 @@ const team = (server) => {
         return;
       }
 
-      if (teamsCount <= 2) {
+      if (teamsCount <= 1) {
         server.undo(action, meta, 'error', {
-          message: 'Для игры нужно минимум две команды',
+          message: 'Для игры нужна минимум одна',
         });
         return;
       }
