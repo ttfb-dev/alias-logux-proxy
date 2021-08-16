@@ -173,7 +173,7 @@ const team = (server) => {
 
       if (teamsCount <= 1) {
         server.undo(action, meta, 'error', {
-          message: 'Для игры нужна минимум одна',
+          message: 'Для игры нужна минимум одна команда',
         });
         return;
       }
