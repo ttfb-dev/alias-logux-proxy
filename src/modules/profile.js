@@ -84,7 +84,7 @@ const profile = (server) => {
 
       try {
         await profileService.toggleSet(userId, id);
-      } catch (e) {
+      } catch ({ message }) {
         logger.critical(message, {
           type: 'profile/toggle_dataset',
           action,
