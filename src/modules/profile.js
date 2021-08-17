@@ -1,3 +1,4 @@
+import { logger } from '../libs';
 import { profileService } from '../services';
 
 const profile = (server) => {
@@ -84,6 +85,12 @@ const profile = (server) => {
       try {
         await profileService.toggleSet(userId, id);
       } catch (e) {
+        logger.critical(message, {
+          type: 'profile/toggle_dataset',
+          action,
+          id: ctx.id,
+          userId: ctx.userId,
+        });
         server.undo(action, meta);
       }
     },
