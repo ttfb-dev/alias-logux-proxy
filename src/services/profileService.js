@@ -34,7 +34,7 @@ class ProfileService {
 
     console.log(`isActive ${userId} ${datasetId}: ${isActive}`);
 
-    console.log(await udatasets.getActiveDatasetIds(userId));
+    console.log(await udatasets.getActive(userId));
 
     if (isActive) {
       console.log(`deactivate ${datasetId}`);
@@ -44,7 +44,7 @@ class ProfileService {
       await udatasets.activate(userId, datasetId);
     }
 
-    console.log(await udatasets.getActiveDatasetIds(userId));
+    console.log(await udatasets.getActive(userId));
   }
 
   async getDatasetsWithStatus(userId) {
