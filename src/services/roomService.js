@@ -314,10 +314,9 @@ class RoomService {
         room.ownerId,
       );
       if (activeDatasetIds) {
-        await activeDatasetIds.forEach(async (datasetId) => {
-          console.log(`activate ${datasetId} in ${roomId}`);
+        for (const datasetId of activeDatasetIds) {
           await this.activateGameDataset(roomId, datasetId);
-        });
+        }
       }
     }
 
