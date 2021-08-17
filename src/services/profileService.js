@@ -32,9 +32,13 @@ class ProfileService {
   async toggleSet(userId, datasetId) {
     const isActive = await this.isDatasetActive(userId, datasetId);
 
+    console.log(`isActive ${datasetId}: ${isActive}`);
+
     if (isActive) {
+      console.log(`deactivate ${datasetId}: ${isActive}`);
       await udatasets.deactivate(userId, datasetId);
     } else {
+      console.log(`activate ${datasetId}: ${isActive}`);
       await udatasets.activate(userId, datasetId);
     }
   }
