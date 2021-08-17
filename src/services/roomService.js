@@ -313,11 +313,10 @@ class RoomService {
       const activeDatasetIds = await profileService.getActiveDatasetIds(
         room.ownerId,
       );
-      console.log(activeDatasetIds);
       if (activeDatasetIds) {
         await activeDatasetIds.forEach(async (datasetId) => {
-          console.log(`activate ${datasetId}`);
-          await gdatasets.activate(roomId, datasetId);
+          console.log(`activate ${datasetId} in ${roomId}`);
+          await this.activateGameDataset(roomId, datasetId);
         });
       }
     }
