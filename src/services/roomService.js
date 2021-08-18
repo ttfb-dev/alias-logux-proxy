@@ -308,6 +308,7 @@ class RoomService {
   }
 
   async refreshRoomDatasets(roomId, onRoomCreate = false) {
+    console.log(roomId);
     if (onRoomCreate) {
       const room = await this.getRoom(roomId);
       const activeDatasetIds = await profileService.getActiveDatasetIds(
@@ -316,6 +317,7 @@ class RoomService {
       console.log(activeDatasetIds);
       if (activeDatasetIds) {
         for (const datasetId of activeDatasetIds) {
+          console.log(`activate ${datasetId} in ${roomId}`);
           await this.activateGameDataset(roomId, datasetId);
         }
       }
