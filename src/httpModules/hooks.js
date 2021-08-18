@@ -4,7 +4,7 @@ const hooks = (httpServer, server) => {
   httpServer.get(
     '/user/:user_id/refresh-datasets',
     async (request, response) => {
-      const userId = parseInt(request.params.user_id);
+      const userId = parseInt(request.params.user_id, 10);
       const roomId = await roomService.whereIAm(userId);
 
       const datasets = await profileService.getDatasetsWithStatus(userId);

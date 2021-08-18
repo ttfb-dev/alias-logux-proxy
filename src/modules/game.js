@@ -4,7 +4,7 @@ import { gameService, roomService } from '../services';
 const game = (server) => {
   server.type('game/start', {
     async accessAndProcess(ctx, action, meta) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
 
       ctx.data = { userId, roomId };
@@ -40,7 +40,7 @@ const game = (server) => {
 
   server.type('game/finish', {
     async accessAndProcess(ctx, action, meta) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
 
       ctx.data = { userId, roomId };
@@ -75,7 +75,7 @@ const game = (server) => {
 
   server.type('step/get_words', {
     async access(ctx, action, meta) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
 
       ctx.data = { roomId, userId };
@@ -98,7 +98,7 @@ const game = (server) => {
 
   server.type('step/start', {
     async access(ctx) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
       const gameId = await gameService.getRoomGameId(roomId);
 
@@ -141,7 +141,7 @@ const game = (server) => {
 
   server.type('step/finish', {
     async access(ctx) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
       const gameId = await gameService.getRoomGameId(roomId);
 
@@ -173,7 +173,7 @@ const game = (server) => {
 
   server.type('step/set_word', {
     async access(ctx) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
       const gameId = await gameService.getRoomGameId(roomId);
 
@@ -203,7 +203,7 @@ const game = (server) => {
 
   server.type('step/edit_word', {
     async access(ctx) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
       const gameId = await gameService.getRoomGameId(roomId);
 
@@ -234,7 +234,7 @@ const game = (server) => {
 
   server.type('step/set_history', {
     async access(ctx) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
       const gameId = await gameService.getRoomGameId(roomId);
 
@@ -271,7 +271,7 @@ const game = (server) => {
 
   server.type('step/next', {
     async access(ctx) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
       const gameId = await gameService.getRoomGameId(roomId);
 

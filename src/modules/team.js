@@ -5,15 +5,15 @@ const team = (server) => {
   server.type('room/team_join', {
     async access(ctx, action, meta) {
       const roomId = action.roomId;
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const currentTeam = await teamService.getMyTeam(roomId, userId);
       //допускаем только тех кто не в команде
       return currentTeam === null;
     },
     async process(ctx, action, meta) {
       const roomId = action.roomId;
-      const teamId = parseInt(action.teamId);
-      const userId = parseInt(ctx.userId);
+      const teamId = parseInt(action.teamId, 10);
+      const userId = parseInt(ctx.userId, 10);
 
       const result = await teamService.joinTeam(roomId, teamId, userId);
 
@@ -44,14 +44,14 @@ const team = (server) => {
   server.type('room/team_leave', {
     async access(ctx, action, meta) {
       const roomId = action.roomId;
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const currentTeam = await teamService.getMyTeam(roomId, userId);
       //допускаем только тех кто находится в команде
       return currentTeam !== null;
     },
     async process(ctx, action, meta) {
       const roomId = action.roomId;
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
 
       const result = await teamService.leaveTeam(roomId, userId);
 
@@ -80,7 +80,7 @@ const team = (server) => {
 
   server.type('room/team_change', {
     async access(ctx, action, meta) {
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
 
       ctx.data = { userId, roomId };
@@ -116,7 +116,7 @@ const team = (server) => {
   server.type('room/team_create', {
     async access(ctx, action, meta) {
       const roomId = action.roomId;
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const currentRoom = await roomService.whereIAm(userId);
       //допускаем только тех кто находится в комнате
       return currentRoom === roomId;
@@ -151,8 +151,8 @@ const team = (server) => {
   server.type('room/team_delete', {
     async access(ctx, action, meta) {
       const roomId = action.roomId;
-      const teamId = parseInt(action.teamId);
-      const userId = parseInt(ctx.userId);
+      const teamId = parseInt(action.teamId, 10);
+      const userId = parseInt(ctx.userId, 10);
       ctx.data = { roomId, teamId, userId };
       const currentRoom = await roomService.whereIAm(userId);
       //проверяем, что комната пустая и удаляющий в текущей комнате
@@ -204,7 +204,7 @@ const team = (server) => {
   server.type('room/team_rename', {
     async access(ctx, action, meta) {
       const roomId = action.roomId;
-      const userId = parseInt(ctx.userId);
+      const userId = parseInt(ctx.userId, 10);
       const currentRoom = await roomService.whereIAm(userId);
 
       ctx.data = { roomId, userId };
@@ -213,7 +213,7 @@ const team = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId } = ctx.data;
-      const teamId = parseInt(action.teamId);
+      const teamId = parseInt(action.teamId, 10);
       const teamName = action.teamName;
 
       const result = await roomService.renameTeam(roomId, teamId, teamName);

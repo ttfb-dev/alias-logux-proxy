@@ -4,7 +4,7 @@ import qs from 'querystring';
 const secretKey = process.env.VK_PROTECTED_KEY;
 
 const isVkAuthorized = function (userId, queryString) {
-  if (parseInt(userId) < 10) {
+  if (parseInt(userId, 10) < 10) {
     return true;
   }
 
@@ -35,7 +35,8 @@ const isVkAuthorized = function (userId, queryString) {
     .replace(/=$/, '');
 
   return (
-    paramsHash === urlParams.sign && parseInt(userId) === parseInt(parsedVkId)
+    paramsHash === urlParams.sign &&
+    parseInt(userId, 10) === parseInt(parsedVkId, 10)
   );
 };
 

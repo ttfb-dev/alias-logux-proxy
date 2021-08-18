@@ -392,8 +392,8 @@ class GameService {
 
   unpackWordIndex(index) {
     return {
-      randomDatasetIndex: parseInt(index / 100000),
-      randomDatasetWord: parseInt(index % 100000),
+      randomDatasetIndex: parseInt(index / 100000, 10),
+      randomDatasetWord: parseInt(index % 100000, 10),
     };
   }
 
