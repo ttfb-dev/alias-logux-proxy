@@ -308,24 +308,17 @@ class RoomService {
   }
 
   async refreshRoomDatasets(roomId, onRoomCreate = false) {
-    const activeDatasetsBefore = await gdatasets.getActive(roomId);
-    console.log('before:', activeDatasetsBefore);
     if (onRoomCreate) {
       const room = await this.getRoom(roomId);
       const activeDatasetIds = await profileService.getActiveDatasetIds(
         room.ownerId,
       );
-      console.log(activeDatasetIds);
       if (activeDatasetIds) {
         for (const datasetId of activeDatasetIds) {
-          console.log(`activate ${datasetId} in ${roomId}`);
           await this.activateGameDataset(roomId, datasetId);
         }
       }
     }
-
-    const activeDatasetsReal = await gdatasets.getActive(roomId);
-    console.log('in result:', activeDatasetsReal);
 
     const purchasedDatasetIds = await this.getRoomPurchasedDatasetIds(roomId);
 
