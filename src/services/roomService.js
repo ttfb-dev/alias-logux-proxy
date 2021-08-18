@@ -308,7 +308,8 @@ class RoomService {
   }
 
   async refreshRoomDatasets(roomId, onRoomCreate = false) {
-    console.log(roomId);
+    const activeDatasetsBefore = await gdatasets.getActive(roomId);
+    console.log('before:', activeDatasetsBefore);
     if (onRoomCreate) {
       const room = await this.getRoom(roomId);
       const activeDatasetIds = await profileService.getActiveDatasetIds(
