@@ -277,6 +277,8 @@ const room = (server) => {
         const userId = parseInt(ctx.userId, 10);
         const datasetId = parseInt(action.id, 10);
 
+        console.log('access activate, ' + datasetId);
+
         const roomId = await roomService.whereIAm(userId);
 
         ctx.data = { roomId, userId, datasetId };
@@ -304,10 +306,12 @@ const room = (server) => {
     async process(ctx, action, meta) {
       try {
         const { roomId, datasetId } = ctx.data;
+
+        console.log('process activate, ' + datasetId);
         await roomService.activateGameDataset(roomId, datasetId);
       } catch ({ message }) {
         logger.critical(message, {
-          type: 'room/activate_word_dataset/access',
+          type: 'room/activate_word_dataset/process',
           action,
           userId: ctx.userId,
         });
@@ -321,6 +325,8 @@ const room = (server) => {
       try {
         const userId = parseInt(ctx.userId, 10);
         const datasetId = parseInt(action.id, 10);
+
+        console.log('access deactivate, ' + datasetId);
 
         const roomId = await roomService.whereIAm(userId);
 
@@ -336,7 +342,7 @@ const room = (server) => {
         return isItMyRoomId && amIRoomOwner && isDatasetAvailableToDeactivate;
       } catch ({ message }) {
         logger.critical(message, {
-          type: 'room/deactivate_game_dataset',
+          type: 'room/deactivate_game_dataset/access',
           action,
           userId: ctx.userId,
         });
@@ -348,6 +354,8 @@ const room = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, datasetId } = ctx.data;
+
+      console.log('process deactivate, ' + datasetId);
       await roomService.deactivateGameDataset(roomId, datasetId);
     },
   });
