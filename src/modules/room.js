@@ -275,7 +275,7 @@ const room = (server) => {
     async access(ctx, action, meta) {
       try {
         const userId = parseInt(ctx.userId, 10);
-        const datasetId = parseInt(action.datasetId, 10);
+        const datasetId = parseInt(action.id, 10);
 
         const roomId = await roomService.whereIAm(userId);
 
@@ -320,7 +320,7 @@ const room = (server) => {
     async access(ctx, action, meta) {
       try {
         const userId = parseInt(ctx.userId, 10);
-        const datasetId = parseInt(action.datasetId, 10);
+        const datasetId = parseInt(action.id, 10);
 
         const roomId = await roomService.whereIAm(userId);
 
