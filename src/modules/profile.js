@@ -21,7 +21,7 @@ const profile = (server) => {
   server.type('profile/activate_dataset', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
-      const { id } = action;
+      const id = parseInt(action.id, 10);
 
       const isActive = await profileService.isDatasetActive(userId, id);
       const isAvailable = await profileService.isDatasetAvailable(userId, id);
@@ -30,7 +30,7 @@ const profile = (server) => {
     },
     async process(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
-      const { id } = action;
+      const id = parseInt(action.id, 10);
 
       await profileService.activateDatasetId(userId, id);
 
@@ -46,7 +46,7 @@ const profile = (server) => {
   server.type('profile/deactivate_dataset', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
-      const { id } = action;
+      const id = parseInt(action.id, 10);
 
       const isActive = await profileService.isDatasetActive(userId, id);
 
@@ -54,7 +54,7 @@ const profile = (server) => {
     },
     async process(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
-      const { id } = action;
+      const id = parseInt(action.id, 10);
 
       await profileService.deactivateDatasetId(userId, id);
 
