@@ -33,7 +33,7 @@ const profile = (server) => {
     },
     async process(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
-      const { datasetId } = action;
+      const { id } = action;
 
       await profileService.activateDatasetId(userId, datasetId);
 
@@ -57,7 +57,7 @@ const profile = (server) => {
     },
     async process(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
-      const { datasetId } = action;
+      const { id } = action;
 
       await profileService.deactivateDatasetId(userId, datasetId);
 
