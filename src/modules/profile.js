@@ -21,13 +21,10 @@ const profile = (server) => {
   server.type('profile/activate_dataset', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
-      const { datasetId } = action;
+      const { id } = action;
 
-      const isActive = await profileService.isDatasetActive(userId, datasetId);
-      const isAvailable = await profileService.isDatasetAvailable(
-        userId,
-        datasetId,
-      );
+      const isActive = await profileService.isDatasetActive(userId, id);
+      const isAvailable = await profileService.isDatasetAvailable(userId, id);
 
       return !isActive && isAvailable;
     },
@@ -35,7 +32,7 @@ const profile = (server) => {
       const userId = parseInt(ctx.userId, 10);
       const { id } = action;
 
-      await profileService.activateDatasetId(userId, datasetId);
+      await profileService.activateDatasetId(userId, id);
 
       const datasets = await profileService.getDatasetsWithStatus(userId);
 
@@ -49,9 +46,9 @@ const profile = (server) => {
   server.type('profile/deactivate_dataset', {
     async access(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
-      const { datasetId } = action;
+      const { id } = action;
 
-      const isActive = await profileService.isDatasetActive(userId, datasetId);
+      const isActive = await profileService.isDatasetActive(userId, id);
 
       return isActive;
     },
@@ -59,7 +56,7 @@ const profile = (server) => {
       const userId = parseInt(ctx.userId, 10);
       const { id } = action;
 
-      await profileService.deactivateDatasetId(userId, datasetId);
+      await profileService.deactivateDatasetId(userId, id);
 
       const datasets = await profileService.getDatasetsWithStatus(userId);
 
