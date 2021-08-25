@@ -64,6 +64,14 @@ class ProfileService {
     return prs.getUserParam(userId, 'is_donut', false);
   }
 
+  async isOnboardingFinished(userId) {
+    return prs.getUserParam(userId, 'is_onboarding_finished', false);
+  }
+
+  async setOnboardingFinished(userId) {
+    return prs.setUserParam(userId, 'is_onboarding_finished', true);
+  }
+
   async isDatasetActive(userId, datasetId) {
     const activeDatasetIds = await this.getActiveDatasetIds(userId);
     return activeDatasetIds.includes(datasetId);

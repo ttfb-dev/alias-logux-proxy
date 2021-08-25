@@ -93,6 +93,49 @@ const profile = (server) => {
     },
   });
 
+  server.type('profile/is_onboarding_finished', {
+    async access(ctx, action, meta) {
+      return true;
+    },
+    async process(ctx, action, meta) {
+      const userId = parseInt(ctx.userId, 10);
+
+      try {
+        const isFinished = await profileService.isOnboardingFinished(userId);
+
+        ctx.sendBack({
+          type: 'profile/is_onboarding_finished_success',
+          isFinished,
+        });
+      } catch ({ message }) {
+        logger.critical(message, {
+          type: 'profile/is_onboarding_finished',
+          action,
+          userId: ctx.userId,
+        });
+      }
+    },
+  });
+
+  server.type('profile/set_onboarding_finished', {
+    async access(ctx, action, meta) {
+      return true;
+    },
+    async process(ctx, action, meta) {
+      const userId = parseInt(ctx.userId, 10);
+
+      try {
+        await profileService.setOnboardingFinished(userId);
+      } catch ({ message }) {
+        logger.critical(message, {
+          type: 'profile/set_onboarding_finished',
+          action,
+          userId: ctx.userId,
+        });
+      }
+    },
+  });
+
   //событие обновления списка наборов профиля
   server.type('profile/datasets_changed', {
     access() {
