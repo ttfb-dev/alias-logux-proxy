@@ -17,11 +17,15 @@ const game = (server) => {
         if (isRoomOwner && canStartGame) {
           const gameId = await gameService.startGame(roomId);
 
-          await logger.info('game.start', {
-            type: 'game/start',
-            action,
+          const { members, teams, gameWordDatasets } =
+            await roomService.getRoomDetail(roomId, userId);
+
+          await logger.analytics('game.start', userId, {
             roomId,
             gameId,
+            members,
+            teams,
+            gameWordDatasets,
           });
         }
       } catch (e) {
