@@ -100,6 +100,17 @@ const room = (server) => {
         return;
       }
 
+      const { browser, os, device } = parser(
+        ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
+      );
+
+      logger.analytics('room.create', userId, {
+        room_id: result,
+        browser,
+        os,
+        device,
+      });
+
       ctx.sendBack({
         type: 'room/create_success',
         roomId: result,
