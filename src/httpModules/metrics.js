@@ -6,6 +6,9 @@ const metrics = (httpServer) => {
   httpServer.post('/metrics', async (request, response) => {
     try {
       const { browser, os, device } = parser(request.headers['user-agent']);
+      if (!request.body || request.body === '') {
+        return;
+      }
       const rows = JSON.parse(request.body);
       rows.forEach(async ({ event, userId, ...data }) => {
         await logger.execMetrics('vk-miniapp', event, userId, {
