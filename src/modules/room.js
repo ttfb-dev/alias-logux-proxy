@@ -1,3 +1,5 @@
+import parser from 'ua-parser-js';
+
 import ErrorResponse from '../contracts/errorResponse';
 import { logger } from '../libs';
 import { gameService, roomService, wordService } from '../services';
