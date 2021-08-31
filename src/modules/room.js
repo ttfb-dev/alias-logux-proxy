@@ -58,7 +58,7 @@ const room = (server) => {
 
     async process(ctx, action, meta) {
       const { roomId } = action;
-      const { userId } = ctx.data;
+      const { userId, method } = ctx.data;
 
       try {
         await roomService.joinRoom(userId, roomId);
@@ -74,6 +74,18 @@ const room = (server) => {
           members,
           teams,
           gameWordDatasets,
+        });
+
+        const { browser, os, device } = parser(
+          ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
+        );
+
+        await logger.analytics('room.join', userId, {
+          room_id: roomId,
+          join_method: method,
+          browser,
+          os,
+          device,
         });
       } catch ({ message }) {
         logger.error(message, { roomId, userId });

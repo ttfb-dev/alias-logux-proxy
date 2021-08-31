@@ -1,3 +1,5 @@
+import parser from 'ua-parser-js';
+
 import { logger } from '../libs';
 import { profileService } from '../services';
 
@@ -126,6 +128,16 @@ const profile = (server) => {
 
       try {
         await profileService.setOnboardingFinished(userId);
+
+        const { browser, os, device } = parser(
+          ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
+        );
+
+        await logger.analytics('profile.finish_onboarding', userId, {
+          browser,
+          os,
+          device,
+        });
       } catch ({ message }) {
         logger.critical(message, {
           type: 'profile/set_onboarding_finished',
