@@ -57,8 +57,8 @@ const room = (server) => {
     },
 
     async process(ctx, action, meta) {
-      const { roomId } = action;
-      const { userId, method } = ctx.data;
+      const { roomId, method } = action;
+      const { userId } = ctx.data;
 
       try {
         await roomService.joinRoom(userId, roomId);
