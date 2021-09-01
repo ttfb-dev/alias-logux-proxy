@@ -54,6 +54,7 @@ const game = (server) => {
         const canFinishGame = await roomService.isRoomInGame(roomId);
 
         if (canFinishGame) {
+          const gameId = await gameService.getRoomGameId(roomId);
           await roomService.setRoomStatus(
             roomId,
             roomService.storageKeys.statuses.lobby,
