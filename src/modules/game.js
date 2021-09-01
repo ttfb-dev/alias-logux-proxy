@@ -46,6 +46,7 @@ const game = (server) => {
     async accessAndProcess(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
       const roomId = await roomService.whereIAm(userId);
+      const { reason } = action;
 
       ctx.data = { userId, roomId };
 
@@ -58,10 +59,10 @@ const game = (server) => {
             roomService.storageKeys.statuses.lobby,
           );
 
-          await logger.info('game.finish', {
-            type: 'game/finish',
-            action,
+          await logger.analytics('game.finish', userId, {
             roomId,
+            gameId,
+            reason,
           });
         }
       } catch (e) {
