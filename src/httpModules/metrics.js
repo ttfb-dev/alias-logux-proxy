@@ -6,11 +6,7 @@ const metrics = (httpServer) => {
   httpServer.post('/metrics', async (request, response) => {
     try {
       const { browser, os, device } = parser(request.headers['user-agent']);
-      if (
-        !request.body ||
-        (typeof request.body === 'object' &&
-          Object.keys(request.body).lenght === 0)
-      ) {
+      if (Object.keys(request.body).length === 0) {
         return;
       }
       const rows = JSON.parse(request.body);
