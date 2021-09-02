@@ -7,14 +7,21 @@ import { gameService, roomService, wordService } from '../services';
 const room = (server) => {
   server.channel('room/:roomId', {
     async access(ctx, action, meta) {
-      const roomId = ctx.params.roomId;
-      const userId = parseInt(ctx.userId, 10);
+      try {
+        const roomId = ctx.params.roomId;
+        const userId = parseInt(ctx.userId, 10);
 
-      ctx.data = { roomId, userId };
+        ctx.data = { roomId, userId };
 
-      const currentRoomId = await roomService.whereIAm(userId);
+        const currentRoomId = await roomService.whereIAm(userId);
 
-      return currentRoomId === roomId;
+        return currentRoomId === roomId;
+      } catch ({ message }) {
+        await logger.critical(message, {
+          action: 'room/:roomId',
+          method: 'access',
+        });
+      }
     },
     async load(ctx, action, meta) {
       const { roomId, userId } = ctx.data;
