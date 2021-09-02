@@ -15,6 +15,8 @@ const room = (server) => {
 
         const currentRoomId = await roomService.whereIAm(userId);
 
+        console.log(roomId, currentRoomId, userId);
+
         return currentRoomId === roomId;
       } catch ({ message }) {
         await logger.critical(message, {
