@@ -15,9 +15,23 @@ const room = (server) => {
 
         const currentRoomId = await roomService.whereIAm(userId);
 
-        console.log(roomId, currentRoomId, userId);
+        if (currentRoomId !== roomId) {
+          await logger.critical('channel subscribe failed', {
+            userId,
+            channel: 'room/:roomId',
+            currentRoomId,
+            roomId,
+          });
+          return false;
+        }
+        await logger.info('channel subscribe ok', {
+          userId,
+          channel: 'room/:roomId',
+          currentRoomId,
+          roomId,
+        });
 
-        return currentRoomId === roomId;
+        return true;
       } catch ({ message }) {
         await logger.critical(message, {
           action: 'room/:roomId',
