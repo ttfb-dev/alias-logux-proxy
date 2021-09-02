@@ -23,7 +23,11 @@ const game = (server) => {
           await logger.analytics('game.start', userId, {
             roomId,
             gameId,
-            members,
+            membersCount: members.length,
+            members: members.map((member) => ({
+              name: `${member.first_name}  ${member.last_name}`,
+              id: member.id,
+            })),
             teams,
             gameWordDatasets,
           });
