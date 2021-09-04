@@ -109,7 +109,7 @@ const room = (server) => {
           device,
         });
       } catch ({ message }) {
-        logger.error(message, { roomId, userId });
+        logger.critical(message, { roomId, userId });
         server.undo(action, meta, 'error', {
           message,
         });
@@ -118,38 +118,46 @@ const room = (server) => {
   });
 
   server.type('room/create', {
-    async access(ctx, action, meta) {
-      return true;
-    },
-    async process(ctx, action, meta) {
+    async accessAndProcess(ctx, action, meta) {
       const userId = parseInt(ctx.userId, 10);
 
-      const result = await roomService.createRoom(userId);
+      try {
+        const currentRoomId = await this.whereIAm(userId);
+        if (currentRoomId) {
+          const error = new ErrorResponse(
+            'user_already_in_room',
+            `Вы уже присоеденены к комнате ${currentRoomId}`,
+            { room_id: currentRoomId },
+          );
 
-      if (result instanceof ErrorResponse) {
-        ctx.sendBack({
-          type: 'room/create_error',
-          ...result,
+          ctx.sendBack({
+            type: 'room/create_error',
+            ...error,
+          });
+
+          return;
+        }
+
+        const roomId = await roomService.createRoom(userId);
+
+        const { browser, os, device } = parser(
+          ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
+        );
+
+        logger.analytics('room.create', userId, {
+          room_id: roomId,
+          browser,
+          os,
+          device,
         });
 
-        return;
+        ctx.sendBack({
+          type: 'room/create_success',
+          roomId,
+        });
+      } catch ({ message }) {
+        logger.critical('room.create', userId, {});
       }
-
-      const { browser, os, device } = parser(
-        ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
-      );
-
-      logger.analytics('room.create', userId, {
-        room_id: result,
-        browser,
-        os,
-        device,
-      });
-
-      ctx.sendBack({
-        type: 'room/create_success',
-        roomId: result,
-      });
     },
   });
 

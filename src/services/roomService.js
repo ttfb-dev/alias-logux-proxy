@@ -113,15 +113,6 @@ class RoomService {
   }
 
   async createRoom(userId) {
-    const currentRoomId = await this.whereIAm(userId);
-    if (currentRoomId) {
-      throw new ErrorResponse(
-        'user_already_in_room',
-        `Вы уже присоеденены к комнате ${currentRoomId}`,
-        { room_id: currentRoomId },
-      );
-    }
-
     const roomId = nanoid();
 
     const roomName = await wordService.getRandomRoomName('ru');
