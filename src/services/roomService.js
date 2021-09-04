@@ -44,27 +44,12 @@ class RoomService {
     return userId === ownerId;
   }
 
-  async joinRoom(userId, roomId) {
-    // если уже присоеденены к какой-либо комнате
-    const currentRoomId = await this.whereIAm(userId);
-    if (currentRoomId) {
-      throw new ErrorResponse(
-        'user_already_in_room',
-        `Вы уже находитесь в ${currentRoomId} комнате.`,
-        { room_id: currentRoomId },
-      );
-    }
-
-    // проверяем статус комнаты
+  async isRoomActive(roomId) {
     const roomStatus = await prs.getRoomParam(roomId, 'status');
-    const isRoomActive = roomStatus === this.storageKeys.statuses.lobby;
-    if (!isRoomActive) {
-      throw new ErrorResponse(
-        'room_does_not_exist_or_closed',
-        'Комната, к которой вы пытаетесь присоединиться не существует или закрыта',
-      );
-    }
+    return roomStatus === this.storageKeys.statuses.lobby;
+  }
 
+  async joinRoom(userId, roomId) {
     const roomMemberIds = await prs.getRoomParam(
       roomId,
       this.storageKeys.memberIds,

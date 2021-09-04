@@ -82,6 +82,33 @@ const room = (server) => {
       const { userId } = ctx.data;
 
       try {
+        // если уже присоеденены к какой-либо комнате
+        const currentRoomId = await roomService.whereIAm(userId);
+        if (currentRoomId) {
+          const errorJoined = new ErrorResponse(
+            'user_already_in_room',
+            `Вы уже находитесь в ${currentRoomId} комнате.`,
+            { room_id: currentRoomId },
+          );
+          server.undo(action, meta, 'denied', {
+            message: errorJoined.message,
+          });
+          return;
+        }
+
+        // проверяем статус комнаты
+        const isRoomActive = await roomService.isRoomActive(roomId);
+        if (!isRoomActive) {
+          const errorNotFoundOrClosed = new ErrorResponse(
+            'room_does_not_exist_or_closed',
+            'Комната, к которой вы пытаетесь присоединиться не существует или закрыта',
+          );
+          server.undo(action, meta, 'denied', {
+            message: errorNotFoundOrClosed.message,
+          });
+          return;
+        }
+
         await roomService.joinRoom(userId, roomId);
         await roomService.refreshRoomDatasets(roomId);
 
@@ -109,7 +136,6 @@ const room = (server) => {
           device,
         });
       } catch ({ message }) {
-        logger.critical(message, { roomId, userId });
         server.undo(action, meta, 'error', {
           message,
         });
