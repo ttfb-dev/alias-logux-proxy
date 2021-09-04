@@ -122,7 +122,7 @@ const room = (server) => {
       const userId = parseInt(ctx.userId, 10);
 
       try {
-        const currentRoomId = await this.whereIAm(userId);
+        const currentRoomId = await roomService.whereIAm(userId);
         if (currentRoomId) {
           const error = new ErrorResponse(
             'user_already_in_room',
@@ -144,7 +144,7 @@ const room = (server) => {
           ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
         );
 
-        logger.analytics('room.create', userId, {
+        await logger.analytics('room.create', userId, {
           room_id: roomId,
           browser,
           os,
@@ -156,7 +156,7 @@ const room = (server) => {
           roomId,
         });
       } catch ({ message }) {
-        logger.critical('room.create', userId, { message });
+        logger.critical(message, userId);
       }
     },
   });
