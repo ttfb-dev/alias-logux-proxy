@@ -165,34 +165,25 @@ const team = (server) => {
       const teamsCount = await roomService.getTeamsCount(roomId);
 
       if (!isEmpty) {
-        server.undo(action, meta, 'error', {
+        server.undo(action, meta, 'denied', {
           message: 'В команде остались люди',
         });
         return;
       }
 
       if (teamsCount <= 1) {
-        server.undo(action, meta, 'error', {
+        server.undo(action, meta, 'denied', {
           message: 'Для игры нужна минимум одна команда',
         });
         return;
       }
 
-      const result = await roomService.deleteTeam(roomId, teamId);
-
-      if (result instanceof ErrorResponse) {
-        ctx.sendBack({
-          type: 'room/team_delete_error',
-          ...result,
-        });
-
-        return;
-      }
+      const teams = await roomService.deleteTeam(roomId, teamId);
 
       await server.log.add({
         type: 'room/team_deleted',
         roomId,
-        teams: result,
+        teams,
       });
 
       ctx.sendBack({

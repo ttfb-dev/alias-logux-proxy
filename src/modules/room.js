@@ -20,7 +20,7 @@ const room = (server) => {
         }
 
         if (currentRoomId !== roomId) {
-          await logger.critical('channel subscribe failed', {
+          await logger.error('channel subscribe failed', {
             userId,
             channel: 'room/:roomId',
             currentRoomId,
@@ -28,12 +28,6 @@ const room = (server) => {
           });
           return false;
         }
-        await logger.info('channel subscribe ok', {
-          userId,
-          channel: 'room/:roomId',
-          currentRoomId,
-          roomId,
-        });
 
         return true;
       } catch ({ message }) {
