@@ -156,7 +156,7 @@ const room = (server) => {
           roomId,
         });
       } catch ({ message }) {
-        logger.critical('room.create', userId, {});
+        logger.critical('room.create', userId, { message });
       }
     },
   });
