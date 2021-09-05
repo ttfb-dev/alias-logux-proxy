@@ -1,7 +1,7 @@
 import { customAlphabet } from 'nanoid';
 
 import { ErrorResponse } from '../contracts';
-import { gdatasets, prs, vkapi } from '../libs';
+import { gdatasets, isDev, prs, roomService, vkapi } from '../libs';
 
 import { gameService, profileService, teamService, wordService } from '.';
 
@@ -159,6 +159,12 @@ class RoomService {
     };
   }
 
+  async getRoomSettings(roomId) {
+    return {
+      settings: await prs.getRoomParam(roomId, 'settings', {}),
+    };
+  }
+
   async getMembers(roomId) {
     const memberIds = await prs.getRoomParam(
       roomId,
@@ -170,6 +176,21 @@ class RoomService {
   }
 
   async getRoomDetail(roomId, userId) {
+    if (isDev(userId)) {
+      const room = await this.getRoom(roomId);
+
+      const settings = await roomService.getSettings(roomId);
+
+      console.log(settings);
+
+      room.settings = settings;
+
+      room.myTeamId = teamService.findMyTeam(room.teams, userId);
+
+      delete room.memberIds;
+
+      return room;
+    }
     const room = await this.getRoom(roomId);
 
     room.myTeamId = teamService.findMyTeam(room.teams, userId);
