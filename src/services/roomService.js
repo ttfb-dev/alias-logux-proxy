@@ -108,16 +108,9 @@ class RoomService {
     await prs.setRoomParam(roomId, this.storageKeys.ownerId, userId);
     await prs.setRoomParam(roomId, this.storageKeys.memberIds, [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
-    if (isDev(userId)) {
-      const defaultSettings = await roomLib.getDefaultSettings(roomId);
-      defaultSettings.name = roomName;
-      await roomLib.setSettings(roomId, defaultSettings);
-    } else {
-      await prs.setRoomParam(roomId, 'settings', {
-        name: roomName,
-        lang: 'ru',
-      });
-    }
+    const settings = await roomLib.getDefaultSettings(roomId);
+    settings.name = roomName;
+    await roomLib.setSettings(roomId, settings);
     await prs.setUserParam(userId, this.storageKeys.roomId, roomId);
 
     await this.refreshRoomDatasets(roomId, true);
