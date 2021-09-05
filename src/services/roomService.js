@@ -109,12 +109,9 @@ class RoomService {
     await prs.setRoomParam(roomId, this.storageKeys.memberIds, [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
     if (isDev(userId)) {
-      console.log(userId);
       const defaultSettings = await roomLib.getDefaultSettings(roomId);
       defaultSettings.name = roomName;
-      console.log(defaultSettings);
       await roomLib.setSettings(roomId, defaultSettings);
-      console.log('saved');
     } else {
       await prs.setRoomParam(roomId, 'settings', {
         name: roomName,
