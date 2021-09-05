@@ -153,7 +153,7 @@ class RoomService {
       memberIds: await prs.getRoomParam(roomId, this.storageKeys.memberIds, []),
       members: await this.getMembers(roomId),
       teams: await prs.getRoomParam(roomId, 'teams', []),
-      settings: await prs.getRoomParam(roomId, 'settings', {}),
+      settings: await roomService.getSettings(roomId),
       gameWordDatasets: await this.getRoomGameDatasets(roomId),
       currentGameId: await gameService.getRoomGameId(roomId),
     };
@@ -176,21 +176,6 @@ class RoomService {
   }
 
   async getRoomDetail(roomId, userId) {
-    if (isDev(userId)) {
-      const room = await this.getRoom(roomId);
-
-      const settings = await roomService.getSettings(roomId);
-
-      console.log(settings);
-
-      room.settings = settings;
-
-      room.myTeamId = teamService.findMyTeam(room.teams, userId);
-
-      delete room.memberIds;
-
-      return room;
-    }
     const room = await this.getRoom(roomId);
 
     room.myTeamId = teamService.findMyTeam(room.teams, userId);
