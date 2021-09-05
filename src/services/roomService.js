@@ -1,7 +1,7 @@
 import { customAlphabet } from 'nanoid';
 
 import { ErrorResponse } from '../contracts';
-import { gdatasets, isDev, prs, roomService, vkapi } from '../libs';
+import { gdatasets, isDev, prs, roomLib, vkapi } from '../libs';
 
 import { gameService, profileService, teamService, wordService } from '.';
 
@@ -108,10 +108,16 @@ class RoomService {
     await prs.setRoomParam(roomId, this.storageKeys.ownerId, userId);
     await prs.setRoomParam(roomId, this.storageKeys.memberIds, [userId]);
     await prs.setRoomParam(roomId, 'teams', teams);
-    await prs.setRoomParam(roomId, 'settings', {
-      name: roomName,
-      lang: 'ru',
-    });
+    if (isDev(userId)) {
+      const defaultSettings = await roomLib.getDefaultSettings(roomId);
+      defaultSettings.name = roomName;
+      await roomLib.setSettings(defaultSettings);
+    } else {
+      await prs.setRoomParam(roomId, 'settings', {
+        name: roomName,
+        lang: 'ru',
+      });
+    }
     await prs.setUserParam(userId, this.storageKeys.roomId, roomId);
 
     await this.refreshRoomDatasets(roomId, true);
@@ -133,14 +139,14 @@ class RoomService {
 
   async renameRoom(roomId, customRoomName) {
     let roomName = customRoomName;
-    const settings = await roomService.getSettings(roomId);
+    const settings = await roomLib.getSettings(roomId);
 
     if (!customRoomName) {
       roomName = await wordService.getRandomRoomName();
     }
 
     settings.name = roomName;
-    await roomService.setSettings(roomId, settings);
+    await roomLib.setSettings(roomId, settings);
 
     return settings;
   }
@@ -153,7 +159,7 @@ class RoomService {
       memberIds: await prs.getRoomParam(roomId, this.storageKeys.memberIds, []),
       members: await this.getMembers(roomId),
       teams: await prs.getRoomParam(roomId, 'teams', []),
-      settings: await roomService.getSettings(roomId),
+      settings: await roomLib.getSettings(roomId),
       gameWordDatasets: await this.getRoomGameDatasets(roomId),
       currentGameId: await gameService.getRoomGameId(roomId),
     };
@@ -184,8 +190,6 @@ class RoomService {
   }
 
   async createTeam(roomId, teamName) {
-    const settings = await roomService.getSettings(roomId);
-
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     const newTeam = await teamService.getNewTeam(roomId, teamName);
 
@@ -236,7 +240,6 @@ class RoomService {
   }
 
   async renameTeam(roomId, teamId, customTeamName) {
-    const settings = await roomService.getSettings(roomId);
     const teams = await prs.getRoomParam(roomId, 'teams', []);
 
     const teamName =

@@ -3,7 +3,7 @@ import { datasets, gdatasets, udatasets } from './datasets';
 import isDev from './isDev';
 import { logger } from './logger';
 import { prs } from './prs';
-import roomService from './room';
+import roomLib from './room';
 import vkapi from './vkapi';
 
 export {
@@ -13,7 +13,7 @@ export {
   isDev,
   logger,
   prs,
-  roomService,
+  roomLib,
   udatasets,
   vkapi,
 };
