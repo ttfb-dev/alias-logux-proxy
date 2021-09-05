@@ -1,7 +1,7 @@
 import { datasets } from '../libs';
 
 class WordService {
-  async getRandomRoomName(lang = 'ru') {
+  async getRandomRoomName() {
     const availableRoomNames = await datasets.getWordsById(1);
     return availableRoomNames[
       Math.floor(Math.random() * availableRoomNames.length)
@@ -9,23 +9,23 @@ class WordService {
   }
 
   // генерирует пустую команду со случайным неповторяющимся названием
-  async getRandomRoomNames(lang = 'ru', count = 10) {
+  async getRandomRoomNames(count = 10) {
     const availableRoomNames = await datasets.getWordsById(1);
 
     return this.__getRandomNWords(availableRoomNames, count);
   }
 
-  async getRandomTeamNames(lang = 'ru', count = 15) {
+  async getRandomTeamNames(count = 15) {
     const availableTeamNames = await datasets.getWordsById(2);
 
     return this.__getRandomNWords(availableTeamNames, count);
   }
 
-  async getRoomNames(lang = 'ru') {
+  async getRoomNames() {
     return await datasets.getWordsById(1);
   }
 
-  async getTeamNames(lang = 'ru') {
+  async getTeamNames() {
     return await datasets.getWordsById(2);
   }
 
@@ -35,11 +35,6 @@ class WordService {
 
   async getGameDataset(datasetId) {
     return await datasets.getById(datasetId);
-  }
-
-  async getLangGameDatasets(lang) {
-    const gameDatasets = await this.getGameDatasets();
-    return gameDatasets.filter((dataset) => dataset.lang === lang);
   }
 
   async getGameDatasets() {

@@ -45,12 +45,8 @@ const room = (server) => {
         const gameId = await gameService.getRoomGameId(roomId);
         const game = await gameService.getGame(roomId, gameId);
 
-        const randomRoomNames = await wordService.getRandomRoomNames(
-          room.settings.lang,
-        );
-        const randomTeamNames = await wordService.getRandomTeamNames(
-          room.settings.lang,
-        );
+        const randomRoomNames = await wordService.getRandomRoomNames();
+        const randomTeamNames = await wordService.getRandomTeamNames();
 
         return {
           type: 'room/state',

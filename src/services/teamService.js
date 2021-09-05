@@ -4,7 +4,7 @@ import { wordService } from '.';
 
 class TeamService {
   // генерирует пустую команду со случайным неповторяющимся названием
-  async getUniqueRandomTeamName(roomId, lang = 'ru') {
+  async getUniqueRandomTeamName(roomId) {
     let tryLeft = 50;
     const teams = await prs.getRoomParam(roomId, 'teams', []);
     const teamNames = teams.map((team) => {
@@ -13,7 +13,7 @@ class TeamService {
       }
     });
 
-    const allTeamNames = await wordService.getTeamNames(lang);
+    const allTeamNames = await wordService.getTeamNames();
 
     while (tryLeft > 0) {
       const randomName =
@@ -28,16 +28,13 @@ class TeamService {
     return allTeamNames[Math.floor(Math.random() * allTeamNames.length)];
   }
 
-  async getTwoTeams(roomId, lang = 'ru') {
-    return [
-      await this.getNewTeam(roomId, lang),
-      await this.getNewTeam(roomId, lang),
-    ];
+  async getTwoTeams(roomId) {
+    return [await this.getNewTeam(roomId), await this.getNewTeam(roomId)];
   }
 
-  async getNewTeam(roomId, lang = 'ru', customTeamName = null) {
+  async getNewTeam(roomId, customTeamName = null) {
     const teamName =
-      customTeamName || (await this.getUniqueRandomTeamName(roomId, lang));
+      customTeamName || (await this.getUniqueRandomTeamName(roomId));
     const teamId = await prs.getNextInt(`room_${roomId}_teams`, 0);
     return {
       teamId: teamId,

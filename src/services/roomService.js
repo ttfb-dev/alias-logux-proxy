@@ -100,7 +100,7 @@ class RoomService {
   async createRoom(userId) {
     const roomId = nanoid();
 
-    const roomName = await wordService.getRandomRoomName('ru');
+    const roomName = await wordService.getRandomRoomName();
 
     const teams = await teamService.getTwoTeams(roomId);
 
@@ -110,7 +110,6 @@ class RoomService {
     await prs.setRoomParam(roomId, 'teams', teams);
     await prs.setRoomParam(roomId, 'settings', {
       name: roomName,
-      lang: 'ru',
     });
     await prs.setUserParam(userId, this.storageKeys.roomId, roomId);
 
@@ -133,14 +132,14 @@ class RoomService {
 
   async renameRoom(roomId, customRoomName) {
     let roomName = customRoomName;
+    const settings = await roomService.getSettings(roomId);
+
     if (!customRoomName) {
-      const settings = await prs.getRoomParam(roomId, 'settings', {});
-      roomName = await wordService.getRandomRoomName(settings.lang);
+      roomName = await wordService.getRandomRoomName();
     }
 
-    const settings = await prs.getRoomParam(roomId, 'settings', {});
     settings.name = roomName;
-    await prs.setRoomParam(roomId, 'settings', settings);
+    await roomService.setSettings(roomId, settings);
 
     return settings;
   }
@@ -156,12 +155,6 @@ class RoomService {
       settings: await roomService.getSettings(roomId),
       gameWordDatasets: await this.getRoomGameDatasets(roomId),
       currentGameId: await gameService.getRoomGameId(roomId),
-    };
-  }
-
-  async getRoomSettings(roomId) {
-    return {
-      settings: await prs.getRoomParam(roomId, 'settings', {}),
     };
   }
 
@@ -190,14 +183,10 @@ class RoomService {
   }
 
   async createTeam(roomId, teamName) {
-    const settings = await prs.getRoomParam(roomId, 'settings', {});
+    const settings = await roomService.getSettings(roomId);
 
     const teams = await prs.getRoomParam(roomId, 'teams', []);
-    const newTeam = await teamService.getNewTeam(
-      roomId,
-      settings.lang,
-      teamName,
-    );
+    const newTeam = await teamService.getNewTeam(roomId, teamName);
 
     teams.push(newTeam);
 
@@ -246,12 +235,11 @@ class RoomService {
   }
 
   async renameTeam(roomId, teamId, customTeamName) {
-    const settings = await prs.getRoomParam(roomId, 'settings', {});
+    const settings = await roomService.getSettings(roomId);
     const teams = await prs.getRoomParam(roomId, 'teams', []);
 
     const teamName =
-      customTeamName ||
-      (await teamService.getUniqueRandomTeamName(roomId, settings.lang));
+      customTeamName || (await teamService.getUniqueRandomTeamName(roomId));
 
     teams.forEach((team) => {
       if (team.teamId === teamId) {
@@ -312,8 +300,7 @@ class RoomService {
   }
 
   async getRoomGameDatasets(roomId) {
-    const lang = await this.getRoomLang(roomId);
-    const datasets = await wordService.getLangGameDatasets(lang);
+    const datasets = await wordService.getGameDatasets();
     const activeGameDatasetIds = await gdatasets.getActive(roomId);
     const memberIds = await prs.getRoomParam(
       roomId,
@@ -394,13 +381,6 @@ class RoomService {
     }
 
     return false;
-  }
-
-  async getRoomLang(roomId) {
-    const roomSettings = await prs.getRoomParam(roomId, 'settings', {
-      lang: 'ru',
-    });
-    return roomSettings.lang;
   }
 }
 
