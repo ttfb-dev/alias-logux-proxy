@@ -160,7 +160,11 @@ const room = (server) => {
           return;
         }
 
+        console.log('creating');
+
         const roomId = await roomService.createRoom(userId);
+
+        console.log('created', roomId);
 
         const { browser, os, device } = parser(
           ctx.server.clientIds.get(ctx.clientId).httpHeaders['user-agent'],
@@ -178,7 +182,8 @@ const room = (server) => {
           roomId,
         });
       } catch ({ message }) {
-        logger.critical(message, userId);
+        console.error(message);
+        await logger.critical(message, userId);
       }
     },
   });

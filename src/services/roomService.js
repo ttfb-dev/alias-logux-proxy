@@ -115,6 +115,7 @@ class RoomService {
     } else {
       await prs.setRoomParam(roomId, 'settings', {
         name: roomName,
+        lang: 'ru',
       });
     }
     await prs.setUserParam(userId, this.storageKeys.roomId, roomId);
