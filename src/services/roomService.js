@@ -118,6 +118,10 @@ class RoomService {
     return roomId;
   }
 
+  async updateSettings(roomId, settings) {
+    await roomLib.setSettings(roomId, settings);
+  }
+
   async setRoomInGame(roomId) {
     return await this.setRoomStatus(roomId, this.storageKeys.statuses.game);
   }

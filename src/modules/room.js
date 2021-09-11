@@ -428,6 +428,46 @@ const room = (server) => {
     },
   });
 
+  server.type('room/update_settings', {
+    async access(ctx, action, meta) {
+      try {
+        const userId = parseInt(ctx.userId, 10);
+
+        const roomId = await roomService.whereIAm(userId);
+
+        ctx.data = { roomId, userId };
+
+        const isItMyRoomId = await roomService.isItMyRoomId(userId, roomId);
+
+        const amIRoomOwner = await roomService.amIRoomOwner(userId, roomId);
+
+        return isItMyRoomId && amIRoomOwner;
+      } catch ({ message }) {
+        logger.critical(message, {
+          type: 'room/update_settings/access',
+          action,
+          userId: ctx.userId,
+        });
+      }
+      return false;
+    },
+    resend(ctx, action, meta) {
+      return `room/${ctx.data.roomId}`;
+    },
+    async process(ctx, action, meta) {
+      try {
+        const { roomId, settings } = ctx.data;
+        await roomService.updateSettings(roomId, settings);
+      } catch ({ message }) {
+        logger.critical(message, {
+          type: 'room/update_settings/process',
+          action,
+          userId: ctx.userId,
+        });
+      }
+    },
+  });
+
   /** client actions */
   //событие присоединения к комнате
   server.type('room/user_joined', {
