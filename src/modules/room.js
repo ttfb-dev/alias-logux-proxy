@@ -456,7 +456,8 @@ const room = (server) => {
     },
     async process(ctx, action, meta) {
       try {
-        const { roomId, settings } = ctx.data;
+        const { roomId } = ctx.data;
+        const { settings } = action;
         await roomService.updateSettings(roomId, settings);
       } catch ({ message }) {
         logger.critical(message, {
