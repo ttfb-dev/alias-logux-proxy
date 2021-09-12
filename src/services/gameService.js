@@ -1,4 +1,4 @@
-import { gdatasets, prs } from '../libs';
+import { gdatasets, prs, roomLib } from '../libs';
 
 import { roomService, wordService } from '.';
 
@@ -278,7 +278,7 @@ class GameService {
   async setStepWordWithScore(roomId, gameId, word) {
     const oldScore = await this.getStepScore(roomId, gameId);
 
-    const takeOffPoint = await roomService.getSetting(roomId, 'takeOffPoint');
+    const takeOffPoint = await roomLib.getSetting(roomId, 'takeOffPoint');
     console.log(`takeOffPoint: ${takeOffPoint}`);
     let score;
     if (takeOffPoint) {
@@ -294,7 +294,7 @@ class GameService {
   async editStepWordWithScore(roomId, gameId, word, index) {
     const oldScore = await this.getStepScore(roomId, gameId);
 
-    const takeOffPoint = await roomService.getSetting(roomId, 'takeOffPoint');
+    const takeOffPoint = await roomLib.getSetting(roomId, 'takeOffPoint');
     console.log(`takeOffPoint: ${takeOffPoint}`);
     let score;
     if (takeOffPoint) {
