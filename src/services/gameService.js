@@ -1,4 +1,4 @@
-import { gdatasets, prs, roomLib } from '../libs';
+import { gdatasets, prs } from '../libs';
 
 import { roomService, wordService } from '.';
 
@@ -275,33 +275,21 @@ class GameService {
     await this.setStepWords(roomId, gameId, words);
   }
 
-  async setStepWordWithScore(roomId, gameId, word) {
+  async setStepWordWithScore(roomId, gameId, word, takeOffScore) {
     const oldScore = await this.getStepScore(roomId, gameId);
 
-    const takeOffScore = await roomLib.getSetting(roomId, 'takeOffScore');
-    console.log(`takeOffScore: ${takeOffScore}`);
-    let score;
-    if (takeOffScore) {
-      score = word.guessed ? oldScore + 1 : oldScore - 1;
-    } else {
-      score = word.guessed ? oldScore + 1 : oldScore;
-    }
+    const takeOff = takeOffScore ? 1 : 0;
+    const score = word.guessed ? oldScore + 1 : oldScore - takeOff;
 
     await this.setStepWord(roomId, gameId, word);
     await this.setStepScore(roomId, gameId, score);
   }
 
-  async editStepWordWithScore(roomId, gameId, word, index) {
+  async editStepWordWithScore(roomId, gameId, word, index, takeOffScore) {
     const oldScore = await this.getStepScore(roomId, gameId);
 
-    const takeOffScore = await roomLib.getSetting(roomId, 'takeOffScore');
-    console.log(`takeOffScore: ${takeOffScore}`);
-    let score;
-    if (takeOffScore) {
-      score = word.guessed ? oldScore + 2 : oldScore - 2;
-    } else {
-      score = word.guessed ? oldScore + 1 : oldScore - 1;
-    }
+    const diffScore = takeOffScore ? 2 : 1;
+    const score = word.guessed ? oldScore + diffScore : oldScore - diffScore;
 
     await this.editStepWord(roomId, gameId, word, index);
     await this.setStepScore(roomId, gameId, score);

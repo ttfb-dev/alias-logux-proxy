@@ -196,10 +196,15 @@ const game = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
-      const { word } = action;
+      const { word, takeOffScore } = action;
 
       try {
-        await gameService.setStepWordWithScore(roomId, gameId, word);
+        await gameService.setStepWordWithScore(
+          roomId,
+          gameId,
+          word,
+          takeOffScore,
+        );
       } catch (e) {
         await logger.critical(e.message, {
           method: 'step/set_word',
@@ -226,10 +231,16 @@ const game = (server) => {
     },
     async process(ctx, action, meta) {
       const { roomId, gameId } = ctx.data;
-      const { word, index } = action;
+      const { word, index, takeOffScore } = action;
 
       try {
-        await gameService.editStepWordWithScore(roomId, gameId, word, index);
+        await gameService.editStepWordWithScore(
+          roomId,
+          gameId,
+          word,
+          index,
+          takeOffScore,
+        );
       } catch (e) {
         await logger.critical(e.message, {
           method: 'step/edit_word',
