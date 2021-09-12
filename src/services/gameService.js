@@ -278,10 +278,10 @@ class GameService {
   async setStepWordWithScore(roomId, gameId, word) {
     const oldScore = await this.getStepScore(roomId, gameId);
 
-    const takeOffPoint = await roomLib.getSetting(roomId, 'takeOffPoint');
-    console.log(`takeOffPoint: ${takeOffPoint}`);
+    const takeOffScore = await roomLib.getSetting(roomId, 'takeOffScore');
+    console.log(`takeOffScore: ${takeOffScore}`);
     let score;
-    if (takeOffPoint) {
+    if (takeOffScore) {
       score = word.guessed ? oldScore + 1 : oldScore - 1;
     } else {
       score = word.guessed ? oldScore + 1 : oldScore;
@@ -294,10 +294,10 @@ class GameService {
   async editStepWordWithScore(roomId, gameId, word, index) {
     const oldScore = await this.getStepScore(roomId, gameId);
 
-    const takeOffPoint = await roomLib.getSetting(roomId, 'takeOffPoint');
-    console.log(`takeOffPoint: ${takeOffPoint}`);
+    const takeOffScore = await roomLib.getSetting(roomId, 'takeOffScore');
+    console.log(`takeOffScore: ${takeOffScore}`);
     let score;
-    if (takeOffPoint) {
+    if (takeOffScore) {
       score = word.guessed ? oldScore + 2 : oldScore - 2;
     } else {
       score = word.guessed ? oldScore + 1 : oldScore - 1;
