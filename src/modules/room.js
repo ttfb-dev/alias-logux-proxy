@@ -456,9 +456,14 @@ const room = (server) => {
     },
     async process(ctx, action, meta) {
       try {
+        const userId = parseInt(ctx.userId, 10);
         const { roomId } = ctx.data;
         const { settings } = action;
         await roomService.updateSettings(roomId, settings);
+        await logger.analytics('room.set_settings', userId, {
+          roomId,
+          settings,
+        });
       } catch ({ message }) {
         logger.critical(message, {
           type: 'room/update_settings/process',
