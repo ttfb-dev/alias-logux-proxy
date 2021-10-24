@@ -64,8 +64,13 @@ const game = (server) => {
             roomService.storageKeys.statuses.lobby,
           );
 
-          const event = new Event(EVENTS.USER_PLAYS_GAME_HALLOWEEN_2021);
-          eventBus.newEvent(event);
+          const dateFrom = new Date('2021-10-24');
+          const dateTo = new Date('2021-11-01');
+          const now = new Date();
+          if (now > dateFrom && now < dateTo) {
+            const event = new Event(EVENTS.USER_PLAYS_GAME_HALLOWEEN_2021);
+            eventBus.newEvent(event);
+          }
 
           await logger.analytics('game.finish', userId, {
             roomId,
