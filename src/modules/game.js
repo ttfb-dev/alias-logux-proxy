@@ -1,4 +1,4 @@
-import { analytics, logger } from '../libs';
+import { analytics, Event, eventBus, EVENTS, logger } from '../libs';
 import { gameService, roomService } from '../services';
 
 const game = (server) => {
@@ -63,6 +63,9 @@ const game = (server) => {
             roomId,
             roomService.storageKeys.statuses.lobby,
           );
+
+          const event = new Event(EVENTS.USER_PLAYS_GAME_HALLOWEEN_2021);
+          eventBus.newEvent(event);
 
           await logger.analytics('game.finish', userId, {
             roomId,
