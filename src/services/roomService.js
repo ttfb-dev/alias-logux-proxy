@@ -3,6 +3,7 @@ import { customAlphabet } from 'nanoid';
 import { ErrorResponse } from '../contracts';
 import { gdatasets, isDev, prs, roomLib, vkapi } from '../libs';
 
+import { flags } from './wordService';
 import { gameService, profileService, teamService, wordService } from '.';
 
 const nanoid = customAlphabet('1234567890abcdef', 10);
@@ -309,22 +310,20 @@ class RoomService {
       [],
     );
 
-    let isJoinedGroup = false;
-    let isDonut = false;
+    const localFlags = { ...flags };
 
     for (const userId of memberIds) {
       if (!isJoinedGroup && (await profileService.isJoinedGroup(userId))) {
-        isJoinedGroup = true;
+        localFlags.isJoinedGroup = true;
       }
       if (!isDonut && (await profileService.isDonut(userId))) {
-        isDonut = true;
+        localFlags.isDonut = true;
       }
     }
 
     return profileService.mapDatasetsWithStatus(
       activeGameDatasetIds,
-      isJoinedGroup,
-      isDonut,
+      localFlags,
       datasets,
     );
   }
