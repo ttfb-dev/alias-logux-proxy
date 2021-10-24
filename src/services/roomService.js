@@ -313,10 +313,13 @@ class RoomService {
     const localFlags = { ...flags };
 
     for (const userId of memberIds) {
-      if (!isJoinedGroup && (await profileService.isJoinedGroup(userId))) {
+      if (
+        !localFlags.isJoinedGroup &&
+        (await profileService.isJoinedGroup(userId))
+      ) {
         localFlags.isJoinedGroup = true;
       }
-      if (!isDonut && (await profileService.isDonut(userId))) {
+      if (!localFlags.isDonut && (await profileService.isDonut(userId))) {
         localFlags.isDonut = true;
       }
     }
