@@ -66,7 +66,6 @@ class WordService {
 export const flags = {
   isDonut: false,
   isJoinedGroup: false,
-  isHalloween21: false,
 };
 
 export default new WordService();

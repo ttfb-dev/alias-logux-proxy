@@ -51,7 +51,14 @@ class ProfileService {
 
     localFlags.isDonut = await this.isDonut(userId);
 
-    return this.mapDatasetsWithStatus(activeIds, localFlags, datasets);
+    const fixedIds = [];
+
+    return this.mapDatasetsWithStatus(
+      activeIds,
+      fixedIds,
+      localFlags,
+      datasets,
+    );
   }
 
   async isJoinedGroup(userId) {
@@ -103,19 +110,22 @@ class ProfileService {
     return purchasedDatasetIds.includes(datasetId);
   }
 
-  mapDatasetsWithStatus(activeIds, flags, datasets) {
+  mapDatasetsWithStatus(activeIds, fixedIds, flags, datasets) {
     datasets.forEach((dataset) => {
-      let isAvailableToActivate = false;
-      switch (dataset.type) {
-        case 'free':
-          isAvailableToActivate = true;
-          break;
-        case 'subscribe':
-          isAvailableToActivate = flags.isJoinedGroup;
-          break;
-        case 'donut':
-          isAvailableToActivate = flags.isDonut;
-          break;
+      let isAvailableToActivate = fixedIds.includes(dataset.datasetId);
+
+      if (!isAvailableToActivate) {
+        switch (dataset.type) {
+          case 'free':
+            isAvailableToActivate = true;
+            break;
+          case 'subscribe':
+            isAvailableToActivate = flags.isJoinedGroup;
+            break;
+          case 'donut':
+            isAvailableToActivate = flags.isDonut;
+            break;
+        }
       }
 
       const isActive = activeIds.includes(dataset.datasetId);

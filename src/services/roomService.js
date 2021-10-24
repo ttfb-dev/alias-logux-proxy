@@ -324,8 +324,11 @@ class RoomService {
       }
     }
 
+    const fixedIds = [];
+
     return profileService.mapDatasetsWithStatus(
       activeGameDatasetIds,
+      fixedIds,
       localFlags,
       datasets,
     );
