@@ -1,10 +1,10 @@
-import { EVENTS } from '../libs';
+import { EVENTS, logger } from '../libs';
 
 class EventHandler {
   async process(event, server) {
     switch (event.name) {
       default:
-        console.log(event);
+        logger.critical('got event', { event });
         break;
     }
   }
