@@ -67,9 +67,12 @@ const game = (server) => {
           const dateFrom = new Date('2021-10-24');
           const dateTo = new Date('2021-11-01');
           const now = new Date();
-          if (now > dateFrom && now < dateTo) {
+          if (now > dateFrom && now < dateTo && reason === 'has_winner') {
             const event = new Event(EVENTS.USER_PLAYS_GAME_HALLOWEEN_2021);
-            eventBus.newEvent(event);
+            const userIds = await roomService.getMemberIds(roomId);
+            for (const id of userIds) {
+              eventBus.newEvent(event, { userId: id });
+            }
           }
 
           await logger.analytics('game.finish', userId, {

@@ -164,13 +164,12 @@ class RoomService {
   }
 
   async getMembers(roomId) {
-    const memberIds = await prs.getRoomParam(
-      roomId,
-      this.storageKeys.memberIds,
-      [],
-    );
-
+    const memberIds = this.getMemberIds(roomId);
     return await vkapi.getUsers(memberIds);
+  }
+
+  async getMemberIds(roomId) {
+    return await prs.getRoomParam(roomId, this.storageKeys.memberIds, []);
   }
 
   async getRoomDetail(roomId, userId) {
