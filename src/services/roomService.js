@@ -164,7 +164,7 @@ class RoomService {
   }
 
   async getMembers(roomId) {
-    const memberIds = this.getMemberIds(roomId);
+    const memberIds = await this.getMemberIds(roomId);
     return await vkapi.getUsers(memberIds);
   }
 
