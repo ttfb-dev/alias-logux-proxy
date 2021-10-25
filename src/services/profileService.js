@@ -111,7 +111,6 @@ class ProfileService {
   }
 
   mapDatasetsWithStatus(activeIds, fixedIds, flags, datasets) {
-    console.log({ activeIds, fixedIds, flags });
     datasets.forEach((dataset) => {
       let isAvailableToActivate = fixedIds.includes(dataset.datasetId);
 

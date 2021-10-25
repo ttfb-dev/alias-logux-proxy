@@ -324,7 +324,11 @@ class RoomService {
         localFlags.isDonut = true;
       }
 
-      fixedIdsMap.push(...udatasets.getFixed(userId));
+      const userFixedIds = udatasets.getFixed(userId);
+
+      if (userFixedIds.length) {
+        fixedIdsMap.push(...userFixedIds);
+      }
     }
 
     const fixedIds = fixedIdsMap.filter((v, i, a) => a.indexOf(v) === i);
