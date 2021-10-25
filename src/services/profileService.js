@@ -41,7 +41,7 @@ class ProfileService {
   }
 
   async getDatasetsWithStatus(userId) {
-    const datasets = await wordService.getGameDatasets();
+    const allDatasets = await wordService.getGameDatasets();
 
     const activeIds = await this.getActiveDatasetIds(userId);
 
@@ -51,13 +51,13 @@ class ProfileService {
 
     localFlags.isDonut = await this.isDonut(userId);
 
-    const fixedIds = [];
+    const fixedIds = await udatasets.getFixed(userId);
 
     return this.mapDatasetsWithStatus(
       activeIds,
       fixedIds,
       localFlags,
-      datasets,
+      allDatasets,
     );
   }
 

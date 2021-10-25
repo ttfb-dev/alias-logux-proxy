@@ -1,7 +1,7 @@
 import { customAlphabet } from 'nanoid';
 
 import { ErrorResponse } from '../contracts';
-import { gdatasets, isDev, prs, roomLib, vkapi } from '../libs';
+import { gdatasets, isDev, prs, roomLib, udatasets, vkapi } from '../libs';
 
 import { flags } from './wordService';
 import { gameService, profileService, teamService, wordService } from '.';
@@ -311,6 +311,8 @@ class RoomService {
 
     const localFlags = { ...flags };
 
+    const fixedIdsMap = [];
+
     for (const userId of memberIds) {
       if (
         !localFlags.isJoinedGroup &&
@@ -321,9 +323,11 @@ class RoomService {
       if (!localFlags.isDonut && (await profileService.isDonut(userId))) {
         localFlags.isDonut = true;
       }
+
+      fixedIdsMap.push(...udatasets.getFixed(userId));
     }
 
-    const fixedIds = [];
+    const fixedIds = fixedIdsMap.filter((v, i, a) => a.indexOf(v) === i);
 
     return profileService.mapDatasetsWithStatus(
       activeGameDatasetIds,
