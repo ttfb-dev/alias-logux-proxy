@@ -324,20 +324,14 @@ class RoomService {
         localFlags.isDonut = true;
       }
 
-      const userFixedIds = udatasets.getFixed(userId);
-
-      console.log({ userId, userFixedIds });
+      const userFixedIds = await udatasets.getFixed(userId);
 
       if (userFixedIds.length) {
         fixedIdsMap.push(...userFixedIds);
       }
     }
 
-    console.log({ fixedIdsMap });
-
     const fixedIds = fixedIdsMap.filter((v, i, a) => a.indexOf(v) === i);
-
-    console.log({ fixedIds });
 
     return profileService.mapDatasetsWithStatus(
       activeGameDatasetIds,
